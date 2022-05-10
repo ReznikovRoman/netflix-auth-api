@@ -16,4 +16,5 @@ jobs:
       uses: srggrs/assign-one-project-github-action@1.2.1
       if: github.event.action == 'opened'
       with:
-        project: 'https://github.com/ReznikovRoman/netflix-auth-api/projects/1'
+        project: ${{ secrets.NETFLIX_GITHUB_PROJECT_URL }}
+        column_name: ${{ secrets.NETFLIX_PROJECT_DEFAULT_COLUMN_NAME }}
