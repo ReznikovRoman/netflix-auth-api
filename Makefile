@@ -1,4 +1,5 @@
 REQUIREMENTS_DIR := requirements
+FUNCTIONAL_TESTS_DIR := tests/functional
 PIP_COMPILE_ARGS := --generate-hashes --allow-unsafe --no-header --no-emit-index-url --verbose
 PIP_COMPILE := cd $(REQUIREMENTS_DIR) && pip-compile $(PIP_COMPILE_ARGS)
 
@@ -11,6 +12,21 @@ lint:
 	ec
 	flake8
 	isort -qc .
+
+.PHONY: test
+test:
+	pytest --ignore=$(FUNCTIONAL_TESTS_DIR)
+
+.PHONY: tf
+tf:
+	pytest $(FUNCTIONAL_TESTS_DIR)
+
+.PHONY: dtf
+dtf:
+	cd $(FUNCTIONAL_TESTS_DIR) && docker-compose up test
+
+.PHONY: check
+check: lint test
 
 .PHONY: compile-requirements
 compile-requirements:
