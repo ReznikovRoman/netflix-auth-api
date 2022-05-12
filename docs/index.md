@@ -34,7 +34,7 @@
     - Google OAuth
     - Yandex OAuth
   - Стандартная регистрация по электронной почте и паролю
-    - `POST /api/v1/auth/register/`
+    - `POST /api/v1/auth/register`
     - Тело запроса
     ```json
     {
@@ -43,7 +43,7 @@
     }
     ```
   - Стандартный вход в аккаунт по электронной почте и паролю
-    - `POST /api/v1/auth/login/`
+    - `POST /api/v1/auth/login`
     - Тело запроса
     ```json
     {
@@ -51,11 +51,20 @@
       "password": "xxx"
     }
     ```
+  - Обновление access токена с помощью refresh токена
+    - `POST /api/v1/auth/refresh`
+    - Тело запроса
+    ```json
+    {
+      "refresh_token": "xxx",
+      "grant_type": "refresh_token"
+    }
+    ```
   - Выход из аккаунта
-    - `POST /api/v1/auth/logout/`
+    - `POST /api/v1/auth/logout`
 - Авторизированный пользователь
   - Изменение пароля
-    - `POST /api/v1/auth/change-password/`
+    - `POST /api/v1/users/me/change-password`
     - Тело запроса
     ```json
     {
@@ -65,7 +74,7 @@
     }
     ```
   - Просмотр истории входов в аккаунт
-    - `GET /api/v1/users/me/login-history/`
+    - `GET /api/v1/users/me/login-history`
     - ID лога (истории входа)
     - ID пользователя
     - User Agent, с которого был произведен вход в аккаунт
@@ -75,16 +84,6 @@
     - `GET /api/v1/users/me/social-accounts/`
   - Открепление аккаунта из социальной сети
     - `DELETE /api/v1/users/me/social-accounts/{social_account_id}`
-- JWT
-  - Обновление access токена с помощью refresh токена
-  - `POST /api/v1/auth/refresh/`
-  - Тело запроса
-  ```json
-  {
-    "refresh_token": "xxx",
-    "grant_type": "refresh_token"
-  }
-  ```
 - Роли
   - Приватное АПИ
     - CLIENT_ID/CLIENT_SECRET
