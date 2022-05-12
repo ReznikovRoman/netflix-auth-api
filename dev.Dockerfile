@@ -32,11 +32,16 @@ COPY ./requirements/requirements.dev.txt /app/requirements.dev.txt
 RUN pip install --upgrade pip-tools
 RUN pip-sync requirements.txt requirements.*.txt
 
+# Expose port
+EXPOSE 8002
+
+# Copy configuration files
+COPY ./conf /app/conf
+RUN chmod +x /app/conf/docker/entrypoint.sh
+
 # Copy project files
 COPY . .
 
 # Spin up server
-CMD gunicorn --worker-class gevent \
-  --workers 2 \
-  --bind 0.0.0.0:$NAA_SERVER_PORT \
-  src/patched:app
+WORKDIR /app/src
+CMD ["/app/conf/docker/entrypoint.sh"]
