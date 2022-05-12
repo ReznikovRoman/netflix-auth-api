@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  server:
+    platform: linux/amd64
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - $ENV
+    expose:
+      - 8002
+    volumes:
+      - .:/app
+    command: >
+      sh -c "cd /app/src
+      && flask db upgrade
+      && gunicorn --reload --worker-class gevent --workers 2 --bind 0.0.0.0:$NAA_SERVER_PORT patched:app"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.fastapi.rule=Host(`api-auth.localhost`)"
+
+  redis:
+    image: redis:7.0-alpine
+    expose:
+      - 6379
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: redis-cli -p 6379 ping || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  db:
+    image: postgres:14.2-alpine
+    environment:
+      - POSTGRES_USER=${NAA_DB_USER}
+      - POSTGRES_PASSWORD=${NAA_DB_PASSWORD}
+      - POSTGRES_DB=${NAA_DB_NAME}
+    expose:
+      - 5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    healthcheck:
+      test: pg_isready -d $NAA_DB_NAME -U $NAA_DB_USER
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  traefik:
+    image: traefik:v2.7
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "8009:80"
+      - "8082:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    depends_on:
+      - server
+
+volumes:
+  redis_data:
+  postgres_data:

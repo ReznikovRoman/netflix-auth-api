@@ -5,6 +5,10 @@
 - Flask
   - [flask-sqlalchemy](https://flask-sqlalchemy.palletsprojects.com/en/2.x/quickstart/)
     - Дополнение к ORM SQLAlchemy
+  - [flask-migrate](https://flask-migrate.readthedocs.io/en/latest/)
+    - Дополнение к миграциям alembic
+  - [flask-security](https://pythonhosted.org/Flask-Security/quickstart.html)
+    - Управление пользователями
   - [flask-restx](https://flask-restx.readthedocs.io/en/latest/)
     - REST API + Swagger docs
   - [flask-pydantic](https://github.com/bauerji/flask-pydantic)
