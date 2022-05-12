@@ -8,6 +8,7 @@ fix:
 
 .PHONY: lint
 lint:
+	ec
 	flake8
 	isort -qc .
 

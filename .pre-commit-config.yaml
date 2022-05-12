@@ -1,4 +1,10 @@
 repos:
+- repo: https://github.com/editorconfig-checker/editorconfig-checker.python
+  rev: '2.4.0'
+  hooks:
+    - id: editorconfig-checker
+      name: Run editorconfig-checker
+      alias: ec
 - repo: https://github.com/pycqa/flake8
   rev: '4.0.1'
   hooks:
