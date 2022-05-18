@@ -9,9 +9,20 @@ auth_request_parser = RequestParser(bundle_errors=True)
 auth_request_parser.add_argument(name="email", type=email(), location="form", required=True, nullable=False)
 auth_request_parser.add_argument(name="password", type=str, location="form", required=True, nullable=False)
 
+login_parser = RequestParser(bundle_errors=True)
+login_parser.add_argument(name="email", type=email(), location="form", required=True, nullable=False)
+login_parser.add_argument(name="password", type=str, location="form", required=True, nullable=False)
 
-class UserSerializer(BaseSerializer):
+
+class UserRegistrationSerializer(BaseSerializer):
     model = types.User
 
     id = fields.UUID()  # noqa: VNE003
     email = fields.Email()
+
+
+class JWTCredentialsSerializer(BaseSerializer):
+    model = types.JWTCredentials
+
+    access_token = fields.Str()
+    refresh_token = fields.Str()

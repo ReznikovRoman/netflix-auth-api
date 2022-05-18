@@ -7,6 +7,7 @@ from core.config import get_settings
 from db import redis
 from db.postgres import init_postgres
 from db.postgres_security import init_security
+from jwt_manager import init_jwt
 from middleware.errors import init_error_handlers
 
 settings = get_settings()
@@ -37,6 +38,7 @@ def create_app() -> Flask:
         decode_responses=settings.REDIS_DECODE_RESPONSES,
         retry_on_timeout=settings.REDIS_RETRY_ON_TIMEOUT,
     )
+    init_jwt(app)
 
     return app
 

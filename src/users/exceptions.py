@@ -9,3 +9,11 @@ class UserAlreadyExistsError(NetflixAuthError):
     message = "User with such email already exists"
     code = "user_exists"
     status_code = HTTPStatus.CONFLICT
+
+
+class UserInvalidCredentials(NetflixAuthError):
+    """Данные от аккаунта пользователя неверные."""
+
+    message = "Invalid credentials"
+    code = "user_invalid_credentials"
+    status_code = HTTPStatus.UNAUTHORIZED

@@ -7,10 +7,11 @@ from api.v1.health.views import health_ns
 
 blueprint = Blueprint("api", __name__, url_prefix="/api/v1")
 authorizations = {
-    "Bearer": {
+    "JWT": {
         "type": "apiKey",
         "in": "header",
         "name": "Authorization",
+        "description": "В поле *'Value'* надо вставить JWT: **'Bearer &lt;JWT&gt;'**, JWT - токен авторизации",
     },
 }
 
