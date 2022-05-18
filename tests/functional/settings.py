@@ -25,6 +25,7 @@ class Test(BaseSettings):
     DB_NAME: str
     DB_USER: str
     DB_PASSWORD: str
+    DB_DEFAULT_SCHEMA: str = "public"
     DB_URL: str = None
 
     # Redis

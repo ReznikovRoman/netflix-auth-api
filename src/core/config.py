@@ -20,12 +20,16 @@ class Settings(BaseSettings):
     """Настройки проекта."""
 
     # Project
+    SECRET_KEY: str
     PROJECT_BASE_URL: str
     API_V1_STR: str = "/api/v1"
     SERVER_NAME: str
     SERVER_HOSTS: Union[str, list[AnyHttpUrl]]
     PROJECT_NAME: str
     DEBUG: bool = False
+
+    # SQLAlchemy
+    SQLALCHEMY_ECHO: bool = False
 
     # Postgres
     DB_HOST: str

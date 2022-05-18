@@ -1,9 +1,9 @@
 from flask_restx import Namespace, Resource
 
-api = Namespace("health", description="Состояние сервиса")
+health_ns = Namespace("health", description="Состояние сервиса")
 
 
-@api.route("/")
+@health_ns.route("/")
 class Healthcheck(Resource):
     """Состояние сервиса."""
 

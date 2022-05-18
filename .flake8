@@ -6,6 +6,7 @@ inline-quotes="
 extend-exclude =
     venv*,
     .git,
+    drafts,
     *migrations*,
     .*
 ignore =
@@ -16,6 +17,8 @@ ignore =
     # First line should be in imperative mood
     D401
 per-file-ignores =
+    # XXX imported but unused
+    */db/base_models.py:F401,
     # First argument of a method should be named 'self'
     */core/**.py:N805,
     ./tests/functional/settings.py:N805

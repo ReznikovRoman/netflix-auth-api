@@ -2,6 +2,7 @@
 
 pytest==7.1.2
 pytest-flask==1.2.0
+pytest-flask-sqlalchemy==1.1.0
 pytest-httpx==0.20.0
 pytest-randomly==3.11.0
 pytest-cov==3.0.0
