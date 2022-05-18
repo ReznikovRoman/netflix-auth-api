@@ -8,6 +8,7 @@ from roles.types import Role
 class User:
     id: uuid.UUID  # noqa: VNE003
     email: str
+    password: str
     active: bool
     roles: list[Role]
 
@@ -17,6 +18,7 @@ class User:
         dct = {
             "id": data["id"],
             "email": data["email"],
+            "password": data["password"],
             "active": data["active"],
             "roles": roles,
         }

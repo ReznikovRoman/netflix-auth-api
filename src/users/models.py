@@ -44,7 +44,7 @@ class User(TimeStampedMixin, UUIDMixin, Model, UserMixin):
 
     def to_dto(self) -> types.User:
         user = types.User(
-            id=self.id, email=self.email, active=self.active,
+            id=self.id, email=self.email, password=self.password, active=self.active,
             roles=[role.to_dto() for role in self.roles],
         )
         return user
