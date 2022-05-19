@@ -5,6 +5,7 @@ import json
 from typing import TYPE_CHECKING, Union
 from urllib.parse import urljoin
 
+import redis
 import sqlalchemy
 from requests.sessions import Session
 from sqlalchemy.engine import Engine
@@ -97,6 +98,17 @@ def teardown_postgres(engine: Engine) -> None:
         transaction = connection.begin()
         connection.execute(f"""TRUNCATE {table_names} RESTART IDENTITY;""")
         transaction.commit()
+
+
+def flush_redis_cache() -> None:
+    redis_client = redis.Redis(
+        host=settings.REDIS_HOST,
+        port=settings.REDIS_PORT,
+        encoding=settings.REDIS_DEFAULT_CHARSET,
+        decode_responses=settings.REDIS_DECODE_RESPONSES,
+        retry_on_timeout=settings.REDIS_RETRY_ON_TIMEOUT,
+    )
+    redis_client.flushdb()
 
 
 def _format_table_name(table_name: str) -> str:

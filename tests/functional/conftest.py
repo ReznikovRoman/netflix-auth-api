@@ -3,13 +3,14 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import pytest
+import sqlalchemy
 from sqlalchemy import create_engine
 
-from db.postgres import db_session as _db_session
+from db.postgres import db
 from src.main import create_app
 
 from .settings import get_settings
-from .testlib import create_anon_client, teardown_postgres
+from .testlib import create_anon_client, flush_redis_cache, teardown_postgres
 
 if TYPE_CHECKING:
     from .testlib import APIClient
@@ -41,8 +42,47 @@ def db_engine():
     engine_.dispose()
 
 
-@pytest.fixture(scope="function")
-def db_session(db_engine, app_):
+@pytest.fixture
+def db_session(app_):
+    """Создает SQLAlchemy сессию для тестов.
+
+    Ответ на SO: https://stackoverflow.com/a/38626139/12408707
+    """
     app_.app_context().push()
-    yield _db_session
-    teardown_postgres(db_engine)
+    connection = db.engine.connect()
+    transaction = connection.begin()
+
+    options = dict(bind=connection, binds={})
+    session = db.create_scoped_session(options=options)
+
+    session.begin_nested()
+
+    @sqlalchemy.event.listens_for(session(), "after_transaction_end")
+    def restart_savepoint(sess, trans):
+        if trans.nested and not trans._parent.nested:
+            session.expire_all()
+            session.begin_nested()
+
+    db.session = session
+
+    yield session
+
+    session.remove()
+    transaction.rollback()
+    connection.close()
+
+
+@pytest.fixture(autouse=True)
+def _autoflush_cache() -> None:
+    try:
+        yield
+    finally:
+        flush_redis_cache()
+
+
+@pytest.fixture(autouse=True)
+def _autoflush_db(db_engine) -> None:
+    try:
+        yield
+    finally:
+        teardown_postgres(db_engine)

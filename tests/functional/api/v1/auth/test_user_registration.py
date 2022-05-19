@@ -12,8 +12,7 @@ class TestUserRegistration:
         }
         got = anon_client.post("/api/v1/auth/register", data=body)["data"]
 
-        with db_session() as session:
-            users = session.query(User).all()
+        users = db_session.query(User).all()
 
         assert len(users) == 1
         assert got["id"] is not None
@@ -27,8 +26,7 @@ class TestUserRegistration:
         }
         got = anon_client.post("/api/v1/auth/register", data=body, expected_status_code=400)
 
-        with db_session() as session:
-            users = session.query(User).all()
+        users = db_session.query(User).all()
 
         assert len(users) == 0
         assert "errors" in got
@@ -43,8 +41,7 @@ class TestUserRegistration:
         anon_client.post("/api/v1/auth/register", data=body)
         got = anon_client.post("/api/v1/auth/register", data=body, expected_status_code=409)  # делаем второй запрос
 
-        with db_session() as session:
-            users = session.query(User).all()
+        users = db_session.query(User).all()
 
         assert len(users) == 1
         assert got["error"]["code"] == "user_exists"
