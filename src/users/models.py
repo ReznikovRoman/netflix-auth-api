@@ -30,7 +30,8 @@ roles_users = db.Table(
 class User(TimeStampedMixin, UUIDMixin, Model, UserMixin):
     """Пользователь в онлайн-кинотеатре."""
 
-    roles = db.relationship("Role", secondary=roles_users, backref=db.backref("auth", lazy="dynamic"))
+    roles = db.relationship(
+        "Role", secondary=roles_users, backref=db.backref("auth", lazy="dynamic", cascade="all"))
 
     email = db.Column(db.String(255), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)

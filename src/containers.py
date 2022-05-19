@@ -3,6 +3,7 @@ from dependency_injector import containers, providers
 from core.config import get_settings
 from db.cache.redis import RedisCache
 from db.jwt_storage import JWTStorage
+from roles.repositories import RoleRepository
 from users.jwt import JWTAuth
 from users.repositories import UserRepository
 from users.services import UserService
@@ -35,8 +36,13 @@ class Container(containers.DeclarativeContainer):
         jwt_storage=jwt_storage,
     )
 
+    role_repository = providers.Factory(
+        RoleRepository,
+    )
+
     user_repository = providers.Factory(
         UserRepository,
+        role_repository=role_repository,
     )
     user_service = providers.Factory(
         UserService,

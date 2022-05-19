@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 from sqlalchemy.exc import NoResultFound
 
 from common.exceptions import NotFoundError
+from roles.constants import DefaultRoles
 
 from . import types
 from .exceptions import UserAlreadyExistsError, UserInvalidCredentials
@@ -24,8 +25,13 @@ class UserService:
     def register_new_user(self, email: str, password: str) -> types.User:
         if self.user_repository.is_user_exists(email):
             raise UserAlreadyExistsError
-        new_user = self.user_repository.create_user(email, password)
-        return new_user
+        user = self.user_repository.create_user(email, password)
+        self.assign_default_roles(user)
+        return user
+
+    def assign_default_roles(self, user: types.User) -> types.User:
+        """Назначение ролей по умолчанию пользователю."""
+        return self.user_repository.add_roles_to_user(user, roles_names=[DefaultRoles.VIEWERS.value])
 
     def login(self, email: str, password: str) -> types.JWTCredentials:
         """Аутентификация пользователя в системе."""

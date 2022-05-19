@@ -10,6 +10,7 @@ from db.postgres import db
 from src.main import create_app
 
 from .settings import get_settings
+from .testdata.postgres import default_roles, roles_table
 from .testlib import create_anon_client, flush_redis_cache, teardown_postgres
 
 if TYPE_CHECKING:
@@ -86,3 +87,4 @@ def _autoflush_db(db_engine) -> None:
         yield
     finally:
         teardown_postgres(db_engine)
+        db_engine.execute(roles_table.insert(), default_roles)

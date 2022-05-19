@@ -5,7 +5,7 @@ class TestUserRegistration:
     """Тестирование регистрации пользователей."""
 
     def test_ok(self, db_session, anon_client, user_dto):
-        """При корректном теле запроса пользователь регистрируется/создается корректно."""
+        """При корректном теле запроса пользователь с ролями по умолчанию регистрируется/создается корректно."""
         body = {
             "email": user_dto.email,
             "password": "test-password",
@@ -15,6 +15,7 @@ class TestUserRegistration:
         users = db_session.query(User).all()
 
         assert len(users) == 1
+        assert len(users[0].roles) > 0
         assert got["id"] is not None
         assert got["email"] == user_dto.email
 

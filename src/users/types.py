@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from roles.types import Role
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(slots=True)
 class User:
     id: uuid.UUID  # noqa: VNE003
     email: str

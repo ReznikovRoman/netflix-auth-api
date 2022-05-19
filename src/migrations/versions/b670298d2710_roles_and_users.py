@@ -1,8 +1,8 @@
-"""Users and Roles
+"""Roles and users
 
-Revision ID: 0eda18d0256f
+Revision ID: b670298d2710
 Revises:
-Create Date: 2022-05-18 09:35:52.725759
+Create Date: 2022-05-19 12:40:47.399639
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = "0eda18d0256f"
+revision = "b670298d2710"
 down_revision = None
 branch_labels = None
 depends_on = None

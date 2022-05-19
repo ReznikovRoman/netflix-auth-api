@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from sqlalchemy import func
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -8,9 +12,24 @@ from roles.models import Role
 from . import types
 from .models import User
 
+if TYPE_CHECKING:
+    from roles.repositories import RoleRepository
+
 
 class UserRepository:
     """Репозиторий для работы с данными пользователей."""
+
+    def __init__(self, role_repository: RoleRepository):
+        self.role_repository = role_repository
+
+    def add_roles_to_user(self, user: types.User, roles_names: list[str]) -> types.User:
+        """Добавление ролей с названиями `roles_names` пользователю."""
+        roles = self.role_repository.find_roles_by_names(roles_names, as_sa=True)
+        user_db = User.query.filter_by(id=user.id, active=True).one()
+        with db_session():
+            user_db.roles = roles
+        user.roles = [role.to_dto() for role in roles]
+        return user
 
     @staticmethod
     def get_active_user_by_id_or_none(user_id: str) -> types.User | None:
