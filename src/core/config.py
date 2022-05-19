@@ -1,3 +1,4 @@
+from datetime import timedelta
 from functools import lru_cache
 from typing import Literal, Union
 
@@ -20,12 +21,21 @@ class Settings(BaseSettings):
     """Настройки проекта."""
 
     # Project
+    SECRET_KEY: str
     PROJECT_BASE_URL: str
     API_V1_STR: str = "/api/v1"
     SERVER_NAME: str
     SERVER_HOSTS: Union[str, list[AnyHttpUrl]]
     PROJECT_NAME: str
     DEBUG: bool = False
+
+    # JWT
+    JWT_SECRET_KEY: str = None
+    JWT_ACCESS_TOKEN_EXPIRES: timedelta = timedelta(minutes=5)
+    JWT_REFRESH_TOKEN_EXPIRES: timedelta = timedelta(days=3)
+
+    # SQLAlchemy
+    SQLALCHEMY_ECHO: bool = False
 
     # Postgres
     DB_HOST: str
@@ -53,17 +63,21 @@ class Settings(BaseSettings):
             return [item.strip() for item in server_hosts.split(",")]
         return server_hosts
 
+    @validator("JWT_SECRET_KEY", pre=True)
+    def _assemble_jwt_secret_key(cls, value, values):
+        if value is not None:
+            return value
+        return values["SECRET_KEY"]
+
     @validator("DB_URL", pre=True)
     def get_db_url(cls, value, values) -> str:
         if value is not None:
             return value
-
         user = values["DB_USER"]
         password = values["DB_PASSWORD"]
         host = values["DB_HOST"]
         port = values["DB_PORT"]
         database = values["DB_NAME"]
-
         return f"postgresql://{user}:{password}@{host}:{port}/{database}"
 
 

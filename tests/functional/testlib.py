@@ -1,17 +1,21 @@
 from __future__ import annotations
 
+import contextlib
 import json
 from typing import TYPE_CHECKING, Union
 from urllib.parse import urljoin
 
+import redis
+import sqlalchemy
 from requests.sessions import Session
+from sqlalchemy.engine import Engine
 
 from .settings import get_settings
 
 if TYPE_CHECKING:
     from requests import Response
 
-    APIResponse = Union[dict, str, list[dict]]
+    APIResponse = Union[dict, str, list[dict], dict[str, dict], Response]
 
 
 settings = get_settings()
@@ -26,7 +30,6 @@ class APIClient(Session):
 
     def request(self, method, url, *args, **kwargs):
         url = urljoin(self.base_url, url)
-        print("REQUEST: ", url)
         return super(APIClient, self).request(method, url, *args, **kwargs)
 
     def head(self, *args, **kwargs) -> APIResponse:
@@ -57,7 +60,6 @@ class APIClient(Session):
             return response
 
         content = self._decode(response)
-        print(content)
 
         error_message = f"Got {response.status_code} instead of {expected}. Content is '{content}'"
         assert response.status_code == expected, error_message
@@ -80,3 +82,35 @@ class APIClient(Session):
 
 def create_anon_client() -> APIClient:
     return APIClient(base_url=settings.CLIENT_BASE_URL)
+
+
+def teardown_postgres(engine: Engine) -> None:
+    # XXX: указываем вручную таблицы, которые не должны очищаться
+    tables_to_exclude = (
+        "alembic_version",
+    )
+    table_names = ",".join(
+        _format_table_name(table_name)
+        for table_name in sqlalchemy.inspect(engine).get_table_names()
+        if table_name not in tables_to_exclude
+    )
+    with contextlib.closing(engine.connect()) as connection:
+        transaction = connection.begin()
+        connection.execute(f"""TRUNCATE {table_names} RESTART IDENTITY;""")
+        transaction.commit()
+
+
+def flush_redis_cache() -> None:
+    redis_client = redis.Redis(
+        host=settings.REDIS_HOST,
+        port=settings.REDIS_PORT,
+        encoding=settings.REDIS_DEFAULT_CHARSET,
+        decode_responses=settings.REDIS_DECODE_RESPONSES,
+        retry_on_timeout=settings.REDIS_RETRY_ON_TIMEOUT,
+    )
+    redis_client.flushdb()
+
+
+def _format_table_name(table_name: str) -> str:
+    formatted_name = f"{settings.DB_NAME}.{settings.DB_DEFAULT_SCHEMA}.{table_name}"
+    return formatted_name

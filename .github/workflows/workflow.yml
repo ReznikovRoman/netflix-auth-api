@@ -75,10 +75,13 @@ jobs:
           pip install -r requirements/requirements.txt -r requirements/requirements.test.txt
       - name: Run tests
         run: |
+          export PYTHONUNBUFFERED=1
           export FLASK_APP=main.py
+          export NAA_SECRET_KEY=abcdefg_hg+k2l%!81mup%lr_jeofz9i0_pr68ubeqs3^vzs6_
+          export NAA_SQLALCHEMY_ECHO=1
           export NAA_PROJECT_BASE_URL=http://api-auth.localhost:8009
           export NAA_API_V1_STR=/api/v1
-          export NAA_SERVER_NAME=server:8002
+          export NAA_SERVER_NAME=api-auth.localhost:8009
           export NAA_SERVER_HOSTS=http://api-auth.localhost:8009
           export NAA_SERVER_PORT=8002
           export NAA_PROJECT_NAME=netflix-auth
