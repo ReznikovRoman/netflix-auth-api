@@ -13,9 +13,15 @@ if TYPE_CHECKING:
 
 
 class RedisCache(Cache):
-    """Кэш с использованием Redis."""
+    """Кэш с использованием Redis.
 
-    def __init__(self):
+    Attributes:
+        default_ttl: время жизни ключа в кэше по умолчанию.
+    """
+
+    def __init__(self, default_ttl: int | None = None):
+        self.default_ttl = default_ttl
+
         self._class = RedisClient
 
     @cached_property
@@ -35,6 +41,8 @@ class RedisCache(Cache):
         return self._cache.delete(*keys)
 
     def get_timeout(self, timeout: seconds | timedelta | None = None) -> int | timedelta | None:
+        if timeout is None and self.default_ttl is not None:
+            return self.default_ttl
         if isinstance(timeout, timedelta):
             return timeout
         return None if timeout is None else max(0, int(timeout))

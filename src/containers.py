@@ -1,14 +1,11 @@
 from dependency_injector import containers, providers
 
-from core.config import get_settings
 from db.cache.redis import RedisCache
 from db.jwt_storage import JWTStorage
 from roles.repositories import RoleRepository
 from users.jwt import JWTAuth
 from users.repositories import UserRepository
 from users.services import UserService
-
-settings = get_settings()
 
 
 class Container(containers.DeclarativeContainer):
@@ -25,6 +22,7 @@ class Container(containers.DeclarativeContainer):
 
     cache = providers.Factory(
         RedisCache,
+        default_ttl=config.REDIS_DEFAULT_TIMEOUT,
     )
 
     jwt_storage = providers.Factory(

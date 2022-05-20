@@ -51,7 +51,7 @@ class Settings(BaseSettings):
     REDIS_DEFAULT_CHARSET: str = "utf-8"
     REDIS_DECODE_RESPONSES: bool | Literal[True, False] = True
     REDIS_RETRY_ON_TIMEOUT: bool = True
-    REDIS_DEFAULT_TIMEOUT: seconds = 5
+    REDIS_DEFAULT_TIMEOUT: seconds = 5 * 60  # 5 минут
 
     class Config(EnvConfig):
         env_prefix = "NAA_"
