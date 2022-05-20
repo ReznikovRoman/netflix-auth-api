@@ -8,9 +8,11 @@ class NetflixAuthError(Exception):
     code: str
     status_code: int = HTTPStatus.INTERNAL_SERVER_ERROR
 
-    def __init__(self, message: str | None = None):
+    def __init__(self, message: str | None = None, code: str | None = None):
         if message is not None:
             self.message = message
+        if code is not None:
+            self.code = code
 
     def __str__(self) -> str:
         return self.message

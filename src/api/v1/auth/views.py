@@ -131,3 +131,18 @@ class UserRefreshToken(Resource):
             "Pragma": "no-cache",
         }
         return credentials, HTTPStatus.OK, headers
+
+
+from oauth.utils import requires_auth  # noqa, isort:skip
+@auth_ns.route("/protected", doc={"deprecated": True})  # noqa
+class DeleteMe(Resource):
+    # TODO: удалить после написания АПИ ролей
+
+    @auth_ns.doc(security="auth0")
+    @requires_auth(required_scope="read:roles")
+    def get(self):
+        """Protected."""
+        response = {
+            "status": "protected!",
+        }
+        return response

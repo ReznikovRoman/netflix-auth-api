@@ -13,6 +13,12 @@ authorizations = {
         "name": "Authorization",
         "description": "В поле *'Value'* надо вставить JWT: **'Bearer &lt;JWT&gt;'**, JWT - токен авторизации",
     },
+    "auth0": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "В поле *'Value'* надо вставить JWT: **'Bearer &lt;JWT&gt;'**, JWT - токен от сервиса auth0",
+    },
 }
 
 api = Api(
