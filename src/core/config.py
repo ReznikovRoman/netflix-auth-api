@@ -34,6 +34,12 @@ class Settings(BaseSettings):
     JWT_ACCESS_TOKEN_EXPIRES: timedelta = timedelta(minutes=5)
     JWT_REFRESH_TOKEN_EXPIRES: timedelta = timedelta(days=3)
 
+    # OAUTH
+    AUTH0_DOMAIN: str
+    AUTH0_API_AUDIENCE: str
+    AUTH0_ISSUER: str
+    AUTH0_ALGORITHMS: list[str] = ["RS256"]
+
     # SQLAlchemy
     SQLALCHEMY_ECHO: bool = False
 
