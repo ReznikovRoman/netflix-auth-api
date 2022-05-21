@@ -1,7 +1,7 @@
-from enum import Enum
+from common.enums import ExtendedEnum
 
 
-class DefaultRoles(Enum):
+class DefaultRoles(ExtendedEnum):
     """Роли в сервисе по умолчанию."""
 
     VIEWERS = "viewers"

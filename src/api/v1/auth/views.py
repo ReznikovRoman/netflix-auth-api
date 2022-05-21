@@ -7,43 +7,46 @@ from dependency_injector.wiring import Provide, inject
 from flask_jwt_extended import current_user, get_jwt, jwt_required
 from flask_restx import Namespace, Resource, fields
 
+from flask import request
+
 from api.serializers import serialize
 from containers import Container
-from users.services import UserService
+from users import types
 from users.types import User
 
 from .serializers import JWTCredentialsSerializer, UserRegistrationSerializer, auth_request_parser, login_parser
 
 if TYPE_CHECKING:
+    from users.services import UserService
     current_user: User
 
 auth_ns = Namespace("auth", validate=True, description="Авторизация")
 
-_user_registration = auth_ns.model(
+_user_registration_doc = auth_ns.model(
     name="UserRegistration",
     model={
         "id": fields.String(),
         "email": fields.String(),
     },
 )
-user_registration = auth_ns.model(
+user_registration_doc = auth_ns.model(
     name="UserRegistrationWrapper",
     model={
-        "data": fields.Nested(_user_registration),
+        "data": fields.Nested(_user_registration_doc),
     },
 )
 
-_user_login = auth_ns.model(
+_user_login_doc = auth_ns.model(
     name="UserLogin",
     model={
         "access_token": fields.String(),
         "refresh_token": fields.String(),
     },
 )
-user_login = auth_ns.model(
+user_login_doc = auth_ns.model(
     name="UserLoginWrapper",
     model={
-        "data": fields.Nested(_user_login),
+        "data": fields.Nested(_user_login_doc),
     },
 )
 
@@ -54,7 +57,7 @@ class UserRegister(Resource):
 
     @auth_ns.expect(auth_request_parser, validate=True)
     @auth_ns.doc(description="Регистрация нового пользователя в системе.")
-    @auth_ns.response(HTTPStatus.CREATED.value, "Пользователь был успешно зарегистрирован.", user_registration)
+    @auth_ns.response(HTTPStatus.CREATED.value, "Пользователь был успешно зарегистрирован.", user_registration_doc)
     @auth_ns.response(HTTPStatus.CONFLICT.value, "Пользователь с введенным email адресом уже существует.")
     @auth_ns.response(HTTPStatus.BAD_REQUEST.value, "Ошибка в теле запроса.")
     @auth_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
@@ -75,7 +78,7 @@ class UserLogin(Resource):
 
     @auth_ns.expect(login_parser, validate=True)
     @auth_ns.doc(description="Аутентификация пользователя в системе.")
-    @auth_ns.response(HTTPStatus.OK.value, "Пользователь успешно аутентифицировался.", user_login)
+    @auth_ns.response(HTTPStatus.OK.value, "Пользователь успешно аутентифицировался.", user_login_doc)
     @auth_ns.response(HTTPStatus.UNAUTHORIZED.value, "Неверные почта/пароль.")
     @auth_ns.response(HTTPStatus.BAD_REQUEST.value, "Ошибка в теле запроса.")
     @auth_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
@@ -86,12 +89,22 @@ class UserLogin(Resource):
         request_data = login_parser.parse_args()
         email = request_data.get("email")
         password = request_data.get("password")
-        credentials = user_service.login(email, password)
+        credentials = self._login(user_service, email, password)
         headers = {
             "Cache-Control": "no-store",
             "Pragma": "no-cache",
         }
         return credentials, HTTPStatus.OK, headers
+
+    @staticmethod
+    def _login(user_service: UserService, email: str, password: str) -> types.JWTCredentials:
+        credentials, user = user_service.login(email, password)
+        user_service.update_login_history(
+            user=user,
+            ip_addr=request.remote_addr,
+            user_agent=request.user_agent.string,
+        )
+        return credentials
 
 
 @auth_ns.route("/logout")
@@ -116,7 +129,7 @@ class UserRefreshToken(Resource):
     """Обновление access токена."""
 
     @auth_ns.doc(security="JWT", description="Обмен refresh токена на новую пару access/refresh токенов.")
-    @auth_ns.response(HTTPStatus.OK.value, "Пользователь успешно получил новые доступы.", user_login)
+    @auth_ns.response(HTTPStatus.OK.value, "Пользователь успешно получил новые доступы.", user_login_doc)
     @auth_ns.response(HTTPStatus.UNAUTHORIZED.value, "Неверный refresh токен.")
     @auth_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
     @jwt_required(refresh=True)

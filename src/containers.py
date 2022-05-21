@@ -14,6 +14,7 @@ class Container(containers.DeclarativeContainer):
         modules=[
             "jwt_manager",
             "api.v1.auth.views",
+            "api.v1.users.views",
         ],
     )
 

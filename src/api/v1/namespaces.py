@@ -4,6 +4,7 @@ from flask import Blueprint
 
 from api.v1.auth.views import auth_ns
 from api.v1.health.views import health_ns
+from api.v1.users.views import user_ns
 
 blueprint = Blueprint("api", __name__, url_prefix="/api/v1")
 authorizations = {
@@ -32,4 +33,5 @@ api = Api(
 )
 
 api.add_namespace(auth_ns)
+api.add_namespace(user_ns)
 api.add_namespace(health_ns)

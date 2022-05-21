@@ -14,6 +14,9 @@ class UserContainer(containers.DeclarativeContainer):
         jwt_storage=jwt_storage,
     )
 
+    login_log_repository = providers.Factory(
+        repositories.LoginLogRepository,
+    )
     user_repository = providers.Factory(
         repositories.UserRepository,
         role_repository=role_repository,
@@ -22,4 +25,5 @@ class UserContainer(containers.DeclarativeContainer):
         services.UserService,
         jwt_auth=jwt_auth,
         user_repository=user_repository,
+        login_log_repository=login_log_repository,
     )

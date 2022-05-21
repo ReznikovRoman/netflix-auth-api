@@ -10,8 +10,8 @@ from db.postgres import db, db_session
 from db.postgres_security import user_datastore
 from roles.models import Role
 
-from . import types
-from .models import User, UsersRoles
+from .. import types
+from ..models import User, UsersRoles
 
 if TYPE_CHECKING:
     from sqlalchemy.orm import Query, Session
@@ -52,7 +52,7 @@ class UserRepository:
         return types.User.from_dict(user)
 
     @staticmethod
-    def is_user_exists(email: str) -> bool:
+    def user_exists(email: str) -> bool:
         """Проверка на существование пользователя с данной почтой."""
         exists = db.session.query(
             db.session.query(User.id).filter_by(email=email, active=True).exists(),
