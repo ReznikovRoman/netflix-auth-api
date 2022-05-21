@@ -11,12 +11,10 @@
     - Управление пользователями
   - [flask-restx](https://flask-restx.readthedocs.io/en/latest/)
     - REST API + Swagger docs
-  - [flask-pydantic](https://github.com/bauerji/flask-pydantic)
-    - Валидация данных
   - [flask-jwt-extended](https://flask-jwt-extended.readthedocs.io/en/stable/basic_usage/)
     - Генерация JWT токенов
   - [authlib](https://docs.authlib.org/en/latest/client/flask.html#flask-client)
-    - OAuth 2.0
+    - Social Auth, OAuth 2.0
   - [flask-limiter](https://github.com/alisaifee/flask-limiter)
     - Rate limits
 - PostgreSQL

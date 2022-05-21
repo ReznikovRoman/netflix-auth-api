@@ -30,7 +30,7 @@ def user_lookup_callback(
     https://flask-jwt-extended.readthedocs.io/en/stable/api/#flask_jwt_extended.JWTManager.user_lookup_loader
     """
     identity = jwt_data["sub"]
-    user = user_repository.get_active_user_by_id_or_none(identity)
+    user = user_repository.get_active_user_or_none(identity)
     return user
 
 

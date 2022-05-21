@@ -1,8 +1,8 @@
 """Default roles
 
-Revision ID: 954954de3916
-Revises: 0eda18d0256f
-Create Date: 2022-05-19 12:42:42.499635
+Revision ID: a666a2723b6a
+Revises: 6b1498b06d65
+Create Date: 2022-05-21 10:17:32.422177
 
 """
 import datetime
@@ -13,12 +13,13 @@ import sqlalchemy as sa
 
 from dataclasses import dataclass, field
 
-# revision identifiers, used by Alembic.
 from sqlalchemy import table
 from sqlalchemy.dialects import postgresql
 
-revision = "954954de3916"
-down_revision = "b670298d2710"
+
+# revision identifiers, used by Alembic.
+revision = "a666a2723b6a"
+down_revision = "6b1498b06d65"
 branch_labels = None
 depends_on = None
 

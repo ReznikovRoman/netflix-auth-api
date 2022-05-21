@@ -3,6 +3,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from flask_security import UserMixin
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.sql import expression
 
 from common.models import TimeStampedMixin, UUIDMixin
@@ -18,20 +20,24 @@ else:
     Model = db.Model
 
 
-# M2M
-roles_users = db.Table(
-    "roles_users",
-    db.metadata,
-    db.Column("user_id", db.ForeignKey("user.id"), primary_key=True),
-    db.Column("role_id", db.ForeignKey("role.id"), primary_key=True),
-)
+class UsersRoles(Model):
+    __tablename__ = "users_roles"
+
+    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey("user.id"), primary_key=True)
+    role_id = db.Column(UUID(as_uuid=True), db.ForeignKey("role.id"), primary_key=True)
+
+    user = db.relationship("User", backref=db.backref("user_roles", cascade="all, delete-orphan"))
+    role = db.relationship("Role")
+
+    __table_args__ = (
+        db.PrimaryKeyConstraint("user_id", "role_id"),
+    )
 
 
 class User(TimeStampedMixin, UUIDMixin, Model, UserMixin):
     """Пользователь в онлайн-кинотеатре."""
 
-    roles = db.relationship(
-        "Role", secondary=roles_users, backref=db.backref("auth", lazy="dynamic", cascade="all"))
+    roles = association_proxy("user_roles", "role")
 
     email = db.Column(db.String(255), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)

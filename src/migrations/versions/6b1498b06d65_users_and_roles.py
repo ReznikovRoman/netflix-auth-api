@@ -1,8 +1,8 @@
-"""Roles and users
+"""Users and roles
 
-Revision ID: b670298d2710
+Revision ID: 6b1498b06d65
 Revises:
-Create Date: 2022-05-19 12:40:47.399639
+Create Date: 2022-05-21 10:12:53.715928
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = "b670298d2710"
+revision = "6b1498b06d65"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -23,7 +23,7 @@ def upgrade():
         sa.Column("updated_at", sa.TIMESTAMP(), nullable=False),
         sa.Column("id", postgresql.UUID(as_uuid=True), nullable=False),
         sa.Column("name", sa.String(length=80), nullable=False),
-        sa.Column("description", sa.String(length=255), server_default="", nullable=False),
+        sa.Column("description", sa.String(length=255), server_default='', nullable=False),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("id"),
         sa.UniqueConstraint("name"),
@@ -41,16 +41,16 @@ def upgrade():
         sa.UniqueConstraint("id"),
     )
     op.create_table(
-        "roles_users",
+        "users_roles",
         sa.Column("user_id", postgresql.UUID(as_uuid=True), nullable=False),
         sa.Column("role_id", postgresql.UUID(as_uuid=True), nullable=False),
-        sa.ForeignKeyConstraint(("role_id",), ["role.id"], ),
-        sa.ForeignKeyConstraint(("user_id",), ["user.id"], ),
+        sa.ForeignKeyConstraint(("role_id",), ["role.id"]),
+        sa.ForeignKeyConstraint(("user_id",), ["user.id"]),
         sa.PrimaryKeyConstraint("user_id", "role_id"),
     )
 
 
 def downgrade():
-    op.drop_table("roles_users")
+    op.drop_table("users_roles")
     op.drop_table("user")
     op.drop_table("role")
