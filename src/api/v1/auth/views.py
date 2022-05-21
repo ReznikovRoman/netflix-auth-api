@@ -60,7 +60,7 @@ class UserRegister(Resource):
     @auth_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
     @serialize(UserRegistrationSerializer)
     @inject
-    def post(self, user_service: UserService = Provide[Container.user_service]):
+    def post(self, user_service: UserService = Provide[Container.user_package.user_service]):
         """Регистрация."""
         request_data = auth_request_parser.parse_args()
         email = request_data.get("email")
@@ -81,7 +81,7 @@ class UserLogin(Resource):
     @auth_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
     @serialize(JWTCredentialsSerializer)
     @inject
-    def post(self, user_service: UserService = Provide[Container.user_service]):
+    def post(self, user_service: UserService = Provide[Container.user_package.user_service]):
         """Аутентификация."""
         request_data = login_parser.parse_args()
         email = request_data.get("email")
@@ -104,7 +104,7 @@ class UserLogout(Resource):
     @auth_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
     @jwt_required()
     @inject
-    def post(self, user_service: UserService = Provide[Container.user_service]):
+    def post(self, user_service: UserService = Provide[Container.user_package.user_service]):
         """Выход пользователя."""
         jwt = get_jwt()
         user_service.logout(jwt)
@@ -122,7 +122,7 @@ class UserRefreshToken(Resource):
     @jwt_required(refresh=True)
     @serialize(JWTCredentialsSerializer)
     @inject
-    def post(self, user_service: UserService = Provide[Container.user_service]):
+    def post(self, user_service: UserService = Provide[Container.user_package.user_service]):
         """Обновление access токена."""
         jti = get_jwt()["jti"]
         credentials = user_service.refresh_credentials(jti, current_user)

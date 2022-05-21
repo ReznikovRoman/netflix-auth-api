@@ -23,7 +23,8 @@ jwt_manager = JWTManager()
 @jwt_manager.user_lookup_loader
 @inject
 def user_lookup_callback(
-    _jwt_header: dict, jwt_data: dict, user_repository: UserRepository = Provide[Container.user_repository],
+    jwt_header: dict, jwt_data: dict,
+    user_repository: UserRepository = Provide[Container.user_package.user_repository],
 ) -> types.User:
     """Получение пользователя по identity claim из токена.
 

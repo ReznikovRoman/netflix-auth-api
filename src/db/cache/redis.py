@@ -1,14 +1,12 @@
 from __future__ import annotations
 
 from datetime import timedelta
-from functools import cached_property
 from typing import TYPE_CHECKING, Any
-
-from clients.redis import RedisClient
 
 from .base import Cache
 
 if TYPE_CHECKING:
+    from clients.redis import RedisClient
     from common.types import seconds
 
 
@@ -19,14 +17,10 @@ class RedisCache(Cache):
         default_ttl: время жизни ключа в кэше по умолчанию.
     """
 
-    def __init__(self, default_ttl: int | None = None):
+    def __init__(self, redis_client: RedisClient, default_ttl: int | None = None):
         self.default_ttl = default_ttl
 
-        self._class = RedisClient
-
-    @cached_property
-    def _cache(self) -> RedisClient:
-        return self._class()
+        self._cache = redis_client
 
     def exists(self, *keys) -> int:
         return self._cache.exists(*keys)

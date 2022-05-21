@@ -1,11 +1,10 @@
 from dependency_injector import containers, providers
 
+from clients.redis import RedisClient
 from db.cache.redis import RedisCache
 from db.jwt_storage import JWTStorage
-from roles.repositories import RoleRepository
-from users.jwt import JWTAuth
-from users.repositories import UserRepository
-from users.services import UserService
+from roles.containers import RoleContainer
+from users.containers import UserContainer
 
 
 class Container(containers.DeclarativeContainer):
@@ -20,30 +19,26 @@ class Container(containers.DeclarativeContainer):
 
     config = providers.Configuration()
 
-    cache = providers.Factory(
+    redis_client = providers.Singleton(
+        RedisClient,
+    )
+    cache = providers.Singleton(
         RedisCache,
+        redis_client=redis_client,
         default_ttl=config.REDIS_DEFAULT_TIMEOUT,
     )
 
-    jwt_storage = providers.Factory(
+    jwt_storage = providers.Singleton(
         JWTStorage,
         cache=cache,
     )
-    jwt_auth = providers.Factory(
-        JWTAuth,
+
+    role_package = providers.Container(
+        RoleContainer,
+    )
+
+    user_package = providers.Container(
+        UserContainer,
         jwt_storage=jwt_storage,
-    )
-
-    role_repository = providers.Factory(
-        RoleRepository,
-    )
-
-    user_repository = providers.Factory(
-        UserRepository,
-        role_repository=role_repository,
-    )
-    user_service = providers.Factory(
-        UserService,
-        user_repository=user_repository,
-        jwt_auth=jwt_auth,
+        role_repository=role_package.role_repository,
     )
