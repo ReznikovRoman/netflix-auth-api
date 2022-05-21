@@ -31,7 +31,7 @@ class Settings(BaseSettings):
 
     # JWT
     JWT_SECRET_KEY: str = None
-    JWT_ACCESS_TOKEN_EXPIRES: timedelta = timedelta(minutes=5)
+    JWT_ACCESS_TOKEN_EXPIRES: timedelta = timedelta(minutes=10)
     JWT_REFRESH_TOKEN_EXPIRES: timedelta = timedelta(days=3)
 
     # OAUTH
