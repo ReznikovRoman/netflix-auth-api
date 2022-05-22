@@ -7,8 +7,8 @@ from dependency_injector.wiring import Provide, inject
 from flask_jwt_extended import current_user, jwt_required
 from flask_restx import Namespace, Resource
 
+from api.openapi import register_openapi_models, wrap_model
 from api.serializers import pagination_parser, serialize
-from common.openapi import WrapperModelFactory, register_openapi_models
 from common.types import PageNumberPagination
 from containers import Container
 from users import types
@@ -31,9 +31,7 @@ class UserLoginHistory(Resource):
     @user_ns.expect(pagination_parser, validate=True)
     @user_ns.doc(security="JWT", description="Просмотр истории входов в аккаунт.")
     @user_ns.response(
-        HTTPStatus.OK.value,
-        "История входов.",
-        WrapperModelFactory.wrap(openapi.login_history_doc, user_ns, as_list=True),
+        HTTPStatus.OK.value, "История входов.", wrap_model(openapi.login_history_doc, user_ns, as_list=True),
     )
     @user_ns.response(HTTPStatus.UNAUTHORIZED.value, "Неверный refresh токен.")
     @user_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")

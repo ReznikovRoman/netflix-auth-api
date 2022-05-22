@@ -9,8 +9,8 @@ from flask_restx import Namespace, Resource
 
 from flask import request
 
+from api.openapi import register_openapi_models, wrap_model
 from api.serializers import serialize
-from common.openapi import WrapperModelFactory, register_openapi_models
 from containers import Container
 from users import types
 
@@ -34,7 +34,7 @@ class UserRegister(Resource):
     @auth_ns.response(
         HTTPStatus.CREATED.value,
         "Пользователь был успешно зарегистрирован.",
-        WrapperModelFactory.wrap(openapi.user_registration_doc, auth_ns),
+        wrap_model(openapi.user_registration_doc, auth_ns),
     )
     @auth_ns.response(HTTPStatus.CONFLICT.value, "Пользователь с введенным email адресом уже существует.")
     @auth_ns.response(HTTPStatus.BAD_REQUEST.value, "Ошибка в теле запроса.")
@@ -57,9 +57,7 @@ class UserLogin(Resource):
     @auth_ns.expect(login_parser, validate=True)
     @auth_ns.doc(description="Аутентификация пользователя в системе.")
     @auth_ns.response(
-        HTTPStatus.OK.value,
-        "Пользователь успешно аутентифицировался.",
-        WrapperModelFactory.wrap(openapi.user_login_doc, auth_ns),
+        HTTPStatus.OK.value, "Пользователь успешно аутентифицировался.", wrap_model(openapi.user_login_doc, auth_ns),
     )
     @auth_ns.response(HTTPStatus.UNAUTHORIZED.value, "Неверные почта/пароль.")
     @auth_ns.response(HTTPStatus.BAD_REQUEST.value, "Ошибка в теле запроса.")
@@ -112,9 +110,7 @@ class UserRefreshToken(Resource):
 
     @auth_ns.doc(security="JWT", description="Обмен refresh токена на новую пару access/refresh токенов.")
     @auth_ns.response(
-        HTTPStatus.OK.value,
-        "Пользователь успешно получил новые доступы.",
-        WrapperModelFactory.wrap(openapi.user_login_doc, auth_ns),
+        HTTPStatus.OK.value, "Пользователь успешно получил новые доступы.", wrap_model(openapi.user_login_doc, auth_ns),
     )
     @auth_ns.response(HTTPStatus.UNAUTHORIZED.value, "Неверный refresh токен.")
     @auth_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")

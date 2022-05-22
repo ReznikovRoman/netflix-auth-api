@@ -46,3 +46,6 @@ class WrapperModelFactory:
         _register_model(wrapper, api)
         cls.wrapped_models[wrapper_name] = wrapper
         return wrapper
+
+
+wrap_model: callable = WrapperModelFactory.wrap
