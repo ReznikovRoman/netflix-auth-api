@@ -1,4 +1,6 @@
-from flask_restx import Namespace, Resource
+from flask_restx import Resource
+
+from api.namespace import Namespace
 
 health_ns = Namespace("health", description="Состояние сервиса")
 

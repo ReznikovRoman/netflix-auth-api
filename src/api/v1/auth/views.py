@@ -5,11 +5,12 @@ from typing import TYPE_CHECKING
 
 from dependency_injector.wiring import Provide, inject
 from flask_jwt_extended import current_user, get_jwt, jwt_required
-from flask_restx import Namespace, Resource
+from flask_restx import Resource
 
 from flask import request
 
-from api.openapi import register_openapi_models, wrap_model
+from api.namespace import Namespace
+from api.openapi import register_openapi_models
 from api.serializers import serialize
 from containers import Container
 from users import types
@@ -32,10 +33,7 @@ class UserRegister(Resource):
     @auth_ns.expect(auth_request_parser, validate=True)
     @auth_ns.doc(description="Регистрация нового пользователя в системе.")
     @auth_ns.response(
-        HTTPStatus.CREATED.value,
-        "Пользователь был успешно зарегистрирован.",
-        wrap_model(openapi.user_registration_doc, auth_ns),
-    )
+        HTTPStatus.CREATED.value, "Пользователь был успешно зарегистрирован.", openapi.user_registration_doc)
     @auth_ns.response(HTTPStatus.CONFLICT.value, "Пользователь с введенным email адресом уже существует.")
     @auth_ns.response(HTTPStatus.BAD_REQUEST.value, "Ошибка в теле запроса.")
     @auth_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
@@ -56,9 +54,7 @@ class UserLogin(Resource):
 
     @auth_ns.expect(login_parser, validate=True)
     @auth_ns.doc(description="Аутентификация пользователя в системе.")
-    @auth_ns.response(
-        HTTPStatus.OK.value, "Пользователь успешно аутентифицировался.", wrap_model(openapi.user_login_doc, auth_ns),
-    )
+    @auth_ns.response(HTTPStatus.OK.value, "Пользователь успешно аутентифицировался.", openapi.user_login_doc)
     @auth_ns.response(HTTPStatus.UNAUTHORIZED.value, "Неверные почта/пароль.")
     @auth_ns.response(HTTPStatus.BAD_REQUEST.value, "Ошибка в теле запроса.")
     @auth_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
@@ -109,9 +105,7 @@ class UserRefreshToken(Resource):
     """Обновление access токена."""
 
     @auth_ns.doc(security="JWT", description="Обмен refresh токена на новую пару access/refresh токенов.")
-    @auth_ns.response(
-        HTTPStatus.OK.value, "Пользователь успешно получил новые доступы.", wrap_model(openapi.user_login_doc, auth_ns),
-    )
+    @auth_ns.response(HTTPStatus.OK.value, "Пользователь успешно получил новые доступы.", openapi.user_login_doc)
     @auth_ns.response(HTTPStatus.UNAUTHORIZED.value, "Неверный refresh токен.")
     @auth_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
     @jwt_required(refresh=True)
