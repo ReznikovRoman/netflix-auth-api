@@ -5,50 +5,24 @@ from typing import TYPE_CHECKING
 
 from dependency_injector.wiring import Provide, inject
 from flask_jwt_extended import current_user, get_jwt, jwt_required
-from flask_restx import Namespace, Resource, fields
+from flask_restx import Namespace, Resource
 
 from flask import request
 
 from api.serializers import serialize
+from common.openapi import WrapperModelFactory, register_openapi_models
 from containers import Container
 from users import types
-from users.types import User
 
+from . import openapi
 from .serializers import JWTCredentialsSerializer, UserRegistrationSerializer, auth_request_parser, login_parser
 
 if TYPE_CHECKING:
     from users.services import UserService
-    current_user: User
+    current_user: types.User
 
 auth_ns = Namespace("auth", validate=True, description="Авторизация")
-
-_user_registration_doc = auth_ns.model(
-    name="UserRegistration",
-    model={
-        "id": fields.String(),
-        "email": fields.String(),
-    },
-)
-user_registration_doc = auth_ns.model(
-    name="UserRegistrationWrapper",
-    model={
-        "data": fields.Nested(_user_registration_doc),
-    },
-)
-
-_user_login_doc = auth_ns.model(
-    name="UserLogin",
-    model={
-        "access_token": fields.String(),
-        "refresh_token": fields.String(),
-    },
-)
-user_login_doc = auth_ns.model(
-    name="UserLoginWrapper",
-    model={
-        "data": fields.Nested(_user_login_doc),
-    },
-)
+register_openapi_models("api.v1.auth.openapi", auth_ns)
 
 
 @auth_ns.route("/register")
@@ -57,7 +31,11 @@ class UserRegister(Resource):
 
     @auth_ns.expect(auth_request_parser, validate=True)
     @auth_ns.doc(description="Регистрация нового пользователя в системе.")
-    @auth_ns.response(HTTPStatus.CREATED.value, "Пользователь был успешно зарегистрирован.", user_registration_doc)
+    @auth_ns.response(
+        HTTPStatus.CREATED.value,
+        "Пользователь был успешно зарегистрирован.",
+        WrapperModelFactory.wrap(openapi.user_registration_doc, auth_ns),
+    )
     @auth_ns.response(HTTPStatus.CONFLICT.value, "Пользователь с введенным email адресом уже существует.")
     @auth_ns.response(HTTPStatus.BAD_REQUEST.value, "Ошибка в теле запроса.")
     @auth_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
@@ -78,7 +56,11 @@ class UserLogin(Resource):
 
     @auth_ns.expect(login_parser, validate=True)
     @auth_ns.doc(description="Аутентификация пользователя в системе.")
-    @auth_ns.response(HTTPStatus.OK.value, "Пользователь успешно аутентифицировался.", user_login_doc)
+    @auth_ns.response(
+        HTTPStatus.OK.value,
+        "Пользователь успешно аутентифицировался.",
+        WrapperModelFactory.wrap(openapi.user_login_doc, auth_ns),
+    )
     @auth_ns.response(HTTPStatus.UNAUTHORIZED.value, "Неверные почта/пароль.")
     @auth_ns.response(HTTPStatus.BAD_REQUEST.value, "Ошибка в теле запроса.")
     @auth_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
@@ -129,7 +111,11 @@ class UserRefreshToken(Resource):
     """Обновление access токена."""
 
     @auth_ns.doc(security="JWT", description="Обмен refresh токена на новую пару access/refresh токенов.")
-    @auth_ns.response(HTTPStatus.OK.value, "Пользователь успешно получил новые доступы.", user_login_doc)
+    @auth_ns.response(
+        HTTPStatus.OK.value,
+        "Пользователь успешно получил новые доступы.",
+        WrapperModelFactory.wrap(openapi.user_login_doc, auth_ns),
+    )
     @auth_ns.response(HTTPStatus.UNAUTHORIZED.value, "Неверный refresh токен.")
     @auth_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
     @jwt_required(refresh=True)
