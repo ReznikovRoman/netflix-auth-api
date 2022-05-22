@@ -1,8 +1,10 @@
 pydantic==1.9.0
 marshmallow==3.15.0
+marshmallow-enum==1.5.1
 email-validator==1.2.1
 requests==2.27.1
 httpx==0.22.0
+user-agents==2.2.0
 python-dotenv==0.20.0
 backoff==2.0.1
 Authlib==1.0.1

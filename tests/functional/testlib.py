@@ -15,7 +15,7 @@ from .settings import get_settings
 if TYPE_CHECKING:
     from requests import Response
 
-    APIResponse = Union[dict, str, list[dict], dict[str, dict], Response]
+    APIResponse = Union[str, dict, list[dict], dict[str, dict], dict[str, list[dict]], Response]
 
 
 settings = get_settings()

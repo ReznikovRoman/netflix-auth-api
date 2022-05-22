@@ -12,18 +12,19 @@ from .exceptions import UserAlreadyExistsError, UserInvalidCredentials
 
 if TYPE_CHECKING:
     from .jwt import JWTAuth
-    from .repositories import UserRepository
+    from .repositories import LoginLogRepository, UserRepository
 
 
 class UserService:
     """Сервис для работы с пользователями."""
 
-    def __init__(self, user_repository: UserRepository, jwt_auth: JWTAuth):
+    def __init__(self, user_repository: UserRepository, login_log_repository: LoginLogRepository, jwt_auth: JWTAuth):
         self.user_repository = user_repository
+        self.login_log_repository = login_log_repository
         self.jwt_auth = jwt_auth
 
     def register_new_user(self, email: str, password: str) -> types.User:
-        if self.user_repository.is_user_exists(email):
+        if self.user_repository.user_exists(email):
             raise UserAlreadyExistsError
         user = self.user_repository.create_user(email, password)
         self.assign_default_roles(user)
@@ -33,7 +34,7 @@ class UserService:
         """Назначение ролей по умолчанию пользователю."""
         return self.user_repository.add_roles_to_user(user, roles_names=[DefaultRoles.VIEWERS.value])
 
-    def login(self, email: str, password: str) -> types.JWTCredentials:
+    def login(self, email: str, password: str) -> tuple[types.JWTCredentials, types.User]:
         """Аутентификация пользователя в системе."""
         try:
             user = self.user_repository.get_active_user_by_email(email)
@@ -42,7 +43,11 @@ class UserService:
         if not self.user_repository.is_valid_password(user, password):
             raise UserInvalidCredentials
         credentials = self.jwt_auth.generate_tokens(user)
-        return credentials
+        return credentials, user
+
+    def update_login_history(self, user: types.User, ip_addr: str, user_agent: str) -> types.LoginLog:
+        login_log = self.login_log_repository.create_log_record(user, ip_addr, user_agent)
+        return login_log
 
     def refresh_credentials(self, jti: str, user: types.User) -> types.JWTCredentials:
         """Обновление доступов пользователя по refresh токену."""

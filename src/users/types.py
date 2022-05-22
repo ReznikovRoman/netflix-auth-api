@@ -1,6 +1,8 @@
+import datetime
 import uuid
 from dataclasses import dataclass
 
+from common.enums import ExtendedEnum
 from roles.types import Role
 
 
@@ -34,3 +36,21 @@ class User:
 class JWTCredentials:
     access_token: str
     refresh_token: str
+
+
+@dataclass(frozen=True, slots=True)
+class LoginLog:
+
+    class DeviceType(ExtendedEnum):
+        """Тип девайса, с которого осуществлялся вход в аккаунт."""
+
+        PC = "pc"
+        MOBILE = "mobile"
+        TABLET = "tablet"
+
+    id: uuid.UUID  # noqa: VNE003
+    created_at: datetime.datetime
+    user: "User"
+    user_agent: str
+    ip_addr: str
+    device_type: DeviceType
