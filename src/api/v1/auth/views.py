@@ -129,6 +129,7 @@ class UserChangePassword(Resource):
 
     @auth_ns.expect(password_change_parser, validate=True)
     @auth_ns.doc(security="JWT", description="Смена пароля для пользователя.")
+    @jwt_required()
     @inject
     def post(self, user_service: UserService = Provide[Container.user_package.user_service]):
         """Смена пароля."""

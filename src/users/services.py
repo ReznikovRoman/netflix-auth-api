@@ -60,6 +60,7 @@ class UserService:
     def password_change(
             self, jti: str, user: types.User, old_password: str, new_password: str, new_password_check: str):
         """Смена пароля.
+
         https://stackoverflow.com/a/28804067/12613186
         Предлагается не отзывать предыдущий токен, а только генерировать новый.
         """
