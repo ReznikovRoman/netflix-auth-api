@@ -16,7 +16,8 @@ from containers import Container
 from users import types
 
 from . import openapi
-from .serializers import JWTCredentialsSerializer, UserRegistrationSerializer, auth_request_parser, login_parser
+from .serializers import (JWTCredentialsSerializer, UserRegistrationSerializer, auth_request_parser, login_parser,
+                          password_change_parser)
 
 if TYPE_CHECKING:
     from users.services import UserService
@@ -120,6 +121,24 @@ class UserRefreshToken(Resource):
             "Pragma": "no-cache",
         }
         return credentials, HTTPStatus.OK, headers
+
+
+@auth_ns.route("/change-password")
+class UserChangePassword(Resource):
+    """Смена пароля."""
+
+    @auth_ns.expect(password_change_parser, validate=True)
+    @auth_ns.doc(security="JWT", description="Смена пароля для пользователя.")
+    @inject
+    def post(self, user_service: UserService = Provide[Container.user_package.user_service]):
+        """Смена пароля."""
+        jti = get_jwt()["jti"]
+        request_data = password_change_parser.parse_args()
+        old_password = request_data.get("old_password")
+        new_password = request_data.get("new_password")
+        new_password_check = request_data.get("new_password_check")
+        user_service.password_change(jti, current_user, old_password, new_password, new_password_check)
+        return HTTPStatus.OK
 
 
 from oauth.utils import requires_auth  # noqa, isort:skip

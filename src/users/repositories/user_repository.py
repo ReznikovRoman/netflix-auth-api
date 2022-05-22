@@ -72,6 +72,12 @@ class UserRepository:
         return user.to_dto()
 
     @staticmethod
+    def change_password(user: types.User, password: str) -> None:
+        hashed_password = UserRepository._hash_password(password)
+        with db_session():
+            user.password = hashed_password
+
+    @staticmethod
     def _hash_password(password: str) -> str:
         return generate_password_hash(password)
 

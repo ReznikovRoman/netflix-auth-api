@@ -17,3 +17,11 @@ class UserInvalidCredentials(NetflixAuthError):
     message = "Invalid credentials"
     code = "user_invalid_credentials"
     status_code = HTTPStatus.UNAUTHORIZED
+
+
+class UserInvalidPasswordChange(NetflixAuthError):
+    """Не удалось сменить пароль"""
+    message = "Invalid password change"
+    code = "user_invalid_password_change"
+    status_code = HTTPStatus.UNPROCESSABLE_ENTITY
+  
