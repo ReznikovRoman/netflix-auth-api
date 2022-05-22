@@ -1,4 +1,5 @@
-from marshmallow import fields, validate
+from marshmallow import fields
+from marshmallow_enum import EnumField
 
 from api.serializers import BaseSerializer
 from users import types
@@ -7,8 +8,8 @@ from users import types
 class LoginLogSerializer(BaseSerializer):
     model = types.LoginLog
 
-    id = fields.UUID()  # noqa: VNE003
-    created_at = fields.DateTime()
-    user_agent = fields.Str()
-    ip_addr = fields.Str()
-    device_type = fields.Str(validate=validate.OneOf(types.LoginLog.DeviceType.list()))
+    user_id = fields.Function(lambda obj: str(obj.user.id))
+    device_type = EnumField(types.LoginLog.DeviceType, by_value=True)
+
+    class Meta:
+        additional = ("id", "created_at", "user_agent", "ip_addr")

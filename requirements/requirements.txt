@@ -500,6 +500,12 @@ markupsafe==2.1.1 \
 marshmallow==3.15.0 \
     --hash=sha256:2aaaab4f01ef4f5a011a21319af9fce17ab13bf28a026d1252adab0e035648d5 \
     --hash=sha256:ff79885ed43b579782f48c251d262e062bce49c65c52412458769a4fb57ac30f
+    # via
+    #   -r requirements.in
+    #   marshmallow-enum
+marshmallow-enum==1.5.1 \
+    --hash=sha256:38e697e11f45a8e64b4a1e664000897c659b60aa57bfa18d44e226a9920b6e58 \
+    --hash=sha256:57161ab3dbfde4f57adeb12090f39592e992b9c86d206d02f6bd03ebec60f072
     # via -r requirements.in
 packaging==21.3 \
     --hash=sha256:dd47c42927d89ab911e606518907cc2d3a1f38bbd026385970643f9c5b8ecfeb \

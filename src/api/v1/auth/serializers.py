@@ -24,5 +24,5 @@ class UserRegistrationSerializer(BaseSerializer):
 class JWTCredentialsSerializer(BaseSerializer):
     model = types.JWTCredentials
 
-    access_token = fields.Str()
-    refresh_token = fields.Str()
+    class Meta:
+        fields = ("access_token", "refresh_token")
