@@ -13,11 +13,6 @@ login_parser = RequestParser(bundle_errors=True)
 login_parser.add_argument(name="email", type=email(), location="form", required=True, nullable=False)
 login_parser.add_argument(name="password", type=str, location="form", required=True, nullable=False)
 
-password_change_parser = RequestParser(bundle_errors=True)
-login_parser.add_argument(name="old_password", type=str, location="form", required=True, nullable=False)
-login_parser.add_argument(name="new_password", type=str, location="form", required=True, nullable=False)
-login_parser.add_argument(name="new_password_check", type=str, location="form", required=True, nullable=False)
-
 
 class UserRegistrationSerializer(BaseSerializer):
     model = types.User

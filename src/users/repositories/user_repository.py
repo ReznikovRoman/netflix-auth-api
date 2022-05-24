@@ -74,8 +74,8 @@ class UserRepository:
     @staticmethod
     def change_password(user: types.User, password: str) -> None:
         hashed_password = UserRepository._hash_password(password)
-        with db_session():
-            user.password = hashed_password
+        with db_session() as session:
+            session.query(User).filter(User.email == user.email).update({"password": hashed_password})
 
     @staticmethod
     def _hash_password(password: str) -> str:
