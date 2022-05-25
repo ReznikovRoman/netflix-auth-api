@@ -19,8 +19,8 @@ from . import openapi
 from .serializers import LoginLogSerializer, password_change_parser
 
 if TYPE_CHECKING:
-    from users.services import UserService
     from users.repositories import LoginLogRepository
+    from users.services import UserService
     current_user: types.User
 
 user_ns = Namespace("users", validate=True, description="Пользователи")
