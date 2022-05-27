@@ -15,6 +15,7 @@ class Container(containers.DeclarativeContainer):
             "jwt_manager",
             "api.v1.auth.views",
             "api.v1.users.views",
+            "api.v1.roles.views",
         ],
     )
 
