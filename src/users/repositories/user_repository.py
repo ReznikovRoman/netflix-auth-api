@@ -37,6 +37,24 @@ class UserRepository:
         user.roles = roles
         return user
 
+    def check_role_on_user(self, user_id: str, role_id: str):
+        """Проверка роли у пользователя."""
+        with db_session() as session:
+            return self._has_role(session, user_id, role_id)
+
+    def add_role_to_user(self, user_id: str, role_id: str):
+        """Добавление роли пользователю."""
+        with db_session() as session:
+            if not self._has_role(session, user_id, role_id):
+                session.add(UsersRoles(user_id=user_id, role_id=role_id))
+
+    def delete_role_from_user(self, user_id: str, role_id: str):
+        """Удаление роли у пользователя."""
+        with db_session() as session:
+            if self._has_role(session, user_id, role_id):
+                user_role = UsersRoles.query.filter_by(user_id=user_id, role_id=role_id).first()
+                session.delete(user_role)
+
     @staticmethod
     def get_active_user_or_none(user_id: str) -> types.User | None:
         """Получение активного пользователя по `user_id`."""

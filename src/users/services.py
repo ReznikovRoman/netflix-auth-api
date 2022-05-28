@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 from sqlalchemy.exc import NoResultFound
 
 from common.exceptions import NotFoundError
+from roles import types as role_types
 from roles.constants import DefaultRoles
 
 from . import types
@@ -33,6 +34,18 @@ class UserService:
     def assign_default_roles(self, user: types.User) -> types.User:
         """Назначение ролей по умолчанию пользователю."""
         return self.user_repository.add_roles_to_user(user, roles_names=[DefaultRoles.VIEWERS.value])
+
+    def add_role(self, user: types.User, role: role_types.Role):
+        """Назначение роли пользователю."""
+        return self.user_repository.add_role_to_user(user, role)
+
+    def delete_role(self, user: types.User, role: role_types.Role):
+        """Удалить роль у пользователя."""
+        return self.user_repository.delete_role_from_user(user, role)
+
+    def check_role(self, user: types.User, role: role_types.Role):
+        """Проверить роль у пользователя."""
+        return self.user_repository.check_role_on_user(user, role)
 
     def login(self, email: str, password: str) -> tuple[types.JWTCredentials, types.User]:
         """Аутентификация пользователя в системе."""
