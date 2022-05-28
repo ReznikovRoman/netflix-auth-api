@@ -18,11 +18,11 @@ from .serializers import RoleSerializer, role_change_parser, role_parser
 if TYPE_CHECKING:
     from roles.repositories import RoleRepository
 
-role_ns = Namespace("role", description="Роли")
+role_ns = Namespace("roles", description="Роли")
 register_openapi_models("api.v1.roles.openapi", role_ns)
 
 
-@role_ns.route("/roles")
+@role_ns.route("/")
 class RolesView(Resource):
     """Роли."""
 
@@ -55,7 +55,7 @@ class RolesView(Resource):
         return roles, HTTPStatus.OK
 
 
-@role_ns.route("/roles/<uuid:role_id>")
+@role_ns.route("/<uuid:role_id>")
 class RoleView(Resource):
     """Роль."""
 
