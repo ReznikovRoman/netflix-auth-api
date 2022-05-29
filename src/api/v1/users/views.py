@@ -61,8 +61,5 @@ class UserChangePassword(Resource):
         """Смена пароля."""
         jwt = get_jwt()
         request_data = password_change_parser.parse_args()
-        old_password = request_data.get("old_password")
-        new_password1 = request_data.get("new_password1")
-        new_password2 = request_data.get("new_password2")
-        user_service.change_password(jwt, current_user, old_password, new_password1, new_password2)
+        user_service.change_password(jwt, current_user, **request_data)
         return "", HTTPStatus.NO_CONTENT
