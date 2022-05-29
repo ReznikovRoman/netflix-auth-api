@@ -60,8 +60,8 @@ class UserRepository:
         return exists
 
     @staticmethod
-    def is_valid_password(user: types.User, given_password: str) -> bool:
-        return check_password_hash(user.password, given_password)
+    def is_valid_password(hashed_password: str, given_password: str) -> bool:
+        return check_password_hash(hashed_password, given_password)
 
     @staticmethod
     def create_user(email: str, password: str) -> types.User:
@@ -70,6 +70,14 @@ class UserRepository:
         with db_session():
             user: User = user_datastore.create_user(email=email, password=hashed_password)
         return user.to_dto()
+
+    @staticmethod
+    def change_password(user: types.User, password: str) -> types.User:
+        hashed_password = UserRepository._hash_password(password)
+        with db_session():
+            User.query.filter_by(email=user.email).update({"password": hashed_password})
+        user.password = hashed_password
+        return user
 
     @staticmethod
     def _hash_password(password: str) -> str:

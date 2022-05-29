@@ -4,7 +4,7 @@ from http import HTTPStatus
 from typing import TYPE_CHECKING
 
 from dependency_injector.wiring import Provide, inject
-from flask_jwt_extended import current_user, jwt_required
+from flask_jwt_extended import current_user, get_jwt, jwt_required
 from flask_restx import Resource
 
 from api.namespace import Namespace
@@ -15,10 +15,11 @@ from containers import Container
 from users import types
 
 from . import openapi
-from .serializers import LoginLogSerializer
+from .serializers import LoginLogSerializer, password_change_parser
 
 if TYPE_CHECKING:
     from users.repositories import LoginLogRepository
+    from users.services import UserService
     current_user: types.User
 
 user_ns = Namespace("users", validate=True, description="Пользователи")
@@ -43,3 +44,22 @@ class UserLoginHistory(Resource):
         pagination = PageNumberPagination(request_data.get("page"), request_data.get("per_page"))
         login_history = login_log_repository.get_user_login_history(current_user, pagination)
         return login_history, HTTPStatus.OK
+
+
+@user_ns.route("/me/change-password")
+class UserChangePassword(Resource):
+    """Смена пароля."""
+
+    @user_ns.expect(password_change_parser, validate=True)
+    @user_ns.doc(security="JWT", description="Смена пароля для пользователя.")
+    @user_ns.response(HTTPStatus.NO_CONTENT.value, "Пароль успешно изменен.")
+    @user_ns.response(HTTPStatus.UNAUTHORIZED.value, "Неверный refresh токен.")
+    @user_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
+    @jwt_required()
+    @inject
+    def post(self, user_service: UserService = Provide[Container.user_package.user_service]):
+        """Смена пароля."""
+        jwt = get_jwt()
+        request_data = password_change_parser.parse_args()
+        user_service.change_password(jwt, current_user, **request_data)
+        return "", HTTPStatus.NO_CONTENT
