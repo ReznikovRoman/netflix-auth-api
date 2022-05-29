@@ -28,13 +28,22 @@ def upgrade():
         sa.Column("device_type", postgresql.ENUM("PC", "MOBILE", "TABLET", name="device_type"), nullable=False),
         sa.ForeignKeyConstraint(("user_id",), ["user.id"]),
         sa.PrimaryKeyConstraint("id", "device_type"),
-        sa.UniqueConstraint("id"),
+        sa.UniqueConstraint("id", "device_type"),
+        postgresql_partition_by="LIST (device_type)",
     )
+    op.create_unique_constraint("loginlog_uq_id_device_type", "loginlog", ["id", "device_type"])
+    op.execute("""CREATE TABLE IF NOT EXISTS loginlog_mobile PARTITION OF loginlog FOR VALUES IN ('MOBILE')""")
+    op.execute("""CREATE TABLE IF NOT EXISTS loginlog_tablet PARTITION OF loginlog FOR VALUES IN ('TABLET')""")
+    op.execute("""CREATE TABLE IF NOT EXISTS loginlog_pc PARTITION OF loginlog FOR VALUES IN ('PC')""")
     op.create_unique_constraint("loginlog_role_uq_id", "role", ["id"])
     op.create_unique_constraint("loginlog_user_uq_id", "user", ["id"])
 
 
 def downgrade():
+    op.drop_constraint("loginlog_uq_id_device_type", "loginlog", type_="unique")
+    op.drop_table("loginlog")
+    op.drop_table("loginlog_mobile")
+    op.drop_table("loginlog_tablet")
+    op.drop_table("loginlog_pc")
     op.drop_constraint("loginlog_user_uq_id", "user", type_="unique")
     op.drop_constraint("loginlog_role_uq_id", "role", type_="unique")
-    op.drop_table("loginlog")
