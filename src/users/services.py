@@ -63,6 +63,5 @@ class UserService:
             raise UserInvalidCredentials
         if new_password1 != new_password2:
             raise UserPasswordChangeError(message="Passwords don't match", code="passwords_mismatch")
-        user_dto = self.user_repository.change_password(user, new_password1)
+        self.user_repository.change_password(user, new_password1)
         self.jwt_auth.revoke_tokens(jwt)
-        return user_dto

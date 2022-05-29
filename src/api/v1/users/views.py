@@ -15,7 +15,7 @@ from containers import Container
 from users import types
 
 from . import openapi
-from .serializers import LoginLogSerializer, UserSerializer, password_change_parser
+from .serializers import LoginLogSerializer, password_change_parser
 
 if TYPE_CHECKING:
     from users.repositories import LoginLogRepository
@@ -52,11 +52,10 @@ class UserChangePassword(Resource):
 
     @user_ns.expect(password_change_parser, validate=True)
     @user_ns.doc(security="JWT", description="Смена пароля для пользователя.")
-    @user_ns.response(HTTPStatus.OK.value, "Пароль успешно изменен.", openapi.user_doc)
+    @user_ns.response(HTTPStatus.NO_CONTENT.value, "Пароль успешно изменен.")
     @user_ns.response(HTTPStatus.UNAUTHORIZED.value, "Неверный refresh токен.")
     @user_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
     @jwt_required()
-    @serialize(UserSerializer)
     @inject
     def post(self, user_service: UserService = Provide[Container.user_package.user_service]):
         """Смена пароля."""
@@ -65,5 +64,5 @@ class UserChangePassword(Resource):
         old_password = request_data.get("old_password")
         new_password1 = request_data.get("new_password1")
         new_password2 = request_data.get("new_password2")
-        credentials = user_service.change_password(jwt, current_user, old_password, new_password1, new_password2)
-        return credentials, HTTPStatus.OK
+        user_service.change_password(jwt, current_user, old_password, new_password1, new_password2)
+        return "", HTTPStatus.NO_CONTENT

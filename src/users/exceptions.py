@@ -24,4 +24,4 @@ class UserPasswordChangeError(NetflixAuthError):
 
     message = "Error during password change"
     code = "password_change_error"
-    status_code = HTTPStatus.UNPROCESSABLE_ENTITY
+    status_code = HTTPStatus.BAD_REQUEST

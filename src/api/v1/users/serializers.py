@@ -19,12 +19,3 @@ class LoginLogSerializer(BaseSerializer):
 
     class Meta:
         additional = ("id", "created_at", "user_agent", "ip_addr")
-
-
-class UserSerializer(BaseSerializer):
-    model = types.User
-
-    id = fields.UUID()  # noqa: VNE003
-    email = fields.Email()
-    password = fields.String()
-    active = fields.Boolean()

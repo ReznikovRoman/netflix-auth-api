@@ -76,8 +76,6 @@ class UserRepository:
         hashed_password = UserRepository._hash_password(password)
         with db_session():
             User.query.filter_by(email=user.email).update({"password": hashed_password})
-        user.password = hashed_password
-        return user
 
     @staticmethod
     def _hash_password(password: str) -> str:

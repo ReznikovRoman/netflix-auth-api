@@ -14,7 +14,7 @@ class TestUserChangePassword:
 
         # Сменить пароль
         anon_client.post(
-            "/api/v1/users/me/change-password", data=body, headers=headers, expected_status_code=201, as_response=True)
+            "/api/v1/users/me/change-password", data=body, headers=headers, expected_status_code=204, as_response=True)
 
         # Проверить что после смены пароля старый токен перестал работать
         anon_client.post("/api/v1/users/me/change-password", data=body, headers=headers, expected_status_code=401)
@@ -32,11 +32,25 @@ class TestUserChangePassword:
             "new_password2": f"{user_dto.password} wrong second pass",
         }
 
-        response_error = anon_client.post(
-            "/api/v1/users/me/change-password", data=body, headers=headers, expected_status_code=422,
+        got = anon_client.post(
+            "/api/v1/users/me/change-password", data=body, headers=headers, expected_status_code=400,
         )["error"]
-        assert response_error["code"] == "passwords_mismatch"
-        assert response_error["message"] == "Passwords don't match"
+        assert got["code"] == "passwords_mismatch"
+
+    def test_invalid_access_token(self, anon_client, user_dto):
+        """Если access токен в заголовке неверный, то клиент получит ошибку."""
+        self._user_login(anon_client, user_dto)
+
+        headers = {"Authorization": "Bearer XXX"}
+        anon_client.post(
+            "/api/v1/users/me/change-password", headers=headers, expected_status_code=401, as_response=True,
+        )
+
+    def test_no_credentials(self, anon_client, user_dto):
+        """Если access токена нет в заголовках, то клиент получит соответствующую ошибку."""
+        self._user_login(anon_client, user_dto)
+
+        anon_client.post("/api/v1/users/me/change-password", expected_status_code=401, as_response=True)
 
     def _user_login(self, anon_client, user_dto) -> tuple[str, str]:
         self._register(anon_client, user_dto)
@@ -59,18 +73,3 @@ class TestUserChangePassword:
         }
         credentials = anon_client.post("/api/v1/auth/login", data=body, expected_status_code=200)["data"]
         return credentials["access_token"], credentials["refresh_token"]
-
-    def test_invalid_access_token(self, anon_client, user_dto):
-        """Если access токен в заголовке неверный, то клиент получит ошибку."""
-        self._user_login(anon_client, user_dto)
-
-        headers = {"Authorization": "Bearer XXX"}
-        anon_client.post(
-            "/api/v1/users/me/change-password", headers=headers, expected_status_code=401, as_response=True,
-        )
-
-    def test_no_credentials(self, anon_client, user_dto):
-        """Если access токена нет в заголовках, то клиент получит соответствующую ошибку."""
-        self._user_login(anon_client, user_dto)
-
-        anon_client.post("/api/v1/users/me/change-password", expected_status_code=401, as_response=True)
