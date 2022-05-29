@@ -71,8 +71,8 @@
     ```json
     {
       "old_password": "old",
-      "new_password": "new",
-      "new_password_confirmation": "new"
+      "new_password1": "new",
+      "new_password2": "new"
     }
     ```
   - Просмотр истории входов в аккаунт

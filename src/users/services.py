@@ -8,7 +8,7 @@ from common.exceptions import NotFoundError
 from roles.constants import DefaultRoles
 
 from . import types
-from .exceptions import UserAlreadyExistsError, UserInvalidCredentials, UserInvalidPasswordChange
+from .exceptions import UserAlreadyExistsError, UserInvalidCredentials, UserPasswordChangeError
 
 if TYPE_CHECKING:
     from .jwt import JWTAuth
@@ -57,16 +57,12 @@ class UserService:
         """Выход пользователя из аккаунта."""
         self.jwt_auth.revoke_tokens(jwt)
 
-    def password_change(
-            self, jti: str, user: types.User, old_password: str, new_password: str, new_password_check: str):
-        """Смена пароля.
-
-        https://stackoverflow.com/a/28804067/12613186
-        Предлагается не отзывать предыдущий токен, а только генерировать новый.
-        """
+    def change_password(self, jwt: dict, user: types.User, old_password: str, new_password1: str, new_password2: str):
+        """Смена пароля."""
         if not self.user_repository.is_valid_password(user, old_password):
             raise UserInvalidCredentials
-        if new_password != new_password_check:
-            raise UserInvalidPasswordChange
-        self.user_repository.change_password(user, new_password)
-        return self.jwt_auth.refresh_tokens(jti, user)
+        if new_password1 != new_password2:
+            raise UserPasswordChangeError(message="Passwords don't match", code="passwords_mismatch")
+        user_dto = self.user_repository.change_password(user, new_password1)
+        self.jwt_auth.revoke_tokens(jwt)
+        return user_dto
