@@ -108,7 +108,10 @@ def flush_redis_cache() -> None:
         decode_responses=settings.REDIS_DECODE_RESPONSES,
         retry_on_timeout=settings.REDIS_RETRY_ON_TIMEOUT,
     )
+    throttling_client = redis.Redis(
+        host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_THROTTLE_STORAGE_DB)
     redis_client.flushdb()
+    throttling_client.flushdb()
 
 
 def _format_table_name(table_name: str) -> str:

@@ -13,6 +13,8 @@ from api.namespace import Namespace
 from api.openapi import register_openapi_models
 from api.serializers import serialize
 from containers import Container
+from core.config import get_settings
+from throttling import limiter
 from users import types
 
 from . import openapi
@@ -22,6 +24,8 @@ if TYPE_CHECKING:
     from users.services import UserService
     current_user: types.User
 
+settings = get_settings()
+
 auth_ns = Namespace("auth", validate=True, description="Авторизация")
 register_openapi_models("api.v1.auth.openapi", auth_ns)
 
@@ -29,6 +33,10 @@ register_openapi_models("api.v1.auth.openapi", auth_ns)
 @auth_ns.route("/register")
 class UserRegister(Resource):
     """Регистрация пользователя."""
+
+    decorators = [
+        limiter.limit(settings.THROTTLE_USER_REGISTRATION_LIMITS, methods=["post"]),
+    ]
 
     @auth_ns.expect(auth_request_parser, validate=True)
     @auth_ns.doc(description="Регистрация нового пользователя в системе.")
