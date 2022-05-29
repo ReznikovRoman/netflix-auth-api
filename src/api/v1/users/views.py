@@ -52,7 +52,7 @@ class UserChangePassword(Resource):
 
     @user_ns.expect(password_change_parser, validate=True)
     @user_ns.doc(security="JWT", description="Смена пароля для пользователя.")
-    @user_ns.response(HTTPStatus.CREATED.value, "Пароль успешно изменен.", openapi.user_doc)
+    @user_ns.response(HTTPStatus.OK.value, "Пароль успешно изменен.", openapi.user_doc)
     @user_ns.response(HTTPStatus.UNAUTHORIZED.value, "Неверный refresh токен.")
     @user_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
     @jwt_required()
@@ -66,4 +66,4 @@ class UserChangePassword(Resource):
         new_password1 = request_data.get("new_password1")
         new_password2 = request_data.get("new_password2")
         credentials = user_service.change_password(jwt, current_user, old_password, new_password1, new_password2)
-        return credentials, HTTPStatus.CREATED
+        return credentials, HTTPStatus.OK

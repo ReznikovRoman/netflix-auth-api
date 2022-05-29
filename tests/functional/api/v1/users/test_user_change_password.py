@@ -13,7 +13,8 @@ class TestUserChangePassword:
         }
 
         # Сменить пароль
-        anon_client.post("/api/v1/users/me/change-password", data=body, headers=headers, expected_status_code=201)
+        anon_client.post(
+            "/api/v1/users/me/change-password", data=body, headers=headers, expected_status_code=201, as_response=True)
 
         # Проверить что после смены пароля старый токен перестал работать
         anon_client.post("/api/v1/users/me/change-password", data=body, headers=headers, expected_status_code=401)
