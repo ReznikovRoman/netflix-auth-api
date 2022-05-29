@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import uuid
 from typing import TYPE_CHECKING
 
 from flask_security import UserMixin
@@ -14,6 +15,7 @@ from . import types
 
 if TYPE_CHECKING:
     from flask_sqlalchemy.model import Model as _Model
+    from sqlalchemy.engine import Connection
 
     Model = db.make_declarative_base(_Model)
 else:
@@ -58,12 +60,24 @@ class User(TimeStampedMixin, UUIDMixin, Model, UserMixin):
         return user
 
 
-class LoginLog(TimeStampedMixin, UUIDMixin, Model):
+def create_loginlog_partitions(ddl, target, connection: Connection, **kwargs) -> None:
+    connection.execute("""CREATE TABLE IF NOT EXISTS loginlog_mobile PARTITION OF loginlog FOR VALUES IN ('MOBILE')""")
+    connection.execute("""CREATE TABLE IF NOT EXISTS loginlog_tablet PARTITION OF loginlog FOR VALUES IN ('TABLET')""")
+    connection.execute("""CREATE TABLE IF NOT EXISTS loginlog_pc PARTITION OF loginlog FOR VALUES IN ('PC')""")
+
+
+class LoginLog(TimeStampedMixin, Model):
     """Запись входов в аккаунт."""
 
     user_id = db.Column(UUID(as_uuid=True), db.ForeignKey("user.id"))
     user: "User" = db.relationship("User", back_populates="login_history")
 
+    id = db.Column(  # noqa: VNE003
+        UUID(as_uuid=True),
+        primary_key=True,
+        nullable=False,
+        default=uuid.uuid4,
+    )
     user_agent = db.Column(db.String(255), nullable=False)
     ip_addr = db.Column(db.String(255))
     device_type = db.Column(
@@ -71,6 +85,11 @@ class LoginLog(TimeStampedMixin, UUIDMixin, Model):
 
     __table_args__ = (
         db.PrimaryKeyConstraint("id", "device_type"),
+        db.UniqueConstraint("id", "device_type"),
+        {
+            "postgresql_partition_by": "LIST (device_type)",
+            "listeners": [("after_create", create_loginlog_partitions)],
+        },
     )
 
     def __str__(self) -> str:
