@@ -28,7 +28,10 @@ class JWTAuth:
         refresh_token_jti = str(uuid.uuid4())
         roles_names = [role.name for role in user.roles]
         access_token = create_access_token(
-            identity=user_identity, fresh=fresh, additional_claims={"refresh_jti": refresh_token_jti, "roles": roles_names})
+            identity=user_identity,
+            fresh=fresh,
+            additional_claims={"refresh_jti": refresh_token_jti, "roles": roles_names},
+        )
         refresh_token = create_refresh_token(identity=user_identity, additional_claims={"jti": refresh_token_jti})
         return types.JWTCredentials(access_token=access_token, refresh_token=refresh_token)
 

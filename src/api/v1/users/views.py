@@ -47,7 +47,7 @@ class UserLoginHistory(Resource):
         return login_history, HTTPStatus.OK
 
 
-@user_ns.route("user/<uuid:user_id>/roles/<uuid:role_id>")
+@user_ns.route("/<uuid:user_id>/roles/<uuid:role_id>")
 class UserRolesView(Resource):
 
     @user_ns.response(HTTPStatus.OK.value, "Роль добавлена пользователю.")
