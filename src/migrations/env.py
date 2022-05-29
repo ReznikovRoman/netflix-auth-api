@@ -1,35 +1,39 @@
-from __future__ import with_statement
+from __future__ import with_statement, annotations
 
 import logging
 from logging.config import fileConfig
+from typing import TYPE_CHECKING
 
 from flask import current_app
 
 from alembic import context
 
-# this is the Alembic Config object, which provides
-# access to the values within the .ini file in use.
+if TYPE_CHECKING:
+    from sqlalchemy import Table
+
 config = context.config
 
-# Interpret the config file for Python logging.
-# This line sets up loggers basically.
 fileConfig(config.config_file_name)
-logger = logging.getLogger('alembic.env')
+logger = logging.getLogger("alembic.env")
 
-# add your model's MetaData object here
-# for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
 config.set_main_option(
-    'sqlalchemy.url',
-    str(current_app.extensions['migrate'].db.get_engine().url).replace(
-        '%', '%%'))
-target_metadata = current_app.extensions['migrate'].db.metadata
+    "sqlalchemy.url",
+    str(current_app.extensions["migrate"].db.get_engine().url).replace("%", "%%"),
+)
+target_metadata = current_app.extensions["migrate"].db.metadata
 
-# other values from the config, defined by the needs of env.py,
-# can be acquired:
-# my_important_option = config.get_main_option("my_important_option")
-# ... etc.
+
+def include_object(object_: Table, name: str, type_: str, reflected, compare_to) -> bool:
+    """Настраиваем правила автогенерации миграций.
+
+    https://alembic.sqlalchemy.org/en/latest/autogenerate.html#omitting-based-on-object
+    """
+    tables_to_exclude = (
+        "loginlog", "loginlog_mobile", "loginlog_tablet", "loginlog_pc",
+    )
+    if type_ == "table" and object_.name in tables_to_exclude:
+        return False
+    return True
 
 
 def run_migrations_offline():
@@ -42,11 +46,10 @@ def run_migrations_offline():
 
     Calls to context.execute() here emit the given string to the
     script output.
-
     """
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
-        url=url, target_metadata=target_metadata, literal_binds=True
+        url=url, target_metadata=target_metadata, literal_binds=True, include_object=include_object,
     )
 
     with context.begin_transaction():
@@ -58,9 +61,7 @@ def run_migrations_online():
 
     In this scenario we need to create an Engine
     and associate a connection with the context.
-
     """
-
     # this callback is used to prevent an auto-migration from being generated
     # when there are no changes to the schema
     # reference: http://alembic.zzzcomputing.com/en/latest/cookbook.html
@@ -69,16 +70,17 @@ def run_migrations_online():
             script = directives[0]
             if script.upgrade_ops.is_empty():
                 directives[:] = []
-                logger.info('No changes in schema detected.')
+                logger.info("No changes in schema detected.")
 
-    connectable = current_app.extensions['migrate'].db.get_engine()
+    connectable = current_app.extensions["migrate"].db.get_engine()
 
     with connectable.connect() as connection:
         context.configure(
             connection=connection,
             target_metadata=target_metadata,
             process_revision_directives=process_revision_directives,
-            **current_app.extensions['migrate'].configure_args
+            include_object=include_object,
+            **current_app.extensions["migrate"].configure_args
         )
 
         with context.begin_transaction():
