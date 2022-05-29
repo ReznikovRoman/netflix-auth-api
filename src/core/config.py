@@ -2,7 +2,7 @@ from datetime import timedelta
 from functools import lru_cache
 from typing import Literal, Union
 
-from pydantic import AnyHttpUrl, validator
+from pydantic import AnyHttpUrl, Field, validator
 from pydantic.env_settings import BaseSettings
 
 from common.types import seconds
@@ -27,6 +27,9 @@ class Settings(BaseSettings):
     SERVER_NAME: str
     SERVER_HOSTS: Union[str, list[AnyHttpUrl]]
     PROJECT_NAME: str
+    THROTTLE_KEY_PREFIX: str = ""
+    THROTTLE_DEFAULT_LIMITS: Union[str, list[str]] = Field(default_factory=list)
+    THROTTLE_USER_REGISTRATION_LIMITS: str = Field("5/minute")
     DEBUG: bool = False
 
     # JWT
@@ -54,6 +57,7 @@ class Settings(BaseSettings):
     # Redis
     REDIS_HOST: str
     REDIS_PORT: int
+    REDIS_THROTTLE_STORAGE_DB: int
     REDIS_DEFAULT_CHARSET: str = "utf-8"
     REDIS_DECODE_RESPONSES: bool | Literal[True, False] = True
     REDIS_RETRY_ON_TIMEOUT: bool = True
@@ -68,6 +72,12 @@ class Settings(BaseSettings):
         if isinstance(server_hosts, str):
             return [item.strip() for item in server_hosts.split(",")]
         return server_hosts
+
+    @validator("THROTTLE_DEFAULT_LIMITS", pre=True)
+    def _assemble_throttle_default_limits(cls, throttle_default_limits):
+        if isinstance(throttle_default_limits, str):
+            return [item.strip() for item in throttle_default_limits.split(",")]
+        return throttle_default_limits
 
     @validator("JWT_SECRET_KEY", pre=True)
     def _assemble_jwt_secret_key(cls, value, values):
