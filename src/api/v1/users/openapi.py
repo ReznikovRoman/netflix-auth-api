@@ -13,13 +13,3 @@ login_history_doc = OrderedModel(
         "device_type": fields.String(enum=types.LoginLog.DeviceType.list()),
     },
 )
-
-user_doc = OrderedModel(
-    "User",
-    {
-        "id": fields.String(),
-        "email": fields.String(),
-        "password": fields.String(),
-        "active": fields.String(),
-    },
-)
