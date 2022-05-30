@@ -13,11 +13,10 @@ class TestDeleteRoleFromUser:
         created_user = self._register(anon_client, user_dto)
         created_role = self._add_role(anon_client, role_dto)
         headers = {"Authorization": f"Bearer {self.access_token}"}
-        # Добавить роль пользователю
         url = f"/api/v1/users/{created_user['id']}/roles/{created_role['id']}"
+        # Добавить роль пользователю
         anon_client.post(url, headers=headers, expected_status_code=200)
         # Удалить роль у пользователя
-        url = f"/api/v1/users/{created_user['id']}/roles/{created_role['id']}"
         anon_client.delete(url, headers=headers, expected_status_code=204)
 
     @property

@@ -13,14 +13,12 @@ class TestUserGotRole:
         created_user = self._register(anon_client, user_dto)
         created_role = self._add_role(anon_client, role_dto)
         headers = {"Authorization": f"Bearer {self.access_token}"}
-        # Проверить что пока роли у пользователя нет, возвращается 404
         url = f"/api/v1/users/{created_user['id']}/roles/{created_role['id']}"
+        # Проверить что пока роли у пользователя нет, возвращается 404
         anon_client.head(url, headers=headers, expected_status_code=404)
         # Добавить роль пользователю
-        url = f"/api/v1/users/{created_user['id']}/roles/{created_role['id']}"
         anon_client.post(url, headers=headers, expected_status_code=200)
         # Проверить что роль у пользователя появилась
-        url = f"/api/v1/users/{created_user['id']}/roles/{created_role['id']}"
         anon_client.head(url, headers=headers, expected_status_code=204)
 
     @property
