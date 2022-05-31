@@ -1,14 +1,8 @@
-import requests
-
-from tests.functional.settings import get_settings
-
-settings = get_settings()
+from ..base import Auth0AccessTokenMixin
 
 
-class TestRoleList:
+class TestRoleList(Auth0AccessTokenMixin):
     """Тестирование получения списка ролей."""
-
-    _access_token: str = None
 
     def test_ok(self, anon_client):
         """Получение списка ролей работает корректно."""
@@ -32,25 +26,3 @@ class TestRoleList:
     def test_no_access_token(self, anon_client):
         """Ошибка при отсутствии access_token."""
         anon_client.get("/api/v1/roles/", expected_status_code=401)
-
-    @property
-    def access_token(self):
-        if self._access_token is not None:
-            return self._access_token
-        return self._get_access_token()
-
-    @classmethod
-    def _get_access_token(cls):
-        payload = {
-            "client_id": settings.AUTH0_CLIENT_ID,
-            "client_secret": settings.AUTH0_CLIENT_SECRET,
-            "audience": settings.AUTH0_API_AUDIENCE,
-            "grant_type": "client_credentials",
-        }
-        headers = {"content-type": "application/json"}
-
-        got = requests.post(settings.AUTH0_TOKEN_URL, json=payload, headers=headers).json()
-
-        access_token = got["access_token"]
-        cls._access_token = access_token
-        return access_token

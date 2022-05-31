@@ -1,14 +1,8 @@
-import requests
-
-from tests.functional.settings import get_settings
-
-settings = get_settings()
+from ..base import Auth0AccessTokenMixin
 
 
-class TestDeleteRoleFromUser:
+class TestDeleteRoleFromUser(Auth0AccessTokenMixin):
     """Тестирование удаления роли у пользователя."""
-
-    _access_token: str = None
 
     def test_ok(self, anon_client, role_dto, user_dto):
         """Удаление роли у пользователя работает корректно."""
@@ -47,28 +41,6 @@ class TestDeleteRoleFromUser:
         created_role = self._add_role(anon_client, role_dto)
         url = f"/api/v1/users/{created_user['id']}/roles/{created_role['id']}"
         anon_client.delete(url, expected_status_code=401)
-
-    @property
-    def access_token(self):
-        if self._access_token is not None:
-            return self._access_token
-        return self._get_access_token()
-
-    @classmethod
-    def _get_access_token(cls):
-        payload = {
-            "client_id": settings.AUTH0_CLIENT_ID,
-            "client_secret": settings.AUTH0_CLIENT_SECRET,
-            "audience": settings.AUTH0_API_AUDIENCE,
-            "grant_type": "client_credentials",
-        }
-        headers = {"content-type": "application/json"}
-
-        got = requests.post(settings.AUTH0_TOKEN_URL, json=payload, headers=headers).json()
-
-        access_token = got["access_token"]
-        cls._access_token = access_token
-        return access_token
 
     @staticmethod
     def _register(anon_client, user_dto) -> None:

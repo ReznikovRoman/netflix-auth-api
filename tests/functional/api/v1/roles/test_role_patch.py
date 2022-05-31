@@ -1,16 +1,10 @@
 from uuid import UUID
 
-import requests
-
-from tests.functional.settings import get_settings
-
-settings = get_settings()
+from ..base import Auth0AccessTokenMixin
 
 
-class TestRolePatch:
+class TestRolePatch(Auth0AccessTokenMixin):
     """Тестирование редактирования роли."""
-
-    _access_token: str = None
 
     def test_ok(self, anon_client, role_dto):
         """Редактирование роли работает корректно."""
@@ -53,30 +47,8 @@ class TestRolePatch:
         body = {"name": new_name}
         anon_client.patch(f"/api/v1/roles/{role_id}", data=body, expected_status_code=401)
 
-    @property
-    def access_token(self):
-        if self._access_token is not None:
-            return self._access_token
-        return self._get_access_token()
-
     def _create_role(self, anon_client, role_dto) -> UUID:
         headers = {"Authorization": f"Bearer {self.access_token}"}
         body = {"name": role_dto.name, "description": role_dto.description}
         got = anon_client.post("/api/v1/roles", data=body, headers=headers)["data"]
         return got["id"]
-
-    @classmethod
-    def _get_access_token(cls):
-        payload = {
-            "client_id": settings.AUTH0_CLIENT_ID,
-            "client_secret": settings.AUTH0_CLIENT_SECRET,
-            "audience": settings.AUTH0_API_AUDIENCE,
-            "grant_type": "client_credentials",
-        }
-        headers = {"content-type": "application/json"}
-
-        got = requests.post(settings.AUTH0_TOKEN_URL, json=payload, headers=headers).json()
-
-        access_token = got["access_token"]
-        cls._access_token = access_token
-        return access_token
