@@ -15,6 +15,7 @@ from api.serializers import serialize
 from containers import Container
 from core.config import get_settings
 from throttling import limiter
+from tracer import traced
 from users import types
 
 from . import openapi
@@ -81,6 +82,7 @@ class UserLogin(Resource):
         return credentials, HTTPStatus.OK, headers
 
     @staticmethod
+    @traced("_login")
     def _login(user_service: UserService, email: str, password: str) -> types.JWTCredentials:
         credentials, user = user_service.login(email, password)
         user_service.update_login_history(

@@ -19,6 +19,7 @@ opentelemetry-exporter-jaeger==1.11.1
 opentelemetry-instrumentation-flask==0.30b1
 opentelemetry-instrumentation-requests==0.30b1
 opentelemetry-instrumentation-psycopg2==0.30b1
+opentelemetry-instrumentation-sqlalchemy==0.30b1
 
 Flask==2.1.2
 SQLAlchemy==1.4.36
@@ -36,7 +37,7 @@ Flask-Cors==3.0.10
 
 redis==4.3.1
 hiredis==2.0.0
-psycopg2-binary==2.9.3
+psycopg2==2.9.3
 
 gunicorn==20.1.0
 gevent==21.12.0
