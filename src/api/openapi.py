@@ -4,7 +4,7 @@ import importlib
 import inspect
 import operator
 from collections.abc import Iterator
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 from flask_restx import fields
 from flask_restx.model import RawModel
@@ -48,4 +48,4 @@ class WrapperModelFactory:
         return wrapper
 
 
-wrap_model: callable = WrapperModelFactory.wrap
+wrap_model: Callable = WrapperModelFactory.wrap
