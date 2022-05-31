@@ -165,6 +165,11 @@ make lint
 pre-commit install
 ```
 
+## Трассировка
+За мониторинг распределенной трассировки отвечает [Jaeger](https://www.jaegertracing.io/).
+Веб-интерфейс Jaeger UI доступен по адресу:
+- `http://localhost:16686/`
+
 ## Документация
 Документация в формате OpenAPI 3 доступна по адресам:
 - `${PROJECT_BASE_URL}/api/v1/docs` - Swagger
