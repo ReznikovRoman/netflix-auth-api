@@ -25,7 +25,7 @@ class UserRepository:
     def __init__(self, role_repository: RoleRepository):
         self.role_repository = role_repository
 
-    def add_roles_to_user(self, user: types.User, roles_names: list[str]) -> types.User:
+    def add_roles(self, user: types.User, roles_names: list[str]) -> types.User:
         """Добавление ролей с названиями `roles_names` пользователю."""
         roles = self.role_repository.find_roles_by_names(roles_names)
         with db_session() as session:
@@ -37,26 +37,25 @@ class UserRepository:
         user.roles = roles
         return user
 
-    def check_role_on_user(self, user_id: str, role_id: str):
+    def has_role(self, user_id: UUID, role_id: UUID) -> bool:
         """Проверка роли у пользователя."""
         with db_session() as session:
             return self._has_role(session, user_id, role_id)
 
-    def add_role_to_user(self, user_id: str, role_id: str):
+    def add_role(self, user_id: UUID, role_id: UUID) -> None:
         """Добавление роли пользователю."""
         with db_session() as session:
             if not self._has_role(session, user_id, role_id):
                 session.add(UsersRoles(user_id=user_id, role_id=role_id))
 
-    def delete_role_from_user(self, user_id: str, role_id: str):
+    def delete_role(self, user_id: UUID, role_id: UUID) -> None:
         """Удаление роли у пользователя."""
         with db_session() as session:
             if self._has_role(session, user_id, role_id):
-                user_role = UsersRoles.query.filter_by(user_id=user_id, role_id=role_id).first()
-                session.delete(user_role)
+                session.query(UsersRoles).filter(UsersRoles.user_id == user_id, UsersRoles.role_id == role_id).delete()
 
     @staticmethod
-    def get_active_user_or_none(user_id: str) -> types.User | None:
+    def get_active_user_or_none(user_id: UUID) -> types.User | None:
         """Получение активного пользователя по `user_id`."""
         user = UserRepository._active_user_with_roles(id=user_id).one_or_none()
         if user is None:

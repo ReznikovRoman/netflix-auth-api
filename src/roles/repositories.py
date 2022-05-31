@@ -2,6 +2,7 @@ from http import HTTPStatus
 from uuid import UUID
 
 from sqlalchemy import any_
+from sqlalchemy.exc import IntegrityError
 
 from db.postgres import db_session
 from db.postgres_security import user_datastore
@@ -31,20 +32,22 @@ class RoleRepository:
 
     @staticmethod
     def delete_role(role_id: UUID) -> None:
-        """Создание новой роли."""
+        """Удаление роли."""
         role = Role.query.get_or_404(role_id)
         with db_session() as session:
             session.delete(role)
 
     @staticmethod
-    def patch_role(role_id, name: str = None, description: str = None) -> types.Role:
-        """Отредактирвоать роль."""
+    def update_role(role_id: UUID, **kwargs) -> types.Role:
+        """Редактирование роли."""
         role = Role.query.get_or_404(role_id)
-        if not name and not description:
+        # Приходится изгаляться иначе передаются все аргументы даже которые не надо менять с значением None
+        kwargs_wo_none = {k: v for k, v in {**kwargs}.items() if v is not None}
+        if not kwargs_wo_none:
             return "", HTTPStatus.BAD_REQUEST
-        with db_session():
-            if name:
-                role.name = name
-            if description:
-                role.description = description
+        with db_session() as session:
+            try:
+                session.query(Role).filter_by(id=role_id).update(kwargs_wo_none)
+            except IntegrityError:  # На случай когда передано name которое уже существует в бд
+                return "", HTTPStatus.BAD_REQUEST
         return role.to_dto(), HTTPStatus.OK

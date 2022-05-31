@@ -19,8 +19,7 @@ from . import openapi
 from .serializers import LoginLogSerializer
 
 if TYPE_CHECKING:
-    from users.repositories import LoginLogRepository
-    from users.services import UserService
+    from users.repositories import LoginLogRepository, UserRepository
     current_user: types.User
 
 user_ns = Namespace("users", validate=True, description="Пользователи")
@@ -55,8 +54,10 @@ class UserRolesView(Resource):
     @user_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
     @user_ns.doc(security="auth0")
     @requires_auth(required_scope="create:roles")
-    def post(self, user_id, role_id, user_service: UserService = Provide[Container.user_package.user_service]):
-        user_service.add_role(user_id, role_id)
+    def post(
+        self, user_id, role_id, user_repository: UserRepository = Provide[Container.user_package.user_repository],
+    ):
+        user_repository.add_role(user_id, role_id)
         return "", HTTPStatus.OK
 
     @user_ns.response(HTTPStatus.NO_CONTENT.value, "Роль удалена у пользователя.")
@@ -64,8 +65,10 @@ class UserRolesView(Resource):
     @user_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
     @user_ns.doc(security="auth0")
     @requires_auth(required_scope="delete:roles")
-    def delete(self, user_id, role_id, user_service: UserService = Provide[Container.user_package.user_service]):
-        user_service.delete_role(user_id, role_id)
+    def delete(
+        self, user_id, role_id, user_repository: UserRepository = Provide[Container.user_package.user_repository],
+    ):
+        user_repository.delete_role(user_id, role_id)
         return "", HTTPStatus.NO_CONTENT
 
     @user_ns.response(HTTPStatus.NO_CONTENT.value, "Роль есть у пользователя.")
@@ -74,8 +77,8 @@ class UserRolesView(Resource):
     @user_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
     @user_ns.doc(security="auth0")
     @requires_auth(required_scope="read:roles")
-    def head(self, user_id, role_id, user_service: UserService = Provide[Container.user_package.user_service]):
-        result = user_service.check_role(user_id, role_id)
+    def head(self, user_id, role_id, user_repository: UserRepository = Provide[Container.user_package.user_repository]):
+        result = user_repository.has_role(user_id, role_id)
         if result:
             return "", HTTPStatus.NO_CONTENT
         return "", HTTPStatus.NOT_FOUND

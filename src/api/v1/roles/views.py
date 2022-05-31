@@ -23,7 +23,7 @@ register_openapi_models("api.v1.roles.openapi", role_ns)
 
 
 @role_ns.route("/")
-class RolesView(Resource):
+class RolesListView(Resource):
     """Роли."""
 
     @role_ns.expect(role_parser, validate=True)
@@ -56,7 +56,7 @@ class RolesView(Resource):
 
 
 @role_ns.route("/<uuid:role_id>")
-class RoleView(Resource):
+class RoleDetailView(Resource):
     """Роль."""
 
     @role_ns.doc(security="auth0", description="Удаление роли.")
@@ -72,7 +72,7 @@ class RoleView(Resource):
         return "", HTTPStatus.NO_CONTENT
 
     @role_ns.expect(role_change_parser, validate=True)
-    @role_ns.doc(security="auth0", description="Редактирвоание роли.")
+    @role_ns.doc(security="auth0", description="Редактирование роли.")
     @role_ns.response(HTTPStatus.OK.value, "Роль успешно отредактирована.", openapi.role_detail_doc)
     @role_ns.response(HTTPStatus.UNAUTHORIZED.value, "Требуется авторизация.")
     @role_ns.response(HTTPStatus.BAD_REQUEST.value, "Ошибка в запросе.")
@@ -80,9 +80,7 @@ class RoleView(Resource):
     @requires_auth(required_scope="create:roles")
     @serialize(RoleSerializer)
     def patch(self, role_id, role_repository: RoleRepository = Provide[Container.role_package.role_repository]):
-        """Отредактирвоать роль."""
-        args = role_change_parser.parse_args()
-        name = args.get("name")
-        description = args.get("description")
-        result = role_repository.patch_role(role_id=role_id, name=name, description=description)
+        """Отредактировать роль."""
+        kwargs = role_change_parser.parse_args()
+        result = role_repository.update_role(role_id=role_id, **kwargs)
         return result

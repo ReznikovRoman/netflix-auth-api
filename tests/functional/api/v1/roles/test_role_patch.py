@@ -7,32 +7,51 @@ from tests.functional.settings import get_settings
 settings = get_settings()
 
 
-class TestRoleDelete:
-    """Тестирование удаления роли."""
+class TestRolePatch:
+    """Тестирование редактирования роли."""
 
     _access_token: str = None
 
     def test_ok(self, anon_client, role_dto):
-        """Роль успешно удаляется."""
+        """Редактирование роли работает корректно."""
         role_id = self._create_role(anon_client, role_dto)
         headers = {"Authorization": f"Bearer {self.access_token}"}
-        anon_client.delete(f"/api/v1/roles/{role_id}", headers=headers, expected_status_code=204)
+        new_name = f"{role_dto.name}_new"
+        body = {"name": new_name}
+        got = anon_client.patch(f"/api/v1/roles/{role_id}", data=body, headers=headers)["data"]
 
-    def test_nonexistent_uuid(self, anon_client, role_dto):
-        """Ошибка при попытке удалить роль с несуществующим uuid."""
+        assert got["name"] == new_name
+
+    def test_name_is_busy(self, anon_client, role_dto):
+        """Ошибка если роль с таким именем уже существует."""
+        role_id = self._create_role(anon_client, role_dto)
         headers = {"Authorization": f"Bearer {self.access_token}"}
-        anon_client.delete("/api/v1/roles/XXX", headers=headers, expected_status_code=404)
+        new_name = f"{role_dto.name}_new"
+        body = {"name": new_name}
+        anon_client.patch(f"/api/v1/roles/{role_id}", data=body, headers=headers)
+        role_id = self._create_role(anon_client, role_dto)
+        anon_client.patch(f"/api/v1/roles/{role_id}", data=body, headers=headers, expected_status_code=400)
+
+    def test_role_does_not_exist(self, anon_client):
+        """Ошибка при редактировании не существующей роли."""
+        headers = {"Authorization": f"Bearer {self.access_token}"}
+        body = {"name": "XXX"}
+        anon_client.patch("/api/v1/roles/XXX", data=body, headers=headers, expected_status_code=404)
 
     def test_not_valid_access_token(self, anon_client, role_dto):
         """Ошибка при не валидном access_token."""
         role_id = self._create_role(anon_client, role_dto)
         headers = {"Authorization": "Bearer XXX"}
-        anon_client.delete(f"/api/v1/roles/{role_id}", headers=headers, expected_status_code=401)
+        new_name = f"{role_dto.name}_new"
+        body = {"name": new_name}
+        anon_client.patch(f"/api/v1/roles/{role_id}", data=body, headers=headers, expected_status_code=401)
 
     def test_no_access_token(self, anon_client, role_dto):
         """Ошибка при отсутствии access_token."""
         role_id = self._create_role(anon_client, role_dto)
-        anon_client.delete(f"/api/v1/roles/{role_id}", expected_status_code=401)
+        new_name = f"{role_dto.name}_new"
+        body = {"name": new_name}
+        anon_client.patch(f"/api/v1/roles/{role_id}", data=body, expected_status_code=401)
 
     @property
     def access_token(self):

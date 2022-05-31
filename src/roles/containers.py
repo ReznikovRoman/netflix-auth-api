@@ -1,6 +1,6 @@
 from dependency_injector import containers, providers
 
-from . import repositories, services
+from . import repositories
 
 
 class RoleContainer(containers.DeclarativeContainer):
@@ -11,6 +11,5 @@ class RoleContainer(containers.DeclarativeContainer):
     )
 
     role_service = providers.Factory(
-        services.RoleService,
         role_repository=role_repository,
     )
