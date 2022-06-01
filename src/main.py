@@ -9,6 +9,9 @@ from db.postgres import init_postgres
 from db.postgres_security import init_security
 from jwt_manager import init_jwt
 from middleware.errors import init_error_handlers
+from middleware.request_id import init_custom_request
+from throttling import init_limiter
+from tracer import init_tracer
 
 settings = get_settings()
 
@@ -39,6 +42,9 @@ def create_app() -> Flask:
         retry_on_timeout=settings.REDIS_RETRY_ON_TIMEOUT,
     )
     init_jwt(app)
+    init_limiter(app)
+    init_tracer(app)
+    init_custom_request(app)
 
     return app
 

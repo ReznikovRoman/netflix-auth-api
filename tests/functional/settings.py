@@ -31,6 +31,7 @@ class Test(BaseSettings):
     # Redis
     REDIS_HOST: str
     REDIS_PORT: int
+    REDIS_THROTTLE_STORAGE_DB: int
     REDIS_DEFAULT_CHARSET: str = "utf-8"
     REDIS_DECODE_RESPONSES: bool | Literal[True, False] = True
     REDIS_RETRY_ON_TIMEOUT: bool = True

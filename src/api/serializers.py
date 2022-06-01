@@ -1,6 +1,6 @@
 import dataclasses
 import functools
-from typing import Any, ClassVar, Type
+from typing import Any, Callable, ClassVar, Type
 
 from flask_restx.reqparse import RequestParser
 from marshmallow import Schema, post_dump, post_load, pre_load
@@ -33,10 +33,10 @@ class BaseSerializer(Schema):
         return self.model(**data)
 
 
-def serialize(serializer_class: Type[BaseSerializer], many: bool = False) -> callable:
+def serialize(serializer_class: Type[BaseSerializer], many: bool = False) -> Callable:
     """Декоратор для сериализации объекта с помощью `serializer_class`."""
 
-    def decorator(func) -> callable:
+    def decorator(func) -> Callable:
         @functools.wraps(func)
         def wrapper(*args, **kwargs) -> Any:
             response, *params = func(*args, **kwargs)

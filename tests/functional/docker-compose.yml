@@ -59,6 +59,9 @@ services:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
+      - "--tracing.jaeger=true"
+      - "--tracing.jaeger.samplingParam=0"
+      - "--tracing.jaeger.traceContextHeaderName=X-Request-Id"
     ports:
       - "8009:80"
       - "8082:8080"

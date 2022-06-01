@@ -8,7 +8,7 @@ from common.exceptions import NotFoundError
 from roles.constants import DefaultRoles
 
 from . import types
-from .exceptions import UserAlreadyExistsError, UserInvalidCredentialsError
+from .exceptions import UserAlreadyExistsError, UserInvalidCredentialsError, UserPasswordChangeError
 
 if TYPE_CHECKING:
     from .jwt import JWTAuth
@@ -56,3 +56,15 @@ class UserService:
     def logout(self, jwt: dict) -> None:
         """Выход пользователя из аккаунта."""
         self.jwt_auth.revoke_tokens(jwt)
+
+    def change_password(
+        self, jwt: dict, user: types.User, old_password: str, new_password1: str, new_password2: str,
+    ) -> types.User:
+        """Смена пароля."""
+        if not self.user_repository.is_valid_password(user.password, old_password):
+            raise UserInvalidCredentialsError
+        if new_password1 != new_password2:
+            raise UserPasswordChangeError(message="Passwords don't match", code="passwords_mismatch")
+        user = self.user_repository.change_password(user, new_password1)
+        self.jwt_auth.revoke_tokens(jwt)
+        return user

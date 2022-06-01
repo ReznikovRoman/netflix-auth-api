@@ -1,5 +1,5 @@
 from functools import wraps
-from typing import Any, Final
+from typing import Any, Callable, Final
 
 from jose import jwt
 
@@ -48,7 +48,7 @@ class requires_auth:  # noqa
     def __init__(self, required_scope: str | None = None):
         self.required_scope = required_scope
 
-    def __call__(self, func) -> callable:
+    def __call__(self, func) -> Callable:
         @wraps(func)
         def wrapper(*args, **kwargs) -> Any:
             token = get_token_from_header()
