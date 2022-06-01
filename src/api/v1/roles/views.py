@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from http import HTTPStatus
 from typing import TYPE_CHECKING
+from uuid import UUID
 
 from dependency_injector.wiring import Provide, inject
 from flask_restx import Resource
@@ -23,7 +24,7 @@ register_openapi_models("api.v1.roles.openapi", role_ns)
 
 
 @role_ns.route("/")
-class RolesListView(Resource):
+class RoleListView(Resource):
     """Роли."""
 
     @role_ns.expect(role_parser, validate=True)
@@ -36,10 +37,8 @@ class RolesListView(Resource):
     @inject
     def post(self, role_repository: RoleRepository = Provide[Container.role_package.role_repository]):
         """Создать роль."""
-        args = role_parser.parse_args()
-        name = args.get("name")
-        description = args.get("description")
-        role = role_repository.create_role(name=name, description=description)
+        role_data = role_parser.parse_args()
+        role = role_repository.create(**role_data)
         return role, HTTPStatus.CREATED
 
     @role_ns.doc(security="auth0", description="Список ролей.")
@@ -51,7 +50,7 @@ class RolesListView(Resource):
     @inject
     def get(self, role_repository: RoleRepository = Provide[Container.role_package.role_repository]):
         """Получить список ролей."""
-        roles = role_repository.get_all_roles()
+        roles = role_repository.get_all()
         return roles, HTTPStatus.OK
 
 
@@ -66,9 +65,9 @@ class RoleDetailView(Resource):
     @role_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
     @requires_auth(required_scope="delete:roles")
     @inject
-    def delete(self, role_id, role_repository: RoleRepository = Provide[Container.role_package.role_repository]):
+    def delete(self, role_id: UUID, role_repository: RoleRepository = Provide[Container.role_package.role_repository]):
         """Удалить роль."""
-        role_repository.delete_role(role_id)
+        role_repository.delete(role_id)
         return "", HTTPStatus.NO_CONTENT
 
     @role_ns.expect(role_change_parser, validate=True)
@@ -77,10 +76,10 @@ class RoleDetailView(Resource):
     @role_ns.response(HTTPStatus.UNAUTHORIZED.value, "Требуется авторизация.")
     @role_ns.response(HTTPStatus.BAD_REQUEST.value, "Ошибка в запросе.")
     @role_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
-    @requires_auth(required_scope="create:roles")
+    @requires_auth(required_scope="change:roles")
     @serialize(RoleSerializer)
-    def patch(self, role_id, role_repository: RoleRepository = Provide[Container.role_package.role_repository]):
+    def patch(self, role_id: UUID, role_repository: RoleRepository = Provide[Container.role_package.role_repository]):
         """Отредактировать роль."""
-        kwargs = role_change_parser.parse_args()
-        result = role_repository.update_role(role_id=role_id, **kwargs)
-        return result
+        role_data = role_change_parser.parse_args()
+        role = role_repository.update(role_id, **role_data)
+        return role, HTTPStatus.OK

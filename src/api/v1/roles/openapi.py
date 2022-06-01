@@ -1,7 +1,7 @@
 from flask_restx import OrderedModel, fields
 
 role_detail_doc = OrderedModel(
-    "RoleDetial",
+    "RoleDetail",
     {
         "id": fields.String(),
         "name": fields.String(),

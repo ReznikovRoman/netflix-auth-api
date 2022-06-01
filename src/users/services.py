@@ -8,7 +8,7 @@ from common.exceptions import NotFoundError
 from roles.constants import DefaultRoles
 
 from . import types
-from .exceptions import UserAlreadyExistsError, UserInvalidCredentials
+from .exceptions import UserAlreadyExistsError, UserInvalidCredentialsError
 
 if TYPE_CHECKING:
     from .jwt import JWTAuth
@@ -26,7 +26,7 @@ class UserService:
     def register_new_user(self, email: str, password: str) -> types.User:
         if self.user_repository.user_exists(email):
             raise UserAlreadyExistsError
-        user = self.user_repository.create_user(email, password)
+        user = self.user_repository.create(email, password)
         self.assign_default_roles(user)
         return user
 
@@ -37,11 +37,11 @@ class UserService:
     def login(self, email: str, password: str) -> tuple[types.JWTCredentials, types.User]:
         """Аутентификация пользователя в системе."""
         try:
-            user = self.user_repository.get_active_user_by_email(email)
+            user = self.user_repository.get_active_by_email(email)
         except NoResultFound:
             raise NotFoundError
         if not self.user_repository.is_valid_password(user, password):
-            raise UserInvalidCredentials
+            raise UserInvalidCredentialsError
         credentials = self.jwt_auth.generate_tokens(user)
         return credentials, user
 

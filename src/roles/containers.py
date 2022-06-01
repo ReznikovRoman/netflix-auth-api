@@ -9,7 +9,3 @@ class RoleContainer(containers.DeclarativeContainer):
     role_repository = providers.Factory(
         repositories.RoleRepository,
     )
-
-    role_service = providers.Factory(
-        role_repository=role_repository,
-    )

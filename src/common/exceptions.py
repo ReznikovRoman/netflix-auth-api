@@ -35,6 +35,14 @@ class NotFoundError(NetflixAuthError):
     status_code: int = HTTPStatus.NOT_FOUND
 
 
+class ConflictError(NetflixAuthError):
+    """Конфликт между существующими ресурсами."""
+
+    message = "Resource cannot be processed"
+    code = "resource_conflict"
+    status_code: int = HTTPStatus.CONFLICT
+
+
 class ImproperlyConfiguredError(NetflixAuthError):
     """Неверная конфигурация."""
 

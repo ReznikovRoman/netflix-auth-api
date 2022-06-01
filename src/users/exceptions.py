@@ -11,7 +11,7 @@ class UserAlreadyExistsError(NetflixAuthError):
     status_code = HTTPStatus.CONFLICT
 
 
-class UserInvalidCredentials(NetflixAuthError):
+class UserInvalidCredentialsError(NetflixAuthError):
     """Данные от аккаунта пользователя неверные."""
 
     message = "Invalid credentials"
