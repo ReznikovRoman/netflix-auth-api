@@ -40,7 +40,7 @@ class UserService:
             user = self.user_repository.get_active_by_email(email)
         except NoResultFound:
             raise NotFoundError
-        if not self.user_repository.is_valid_password(user, password):
+        if not self.user_repository.is_valid_password(user.password, password):
             raise UserInvalidCredentialsError
         credentials = self.jwt_auth.generate_tokens(user)
         return credentials, user
