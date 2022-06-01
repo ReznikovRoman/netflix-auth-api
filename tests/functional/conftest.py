@@ -1,17 +1,23 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+from uuid import UUID
 
 import pytest
 import sqlalchemy
 from sqlalchemy import create_engine
 
 from db.postgres import db
+from roles import types as rt
 from src.main import create_app
+from users import types as ut
 
+from .constants import ROLE_UUID, USER_UUID
 from .settings import get_settings
 from .testdata.postgres import default_roles, roles_table
-from .testlib import Auth0Client, create_anon_client, create_auth0_client, flush_redis_cache, teardown_postgres
+from .testlib import (
+    Auth0Client, create_anon_client, create_auth0_client, create_auth_client, flush_redis_cache, teardown_postgres,
+)
 
 if TYPE_CHECKING:
     from .testlib import APIClient
@@ -19,11 +25,35 @@ if TYPE_CHECKING:
 settings = get_settings()
 
 
+@pytest.fixture
+def user_uuid() -> str:
+    return USER_UUID
+
+
+@pytest.fixture
+def role_uuid() -> str:
+    return ROLE_UUID
+
+
+@pytest.fixture
+def user_dto(model_factory, user_uuid, role_uuid) -> ut.User:
+    roles = [rt.Role(id=UUID(role_uuid), name="CustomRole", description="Description")]
+    return model_factory.create_factory(ut.User).build(
+        id=user_uuid, password="test", email="user@test.com", active=True, roles=roles)
+
+
 @pytest.fixture(scope="session")
 def anon_client() -> APIClient:
     anon_client_ = create_anon_client()
     yield anon_client_
     anon_client_.close()
+
+
+@pytest.fixture
+def auth_client(user_dto) -> APIClient:
+    auth_client_ = create_auth_client(user_dto)
+    yield auth_client_
+    auth_client_.close()
 
 
 @pytest.fixture(scope="session")

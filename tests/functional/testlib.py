@@ -11,6 +11,8 @@ import sqlalchemy
 from requests.sessions import Session
 from sqlalchemy.engine import Engine
 
+from users.types import User
+
 from .settings import get_settings
 
 if TYPE_CHECKING:
@@ -25,13 +27,21 @@ settings = get_settings()
 class APIClient(Session):
     """Requests-based клиент для тестов."""
 
-    def __init__(self, base_url: str = "http://server:8002") -> None:
+    _access_token: str = None
+
+    def __init__(self, base_url: str = "http://server:8002", user: User | None = None) -> None:
         super().__init__()
         self.base_url = base_url
+        self.user = user
 
     def request(self, method, url, *args, **kwargs):
         url = urljoin(self.base_url, url)
-        return super(APIClient, self).request(method, url, *args, **kwargs)
+        headers = kwargs.pop("headers", {})
+        anon = kwargs.pop("anon", False)
+        if self.user is not None and not anon:
+            headers.update({"Authorization": f"Bearer {self.access_token}"})
+        response = super(APIClient, self).request(method, url, headers=headers, *args, **kwargs)
+        return response
 
     def head(self, *args, **kwargs) -> APIResponse:
         return self._api_call("head", kwargs.get("expected_status_code", 200), *args, **kwargs)
@@ -80,6 +90,20 @@ class APIClient(Session):
             return False
         return "json" in content_type
 
+    @property
+    def access_token(self):
+        if self._access_token is not None:
+            return self._access_token
+        return self._get_access_token()
+
+    def _get_access_token(self):
+        body = {"email": self.user.email, "password": self.user.password}
+        requests.post(urljoin(self.base_url, "/api/v1/auth/register"), data=body)
+        credentials = requests.post(urljoin(self.base_url, "/api/v1/auth/login"), data=body).json()["data"]
+        access_token = credentials["access_token"]
+        self._access_token = access_token
+        return access_token
+
 
 class Auth0Client(APIClient):
     """Клиент для тестов с авторизацией auth0."""
@@ -120,6 +144,10 @@ class Auth0Client(APIClient):
 
 def create_anon_client() -> APIClient:
     return APIClient(base_url=settings.CLIENT_BASE_URL)
+
+
+def create_auth_client(user: User) -> APIClient:
+    return APIClient(base_url=settings.CLIENT_BASE_URL, user=user)
 
 
 def create_auth0_client() -> Auth0Client:

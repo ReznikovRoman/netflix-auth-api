@@ -73,10 +73,7 @@ class TestRefreshToken(BaseClientTest):
 
     @staticmethod
     def _user_login(anon_client, user_dto) -> tuple[str, str]:
-        body = {
-            "email": user_dto.email,
-            "password": user_dto.password,
-        }
+        body = {"email": user_dto.email, "password": user_dto.password}
         anon_client.post("/api/v1/auth/register", data=body)
         credentials = anon_client.post("/api/v1/auth/login", data=body, expected_status_code=200)["data"]
         return credentials["access_token"], credentials["refresh_token"]

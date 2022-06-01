@@ -12,10 +12,7 @@ class TestUserRegistration(BaseClientTest):
 
     def test_ok(self, user_dto):
         """При корректном теле запроса пользователь с ролями по умолчанию регистрируется/создается корректно."""
-        body = {
-            "email": user_dto.email,
-            "password": "test-password",
-        }
+        body = {"email": user_dto.email, "password": "test-password"}
         got = self.client.post("/api/v1/auth/register", data=body)["data"]
 
         assert got["id"] is not None
@@ -34,10 +31,7 @@ class TestUserRegistration(BaseClientTest):
 
     def test_invalid_body(self):
         """Если в теле запроса неправильно заполнены поля, то клиент получит соответствующую ошибку."""
-        body = {
-            "email": "wrongemail.com",
-            "password": "test-password",
-        }
+        body = {"email": "wrongemail.com", "password": "test-password"}
         got = self.client.post("/api/v1/auth/register", data=body, expected_status_code=400)
 
         assert "errors" in got
@@ -45,10 +39,7 @@ class TestUserRegistration(BaseClientTest):
 
     def test_user_exists(self):
         """Если пользователь уже существует с почтой из формы регистрации, то клиент получит соответствующую ошибку."""
-        body = {
-            "email": "duplicate@gmail.com",
-            "password": "test-password",
-        }
+        body = {"email": "duplicate@gmail.com", "password": "test-password"}
         self.client.post("/api/v1/auth/register", data=body)
 
         got = self.client.post("/api/v1/auth/register", data=body, expected_status_code=409)  # делаем второй запрос

@@ -87,6 +87,22 @@ class Auth0ClientTest(
         self.method = self.method.lower()
 
 
+class AuthClientTest(
+    AuthTestMixin,
+    BaseClientTest,
+):
+    """Базовый класс для тестов с JWT авторизацией."""
+
+    client: APIClient
+
+    @pytest.fixture(autouse=True)
+    def _setup(self, auth_client, anon_client):
+        self.client: APIClient = auth_client
+        self.anon_client: APIClient = anon_client
+        self.endpoint = self.endpoint.removesuffix("/")
+        self.method = self.method.lower()
+
+
 class Auth0AccessTokenMixin:
     """Миксин для получения access токена для авторизации auth0."""
 
