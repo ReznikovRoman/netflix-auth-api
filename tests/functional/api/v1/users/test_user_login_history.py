@@ -1,33 +1,48 @@
-class TestUserLoginHistory:
+import pytest
+
+from tests.functional.api.v1.base import AuthTestMixin, BaseClientTest
+
+
+class TestUserLoginHistory(
+    AuthTestMixin,
+    BaseClientTest,
+):
     """Тестирование получения истории входов в аккаунт."""
 
-    def test_ok(self, anon_client, user_dto):
+    endpoint = "/api/v1/users/me/login-history"
+    method = "get"
+
+    jwt_invalid_access_token_status_code = 422
+
+    def test_ok(self, user_dto):
         """История входов пользователя корректно логируется."""
-        access_token, _ = self._user_login(anon_client, user_dto)
+        access_token, _ = self._user_login(self.client, user_dto)
         headers = {"Authorization": f"Bearer {access_token}"}
 
-        got = anon_client.get("/api/v1/users/me/login-history", headers=headers)["data"]
+        got = self.client.get("/api/v1/users/me/login-history", headers=headers)["data"]
 
         assert len(got) == 1
         assert got[0]["device_type"] == "pc"
 
-    def test_pagination(self, anon_client, user_dto):
+    def test_pagination(self, user_dto):
         """Пагинация истории входов работает корректно."""
-        access_token, _ = self._user_login(anon_client, user_dto)
+        access_token, _ = self._user_login(self.client, user_dto)
         headers = {"Authorization": f"Bearer {access_token}"}
         for _ in range(2):
-            self._login(anon_client, user_dto)
+            self._login(self.client, user_dto)
 
         pagination_params = {"page": 1, "per_page": 2}
-        got = anon_client.get("/api/v1/users/me/login-history", params=pagination_params, headers=headers)["data"]
+        got = self.client.get("/api/v1/users/me/login-history", params=pagination_params, headers=headers)["data"]
 
         assert len(got) == 2
 
-    def test_no_credentials(self, anon_client, user_dto):
-        """Если access токена нет в заголовках, то клиент получит соответствующую ошибку."""
-        self._user_login(anon_client, user_dto)
+    @pytest.fixture
+    def pre_jwt_invalid_access_token(self, user_dto):
+        self._user_login(self.client, user_dto)
 
-        anon_client.get("/api/v1/users/me/login-history", expected_status_code=401)
+    @pytest.fixture
+    def pre_jwt_no_credentials(self, user_dto):
+        self._user_login(self.client, user_dto)
 
     def _user_login(self, anon_client, user_dto) -> tuple[str, str]:
         self._register(anon_client, user_dto)
