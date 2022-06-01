@@ -1,39 +1,38 @@
 from uuid import UUID
 
-from ..base import Auth0AccessTokenMixin
+import pytest
+
+from ..base import Auth0ClientTest
 
 
-class TestRoleDelete(Auth0AccessTokenMixin):
+class TestRoleDelete(Auth0ClientTest):
     """Тестирование удаления роли."""
 
-    def test_ok(self, anon_client, role_dto):
+    endpoint = "/api/v1/roles/{role_id}"
+    method = "delete"
+    format_url = True
+
+    def test_ok(self, role_dto):
         """Роль успешно удаляется."""
-        role_id = self._create_role(anon_client, role_dto)
-        headers = {"Authorization": f"Bearer {self.access_token}"}
+        role_id = self._create_role(role_dto)
 
-        anon_client.delete(f"/api/v1/roles/{role_id}", headers=headers, expected_status_code=204)
+        self.client.delete(f"/api/v1/roles/{role_id}", expected_status_code=204)
 
-    def test_not_found(self, anon_client, role_dto):
+    def test_not_found(self, role_dto):
         """Если роли с данным id нет в БД, то клиент получит ошибку."""
-        headers = {"Authorization": f"Bearer {self.access_token}"}
+        self.client.delete("/api/v1/roles/XXX", expected_status_code=404)
 
-        anon_client.delete("/api/v1/roles/XXX", headers=headers, expected_status_code=404)
+    @pytest.fixture
+    def pre_jwt_invalid_access_token(self, role_dto):
+        role_id = self._create_role(role_dto)
+        return {"role_id": role_id}
 
-    def test_invalid_access_token(self, anon_client, role_dto):
-        """Если access токен в заголовке неверный, то клиент получит ошибку."""
-        role_id = self._create_role(anon_client, role_dto)
-        headers = {"Authorization": "Bearer XXX"}
+    @pytest.fixture
+    def pre_jwt_no_credentials(self, role_dto):
+        role_id = self._create_role(role_dto)
+        return {"role_id": role_id}
 
-        anon_client.delete(f"/api/v1/roles/{role_id}", headers=headers, expected_status_code=401)
-
-    def test_no_credentials(self, anon_client, role_dto):
-        """Если access токена нет в заголовках, то клиент получит соответствующую ошибку."""
-        role_id = self._create_role(anon_client, role_dto)
-
-        anon_client.delete(f"/api/v1/roles/{role_id}", expected_status_code=401)
-
-    def _create_role(self, anon_client, role_dto) -> UUID:
-        headers = {"Authorization": f"Bearer {self.access_token}"}
+    def _create_role(self, role_dto) -> UUID:
         body = {"name": role_dto.name, "description": role_dto.description}
-        got = anon_client.post("/api/v1/roles", data=body, headers=headers)["data"]
+        got = self.client.post("/api/v1/roles", data=body)["data"]
         return got["id"]
