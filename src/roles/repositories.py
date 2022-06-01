@@ -5,8 +5,7 @@ from sqlalchemy import any_
 from sqlalchemy.exc import IntegrityError, NoResultFound
 
 from common.exceptions import ConflictError, NotFoundError
-from db.postgres import db_session
-from db.postgres_security import user_datastore
+from db.postgres import db, db_session
 
 from . import types
 from .models import Role
@@ -27,8 +26,15 @@ class RoleRepository:
     @staticmethod
     def create(name: str, description: str) -> types.Role:
         """Создание новой роли."""
-        with db_session():
-            role: Role = user_datastore.create_role(name=name, description=description)
+        try:
+            role = Role(name=name, description=description)
+            db.session.add(role)
+            db.session.commit()
+        except IntegrityError:
+            raise ConflictError(message="Role with such name already exists", code="role_conflict")
+        except Exception as e:
+            db.session.rollback()
+            raise e
         return role.to_dto()
 
     @staticmethod

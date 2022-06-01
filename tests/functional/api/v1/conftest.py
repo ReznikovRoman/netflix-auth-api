@@ -29,3 +29,9 @@ def user_dto(model_factory, user_uuid, role_uuid) -> ut.User:
 def role_dto(model_factory, role_uuid) -> rt.Role:
     return model_factory.create_factory(rt.Role).build(
         id=role_uuid, name="name", description="description")
+
+
+@pytest.fixture
+def another_role_dto(model_factory, role_uuid) -> rt.Role:
+    return model_factory.create_factory(rt.Role).build(
+        id=role_uuid, name="another", description="description")

@@ -52,7 +52,7 @@ class UserRolesView(Resource):
     """Роли пользователя."""
 
     @user_ns.doc(security="auth0")
-    @user_ns.response(HTTPStatus.NO_CONTENT.value, "Роль добавлена пользователю.")
+    @user_ns.response(HTTPStatus.CREATED.value, "Роль добавлена пользователю.")
     @user_ns.response(HTTPStatus.UNAUTHORIZED.value, "Требуется авторизация.")
     @user_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
     @requires_auth(required_scope="assign:roles")
@@ -63,7 +63,7 @@ class UserRolesView(Resource):
         user_repository: UserRepository = Provide[Container.user_package.user_repository],
     ):
         user_repository.assign_role(user_id, role_id)
-        return "", HTTPStatus.NO_CONTENT
+        return "", HTTPStatus.CREATED
 
     @user_ns.doc(security="auth0")
     @user_ns.response(HTTPStatus.NO_CONTENT.value, "Роль удалена у пользователя.")

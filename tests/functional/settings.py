@@ -39,9 +39,9 @@ class Test(BaseSettings):
     # OAUTH
     AUTH0_API_AUDIENCE: str
     AUTH0_ISSUER: str
-    AUTH0_CLIENT_SECRET: str
     AUTH0_CLIENT_ID: str
-    AUTH0_TOKEN_URL: str
+    AUTH0_CLIENT_SECRET: str
+    AUTH0_AUTHORIZATION_URL: str
 
     class Config(EnvConfig):
         env_prefix = "NAA_"

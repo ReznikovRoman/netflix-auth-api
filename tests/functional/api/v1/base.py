@@ -26,7 +26,7 @@ class Auth0AccessTokenMixin:
         }
         headers = {"content-type": "application/json"}
 
-        got = requests.post(settings.AUTH0_TOKEN_URL, json=payload, headers=headers).json()
+        got = requests.post(settings.AUTH0_AUTHORIZATION_URL, json=payload, headers=headers).json()
 
         access_token = got["access_token"]
         cls._access_token = access_token

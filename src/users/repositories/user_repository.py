@@ -5,8 +5,10 @@ from uuid import UUID
 
 from sqlalchemy import func
 from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.exc import IntegrityError
 from werkzeug.security import check_password_hash, generate_password_hash
 
+from common.exceptions import NotFoundError
 from db.postgres import db, db_session
 from db.postgres_security import user_datastore
 from roles.models import Role
@@ -50,7 +52,10 @@ class UserRepository:
             stmt = (
                 insert(UsersRoles, postgresql_ignore_duplicates=True).values(user_id=user_id, role_id=role_id)
             )
-            session.execute(stmt)
+            try:
+                session.execute(stmt)
+            except IntegrityError:
+                raise NotFoundError
 
     @staticmethod
     def revoke_role(user_id: UUID, role_id: UUID) -> None:
