@@ -115,7 +115,7 @@ class Auth0Client(APIClient):
 
     def request(self, method, url, *args, **kwargs):
         url = urljoin(self.base_url, url)
-        headers = kwargs.get("headers", {})
+        headers = kwargs.pop("headers", {})
         headers.update({"Authorization": f"Bearer {self.access_token}"})
         response = super(APIClient, self).request(method, url, headers=headers, *args, **kwargs)
         return response
