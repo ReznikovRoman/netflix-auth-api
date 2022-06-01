@@ -8,7 +8,7 @@ from common.exceptions import NotFoundError
 from roles.constants import DefaultRoles
 
 from . import types
-from .exceptions import UserAlreadyExistsError, UserInvalidCredentials, UserPasswordChangeError
+from .exceptions import UserAlreadyExistsError, UserInvalidCredentialsError, UserPasswordChangeError
 
 if TYPE_CHECKING:
     from .jwt import JWTAuth
@@ -26,22 +26,22 @@ class UserService:
     def register_new_user(self, email: str, password: str) -> types.User:
         if self.user_repository.user_exists(email):
             raise UserAlreadyExistsError
-        user = self.user_repository.create_user(email, password)
+        user = self.user_repository.create(email, password)
         self.assign_default_roles(user)
         return user
 
     def assign_default_roles(self, user: types.User) -> types.User:
         """Назначение ролей по умолчанию пользователю."""
-        return self.user_repository.add_roles_to_user(user, roles_names=[DefaultRoles.VIEWERS.value])
+        return self.user_repository.add_roles(user, roles_names=[DefaultRoles.VIEWERS.value])
 
     def login(self, email: str, password: str) -> tuple[types.JWTCredentials, types.User]:
         """Аутентификация пользователя в системе."""
         try:
-            user = self.user_repository.get_active_user_by_email(email)
+            user = self.user_repository.get_active_by_email(email)
         except NoResultFound:
             raise NotFoundError
         if not self.user_repository.is_valid_password(user.password, password):
-            raise UserInvalidCredentials
+            raise UserInvalidCredentialsError
         credentials = self.jwt_auth.generate_tokens(user)
         return credentials, user
 
@@ -62,7 +62,7 @@ class UserService:
     ) -> types.User:
         """Смена пароля."""
         if not self.user_repository.is_valid_password(user.password, old_password):
-            raise UserInvalidCredentials
+            raise UserInvalidCredentialsError
         if new_password1 != new_password2:
             raise UserPasswordChangeError(message="Passwords don't match", code="passwords_mismatch")
         user = self.user_repository.change_password(user, new_password1)

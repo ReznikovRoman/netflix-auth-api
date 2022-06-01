@@ -19,6 +19,30 @@ if TYPE_CHECKING:
 settings = get_settings()
 
 
+@pytest.fixture(scope="session")
+def anon_client() -> APIClient:
+    anon_client = create_anon_client()
+    yield anon_client
+    anon_client.close()
+
+
+@pytest.fixture(autouse=True)
+def _autoflush_cache() -> None:
+    try:
+        yield
+    finally:
+        flush_redis_cache()
+
+
+@pytest.fixture(autouse=True)
+def _autoflush_db(db_engine) -> None:
+    try:
+        yield
+    finally:
+        teardown_postgres(db_engine)
+        db_engine.execute(roles_table.insert(), default_roles)
+
+
 @pytest.fixture
 def app_():
     app = create_app()
@@ -26,13 +50,6 @@ def app_():
         "TESTING": True,
     })
     yield app
-
-
-@pytest.fixture(scope="session")
-def anon_client() -> APIClient:
-    anon_client = create_anon_client()
-    yield anon_client
-    anon_client.close()
 
 
 @pytest.fixture(scope="session")
@@ -71,20 +88,3 @@ def db_session(app_):
     session.remove()
     transaction.rollback()
     connection.close()
-
-
-@pytest.fixture(autouse=True)
-def _autoflush_cache() -> None:
-    try:
-        yield
-    finally:
-        flush_redis_cache()
-
-
-@pytest.fixture(autouse=True)
-def _autoflush_db(db_engine) -> None:
-    try:
-        yield
-    finally:
-        teardown_postgres(db_engine)
-        db_engine.execute(roles_table.insert(), default_roles)

@@ -1,25 +1,18 @@
-from users.models import User
-
-
 class TestUserLogin:
     """Тестирование аутентификации пользователей."""
 
-    def test_ok(self, db_session, anon_client, user_dto):
+    def test_ok(self, anon_client, user_dto):
         """При корректных доступах (почта/пароль) клиент получает пару access и refresh токенов."""
         body = {
             "email": user_dto.email,
             "password": user_dto.password,
         }
-        user_id = anon_client.post("/api/v1/auth/register", data=body)["data"]["id"]
-        got = anon_client.post("/api/v1/auth/login", data=body, expected_status_code=200)["data"]
+        anon_client.post("/api/v1/auth/register", data=body)
 
-        user = db_session.query(User).one()
+        got = anon_client.post("/api/v1/auth/login", data=body, expected_status_code=200)["data"]
 
         assert "access_token" in got
         assert "refresh_token" in got
-        assert str(user.id) == user_id
-        assert user.email == user_dto.email
-        assert user.password != user_dto.password
 
     def test_user_not_found(self, anon_client):
         """Если активного пользователя с данной почтой нет в системе, то клиент получит соответствующую ошибку."""
@@ -38,6 +31,7 @@ class TestUserLogin:
             "password": "wrongpassword",
         }
         anon_client.post("/api/v1/auth/register", data={"email": user_dto.email, "password": user_dto.password})
+
         got = anon_client.post("/api/v1/auth/login", data=body, expected_status_code=401)
 
         assert "error" in got

@@ -68,7 +68,7 @@ class APIClient(Session):
 
     def _decode(self, response: Response) -> APIResponse:
         content = response.content.decode("utf-8", errors="ignore")
-        if self.is_json(response):
+        if self.is_json(response) and content:
             return json.loads(content)
         return content
 

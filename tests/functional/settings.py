@@ -37,6 +37,13 @@ class Test(BaseSettings):
     REDIS_RETRY_ON_TIMEOUT: bool = True
     REDIS_DEFAULT_TIMEOUT: int = 5
 
+    # OAUTH
+    AUTH0_API_AUDIENCE: str
+    AUTH0_ISSUER: str
+    AUTH0_CLIENT_ID: str
+    AUTH0_CLIENT_SECRET: str
+    AUTH0_AUTHORIZATION_URL: str
+
     class Config(EnvConfig):
         env_prefix = "NAA_"
         case_sensitive = True
