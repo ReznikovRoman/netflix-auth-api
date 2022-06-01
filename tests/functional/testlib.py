@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Union
 from urllib.parse import urljoin
 
 import redis
+import requests
 import sqlalchemy
 from requests.sessions import Session
 from sqlalchemy.engine import Engine
@@ -80,8 +81,49 @@ class APIClient(Session):
         return "json" in content_type
 
 
+class Auth0Client(APIClient):
+    """Клиент для тестов с авторизацией auth0."""
+
+    _access_token: str = None
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+
+    def request(self, method, url, *args, **kwargs):
+        url = urljoin(self.base_url, url)
+        headers = kwargs.get("headers", {})
+        headers.update({"Authorization": f"Bearer {self.access_token}"})
+        response = super(APIClient, self).request(method, url, headers=headers, *args, **kwargs)
+        return response
+
+    @property
+    def access_token(self):
+        if self._access_token is not None:
+            return self._access_token
+        return self._get_access_token()
+
+    def _get_access_token(self):
+        payload = {
+            "client_id": settings.AUTH0_CLIENT_ID,
+            "client_secret": settings.AUTH0_CLIENT_SECRET,
+            "audience": settings.AUTH0_API_AUDIENCE,
+            "grant_type": settings.AUTH0_GRANT_TYPE,
+        }
+        headers = {"content-type": "application/json"}
+
+        got = requests.post(settings.AUTH0_AUTHORIZATION_URL, json=payload, headers=headers).json()
+
+        access_token = got["access_token"]
+        self._access_token = access_token
+        return access_token
+
+
 def create_anon_client() -> APIClient:
     return APIClient(base_url=settings.CLIENT_BASE_URL)
+
+
+def create_auth0_client() -> Auth0Client:
+    return Auth0Client(base_url=settings.CLIENT_BASE_URL)
 
 
 def teardown_postgres(engine: Engine) -> None:

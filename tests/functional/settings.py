@@ -43,6 +43,7 @@ class Test(BaseSettings):
     AUTH0_CLIENT_ID: str
     AUTH0_CLIENT_SECRET: str
     AUTH0_AUTHORIZATION_URL: str
+    AUTH0_GRANT_TYPE: str = "client_credentials"
 
     class Config(EnvConfig):
         env_prefix = "NAA_"

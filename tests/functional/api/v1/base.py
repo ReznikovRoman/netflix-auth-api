@@ -4,7 +4,7 @@ import pytest
 import requests
 
 from tests.functional.settings import get_settings
-from tests.functional.testlib import APIClient
+from tests.functional.testlib import APIClient, Auth0Client
 
 settings = get_settings()
 
@@ -13,6 +13,7 @@ class BaseClientTest:
     """Базовый класс для тестов."""
 
     client: APIClient
+    anon_client: APIClient
     endpoint: str
     method: str
     format_url: bool = False
@@ -21,6 +22,7 @@ class BaseClientTest:
     @pytest.fixture(autouse=True)
     def _setup(self, anon_client):
         self.client: APIClient = anon_client
+        self.anon_client: APIClient = anon_client
         self.endpoint = self.endpoint.removesuffix("/")
         self.method = self.method.lower()
 
@@ -33,14 +35,14 @@ class AuthTestMixin:
     def test_invalid_access_token(self, pre_jwt_invalid_access_token):
         """Если access токен в заголовке неверный, то клиент получит ошибку."""
         headers = {"Authorization": "Bearer XXX"}
-        method = getattr(self.client, self.method)
+        method = getattr(self.anon_client, self.method)
         endpoint = self._format_endpoint(pre_jwt_invalid_access_token)
         body = self._format_body(pre_jwt_invalid_access_token)
         method(endpoint, headers=headers, data=body, expected_status_code=self.jwt_invalid_access_token_status_code)
 
     def test_no_credentials(self, pre_jwt_no_credentials):
         """Если access токена нет в заголовках, то клиент получит соответствующую ошибку."""
-        method = getattr(self.client, self.method)
+        method = getattr(self.anon_client, self.method)
         endpoint = self._format_endpoint(pre_jwt_no_credentials)
         body = self._format_body(pre_jwt_no_credentials)
         method(endpoint, data=body, expected_status_code=401)
@@ -67,6 +69,22 @@ class AuthTestMixin:
     @pytest.fixture
     def pre_jwt_invalid_access_token(self, *args, **kwargs):
         ...
+
+
+class Auth0ClientTest(
+    AuthTestMixin,
+    BaseClientTest,
+):
+    """Базовый класс для тестов с авторизацией auth0."""
+
+    client: Auth0Client
+
+    @pytest.fixture(autouse=True)
+    def _setup(self, auth0_client, anon_client):
+        self.client: Auth0Client = auth0_client
+        self.anon_client: APIClient = anon_client
+        self.endpoint = self.endpoint.removesuffix("/")
+        self.method = self.method.lower()
 
 
 class Auth0AccessTokenMixin:

@@ -1,11 +1,7 @@
-from ..base import Auth0AccessTokenMixin, AuthTestMixin, BaseClientTest
+from ..base import Auth0ClientTest
 
 
-class TestRoleList(
-    Auth0AccessTokenMixin,
-    AuthTestMixin,
-    BaseClientTest,
-):
+class TestRoleList(Auth0ClientTest):
     """Тестирование получения списка ролей."""
 
     endpoint = "/api/v1/roles"
@@ -13,9 +9,7 @@ class TestRoleList(
 
     def test_ok(self):
         """Получение списка ролей работает корректно."""
-        headers = {"Authorization": f"Bearer {self.access_token}"}
-
-        got = self.client.get("/api/v1/roles/", headers=headers)["data"]
+        got = self.client.get("/api/v1/roles/")["data"]
 
         assert len(got) == 2, got
         assert "id" in got[0]

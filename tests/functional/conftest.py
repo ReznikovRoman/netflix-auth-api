@@ -11,7 +11,7 @@ from src.main import create_app
 
 from .settings import get_settings
 from .testdata.postgres import default_roles, roles_table
-from .testlib import create_anon_client, flush_redis_cache, teardown_postgres
+from .testlib import Auth0Client, create_anon_client, create_auth0_client, flush_redis_cache, teardown_postgres
 
 if TYPE_CHECKING:
     from .testlib import APIClient
@@ -21,9 +21,16 @@ settings = get_settings()
 
 @pytest.fixture(scope="session")
 def anon_client() -> APIClient:
-    anon_client = create_anon_client()
-    yield anon_client
-    anon_client.close()
+    anon_client_ = create_anon_client()
+    yield anon_client_
+    anon_client_.close()
+
+
+@pytest.fixture(scope="session")
+def auth0_client() -> Auth0Client:
+    auth0_client_ = create_auth0_client()
+    yield auth0_client_
+    auth0_client_.close()
 
 
 @pytest.fixture(autouse=True)

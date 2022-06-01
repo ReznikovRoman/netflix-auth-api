@@ -1,13 +1,9 @@
 import pytest
 
-from ..base import Auth0AccessTokenMixin, AuthTestMixin, BaseClientTest
+from ..base import Auth0ClientTest
 
 
-class TestRoleCreate(
-    Auth0AccessTokenMixin,
-    AuthTestMixin,
-    BaseClientTest,
-):
+class TestRoleCreate(Auth0ClientTest):
     """Тестирование создания роли."""
 
     endpoint = "/api/v1/roles"
@@ -16,10 +12,9 @@ class TestRoleCreate(
 
     def test_ok(self, role_dto):
         """Создание роли работает корректно."""
-        headers = {"Authorization": f"Bearer {self.access_token}"}
         body = {"name": role_dto.name, "description": role_dto.description}
 
-        got = self.client.post("/api/v1/roles", data=body, headers=headers)["data"]
+        got = self.client.post("/api/v1/roles", data=body)["data"]
 
         assert "id" in got
         assert got["name"] == role_dto.name
@@ -27,11 +22,10 @@ class TestRoleCreate(
 
     def test_role_exists(self, role_dto):
         """При попытке создать роль с уже существующим названием клиент получит ошибку."""
-        headers = {"Authorization": f"Bearer {self.access_token}"}
         body = {"name": role_dto.name, "description": role_dto.description}
-        self.client.post("/api/v1/roles", data=body, headers=headers)
+        self.client.post("/api/v1/roles", data=body)
 
-        got = self.client.post("/api/v1/roles", data=body, headers=headers, expected_status_code=409)
+        got = self.client.post("/api/v1/roles", data=body, expected_status_code=409)
 
         assert "error" in got
 
