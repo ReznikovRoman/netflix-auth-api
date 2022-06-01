@@ -13,9 +13,11 @@ Docker конфигурации содержат контейнеры:
  2. redis
  3. db
  4. traefik
+ 5. jaeger
 
 Файлы docker-compose:
  1. `docker-compose.yml` - для локальной разработки
+ 2. `tests/functional/docker-compose.yml` - для функциональных тестов
 
 Для запуска контейнеров нужно создать файл `.env` в корне проекта.
 
@@ -171,7 +173,7 @@ pre-commit install
 ## Трассировка
 За мониторинг распределенной трассировки отвечает [Jaeger](https://www.jaegertracing.io/).
 Веб-интерфейс Jaeger UI доступен по адресу:
-- `http://localhost:16686/`
+- `${PROJECT_BASE_URL}:16686/`
 
 ## Документация
 Документация в формате OpenAPI 3 доступна по адресам:
