@@ -42,7 +42,7 @@ class UserRegister(Resource):
     @auth_ns.expect(auth_request_parser, validate=True)
     @auth_ns.doc(description="Регистрация нового пользователя в системе.")
     @auth_ns.response(
-        HTTPStatus.CREATED.value, "Пользователь был успешно зарегистрирован.", openapi.user_registration_doc)
+        HTTPStatus.CREATED.value, "Пользователь был успешно зарегистрирован.", openapi.user_registration)
     @auth_ns.response(HTTPStatus.CONFLICT.value, "Пользователь с введенным email адресом уже существует.")
     @auth_ns.response(HTTPStatus.BAD_REQUEST.value, "Ошибка в теле запроса.")
     @auth_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
@@ -63,7 +63,7 @@ class UserLogin(Resource):
 
     @auth_ns.expect(login_parser, validate=True)
     @auth_ns.doc(description="Аутентификация пользователя в системе.")
-    @auth_ns.response(HTTPStatus.OK.value, "Пользователь успешно аутентифицировался.", openapi.user_login_doc)
+    @auth_ns.response(HTTPStatus.OK.value, "Пользователь успешно аутентифицировался.", openapi.user_login)
     @auth_ns.response(HTTPStatus.UNAUTHORIZED.value, "Неверные почта/пароль.")
     @auth_ns.response(HTTPStatus.BAD_REQUEST.value, "Ошибка в теле запроса.")
     @auth_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
@@ -115,7 +115,7 @@ class UserRefreshToken(Resource):
     """Обновление access токена."""
 
     @auth_ns.doc(security="JWT", description="Обмен refresh токена на новую пару access/refresh токенов.")
-    @auth_ns.response(HTTPStatus.OK.value, "Пользователь успешно получил новые доступы.", openapi.user_login_doc)
+    @auth_ns.response(HTTPStatus.OK.value, "Пользователь успешно получил новые доступы.", openapi.user_login)
     @auth_ns.response(HTTPStatus.UNAUTHORIZED.value, "Неверный refresh токен.")
     @auth_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
     @jwt_required(refresh=True)
@@ -130,18 +130,3 @@ class UserRefreshToken(Resource):
             "Pragma": "no-cache",
         }
         return credentials, HTTPStatus.OK, headers
-
-
-from oauth.utils import requires_auth  # noqa, isort:skip
-@auth_ns.route("/protected", doc={"deprecated": True})  # noqa
-class DeleteMe(Resource):
-    # TODO: удалить после написания АПИ ролей
-
-    @auth_ns.doc(security="auth0")
-    @requires_auth(required_scope="read:roles")
-    def get(self):
-        """Protected."""
-        response = {
-            "status": "protected!",
-        }
-        return response

@@ -2,7 +2,7 @@ from flask_restx import OrderedModel, fields
 
 from users import types
 
-login_history_doc = OrderedModel(
+login_history = OrderedModel(
     "LoginHistory",
     {
         "id": fields.String(),

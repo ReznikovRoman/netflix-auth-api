@@ -29,7 +29,7 @@ class RoleListView(Resource):
 
     @role_ns.expect(role_parser, validate=True)
     @role_ns.doc(security="auth0", description="Создание роли.")
-    @role_ns.response(HTTPStatus.CREATED.value, "Роль успешно создана.", openapi.role_detail_doc)
+    @role_ns.response(HTTPStatus.CREATED.value, "Роль успешно создана.", openapi.role_detail)
     @role_ns.response(HTTPStatus.UNAUTHORIZED.value, "Требуется авторизация.")
     @role_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
     @requires_auth(required_scope="create:roles")
@@ -42,7 +42,7 @@ class RoleListView(Resource):
         return role, HTTPStatus.CREATED
 
     @role_ns.doc(security="auth0", description="Список ролей.")
-    @role_ns.response(HTTPStatus.OK.value, "Список ролей.", openapi.role_detail_doc, as_list=True)
+    @role_ns.response(HTTPStatus.OK.value, "Список ролей.", openapi.role_detail, as_list=True)
     @role_ns.response(HTTPStatus.UNAUTHORIZED.value, "Требуется авторизация.")
     @role_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
     @requires_auth(required_scope="read:roles")
@@ -72,7 +72,7 @@ class RoleDetailView(Resource):
 
     @role_ns.expect(role_change_parser, validate=True)
     @role_ns.doc(security="auth0", description="Редактирование роли.")
-    @role_ns.response(HTTPStatus.OK.value, "Роль успешно отредактирована.", openapi.role_detail_doc)
+    @role_ns.response(HTTPStatus.OK.value, "Роль успешно отредактирована.", openapi.role_detail)
     @role_ns.response(HTTPStatus.UNAUTHORIZED.value, "Требуется авторизация.")
     @role_ns.response(HTTPStatus.BAD_REQUEST.value, "Ошибка в запросе.")
     @role_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")

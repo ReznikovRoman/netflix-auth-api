@@ -34,7 +34,7 @@ class UserLoginHistory(Resource):
 
     @user_ns.expect(pagination_parser, validate=True)
     @user_ns.doc(security="JWT", description="Просмотр истории входов в аккаунт.")
-    @user_ns.response(HTTPStatus.OK.value, "История входов.", openapi.login_history_doc, as_list=True)
+    @user_ns.response(HTTPStatus.OK.value, "История входов.", openapi.login_history, as_list=True)
     @user_ns.response(HTTPStatus.UNAUTHORIZED.value, "Неверный refresh токен.")
     @user_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
     @jwt_required()
@@ -62,8 +62,8 @@ class UserChangePassword(Resource):
     def post(self, user_service: UserService = Provide[Container.user_package.user_service]):
         """Смена пароля."""
         jwt = get_jwt()
-        request_data = password_change_parser.parse_args()
-        user_service.change_password(jwt, current_user, **request_data)
+        passwords_data = password_change_parser.parse_args()
+        user_service.change_password(jwt, current_user, **passwords_data)
         return "", HTTPStatus.NO_CONTENT
 
 

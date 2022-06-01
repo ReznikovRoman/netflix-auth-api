@@ -1,6 +1,6 @@
 from flask_restx import OrderedModel, fields
 
-user_registration_doc = OrderedModel(
+user_registration = OrderedModel(
     "UserRegistration",
     {
         "id": fields.String(),
@@ -8,7 +8,7 @@ user_registration_doc = OrderedModel(
     },
 )
 
-user_login_doc = OrderedModel(
+user_login = OrderedModel(
     "UserLogin",
     {
         "access_token": fields.String(),
