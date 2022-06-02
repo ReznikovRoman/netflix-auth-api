@@ -13,14 +13,16 @@ class TestRolePatch(Auth0ClientTest):
     format_url = True
 
     def test_ok(self, role_dto):
-        """Редактирование роли работает корректно."""
+        """При редактировании роли ее поля корректно изменяются."""
         role_id = self._create_role(role_dto)
         new_name = f"{role_dto.name}_new"
         body = {"name": new_name}
 
         got = self.client.patch(f"/api/v1/roles/{role_id}", data=body)["data"]
 
+        assert got["id"] == str(role_id)
         assert got["name"] == new_name
+        assert got["description"] == role_dto.description
 
     def test_role_with_given_name_exists(self, role_dto, another_role_dto):
         """Если клиент пытается заменить название роли на уже существующее в БД, то он получит ошибку."""
@@ -37,12 +39,12 @@ class TestRolePatch(Auth0ClientTest):
         self.client.patch("/api/v1/roles/XXX", data=body, expected_status_code=404)
 
     @pytest.fixture
-    def pre_jwt_invalid_access_token(self, role_dto):
+    def pre_auth_invalid_access_token(self, role_dto):
         role_id = self._create_role(role_dto)
         return {"role_id": role_id}
 
     @pytest.fixture
-    def pre_jwt_no_credentials(self, role_dto):
+    def pre_auth_no_credentials(self, role_dto):
         role_id = self._create_role(role_dto)
         return {"role_id": role_id}
 

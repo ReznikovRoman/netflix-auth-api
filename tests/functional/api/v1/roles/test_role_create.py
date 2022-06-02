@@ -11,12 +11,12 @@ class TestRoleCreate(Auth0ClientTest):
     use_data = True
 
     def test_ok(self, role_dto):
-        """Создание роли работает корректно."""
+        """При корректном теле запроса клиент роль создается корректно и клиент получает информацию о ней."""
         body = {"name": role_dto.name, "description": role_dto.description}
 
         got = self.client.post("/api/v1/roles", data=body)["data"]
 
-        assert "id" in got
+        assert got["id"] is not None
         assert got["name"] == role_dto.name
         assert got["description"] == role_dto.description
 
@@ -30,11 +30,11 @@ class TestRoleCreate(Auth0ClientTest):
         assert "error" in got
 
     @pytest.fixture
-    def pre_jwt_invalid_access_token(self, role_dto):
+    def pre_auth_invalid_access_token(self, role_dto):
         data = {"name": role_dto.name, "description": role_dto.description}
         return {"data": data}
 
     @pytest.fixture
-    def pre_jwt_no_credentials(self, role_dto):
+    def pre_auth_no_credentials(self, role_dto):
         data = {"name": role_dto.name, "description": role_dto.description}
         return {"data": data}

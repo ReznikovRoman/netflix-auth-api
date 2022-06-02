@@ -8,10 +8,10 @@ class TestRoleList(Auth0ClientTest):
     method = "get"
 
     def test_ok(self):
-        """Получение списка ролей работает корректно."""
+        """Клиент получит корректный список ролей."""
         got = self.client.get("/api/v1/roles/")["data"]
 
         assert len(got) == 2, got
-        assert "id" in got[0]
+        assert got[0]["id"] is not None
         assert "name" in got[0]
         assert "description" in got[0]

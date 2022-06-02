@@ -11,7 +11,7 @@ class TestRevokeUserRole(Auth0ClientTest):
     format_url = True
 
     def test_ok(self, _user_role):
-        """Удаление роли у пользователя работает корректно."""
+        """При успешном удалении роли у пользователя клиент получит пустой ответ с 204 статусом."""
         user_id, role_id = _user_role
         url = f"/api/v1/users/{user_id}/roles/{role_id}"
         self.client.post(url)
@@ -40,12 +40,12 @@ class TestRevokeUserRole(Auth0ClientTest):
         self.client.delete(f"/api/v1/users/XXX/roles/{role_id}", expected_status_code=404)
 
     @pytest.fixture
-    def pre_jwt_invalid_access_token(self, _user_role):
+    def pre_auth_invalid_access_token(self, _user_role):
         user_id, role_id = _user_role
         return {"user_id": user_id, "role_id": role_id}
 
     @pytest.fixture
-    def pre_jwt_no_credentials(self, _user_role):
+    def pre_auth_no_credentials(self, _user_role):
         user_id, role_id = _user_role
         return {"user_id": user_id, "role_id": role_id}
 

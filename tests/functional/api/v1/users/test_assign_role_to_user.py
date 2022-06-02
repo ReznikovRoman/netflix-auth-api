@@ -11,7 +11,7 @@ class TestAssignRoleToUser(Auth0ClientTest):
     format_url = True
 
     def test_ok(self, _user_role):
-        """Назначение роли пользователю работает корректно."""
+        """При успешном назначении роли пользователю клиент получит пустой ответ с 201 статусом."""
         user_id, role_id = _user_role
 
         self.client.post(f"/api/v1/users/{user_id}/roles/{role_id}")
@@ -37,12 +37,12 @@ class TestAssignRoleToUser(Auth0ClientTest):
         self.client.post(f"/api/v1/users/XXX/roles/{role_id}", expected_status_code=404)
 
     @pytest.fixture
-    def pre_jwt_invalid_access_token(self, _user_role):
+    def pre_auth_invalid_access_token(self, _user_role):
         user_id, role_id = _user_role
         return {"user_id": user_id, "role_id": role_id}
 
     @pytest.fixture
-    def pre_jwt_no_credentials(self, _user_role):
+    def pre_auth_no_credentials(self, _user_role):
         user_id, role_id = _user_role
         return {"user_id": user_id, "role_id": role_id}
 
@@ -53,10 +53,7 @@ class TestAssignRoleToUser(Auth0ClientTest):
         return user_id, role_id
 
     def _register(self, user_dto):
-        body = {
-            "email": user_dto.email,
-            "password": user_dto.password,
-        }
+        body = {"email": user_dto.email, "password": user_dto.password}
         got = self.anon_client.post("/api/v1/auth/register", data=body)["data"]
         return got
 

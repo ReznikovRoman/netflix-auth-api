@@ -27,8 +27,5 @@ class TestUserLoginHistory(AuthClientTest):
         assert len(got) == 2
 
     def _login(self, user_dto):
-        body = {
-            "email": user_dto.email,
-            "password": user_dto.password,
-        }
+        body = {"email": user_dto.email, "password": user_dto.password}
         self.client.post("/api/v1/auth/login", data=body, expected_status_code=200)
