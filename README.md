@@ -32,7 +32,7 @@ PYTHONUNBUFFERED=1
 # Netflix Auth API
 FLASK_APP=main.py
 # Project
-NAA_SECRET_KEY=
+NAA_SECRET_KEY=bxv-!8yyx)boy&-spzvrc(v_%kfwuf4&47-av5zqoe(k_b=*2)
 NAA_SQLALCHEMY_ECHO=1
 NAA_PROJECT_BASE_URL=http://api-auth.localhost:8009
 NAA_API_V1_STR=/api/v1
@@ -45,15 +45,15 @@ NAA_THROTTLE_DEFAULT_LIMITS=50/hour
 NAA_THROTTLE_USER_REGISTRATION_LIMITS=5/minute
 NAA_DEBUG=1
 # auth0
-NAA_AUTH0_DOMAIN=
-NAA_AUTH0_API_AUDIENCE=
-NAA_AUTH0_ISSUER=
+NAA_AUTH0_DOMAIN=dummy.com
+NAA_AUTH0_API_AUDIENCE=https://dummy.com
+NAA_AUTH0_ISSUER=https://dummy.com/
 # Postgres
 NAA_DB_HOST=db
 NAA_DB_PORT=5432
-NAA_DB_NAME=
-NAA_DB_USER=
-NAA_DB_PASSWORD=
+NAA_DB_NAME=netflix_auth
+NAA_DB_USER=yandex
+NAA_DB_PASSWORD=netflix
 # Redis
 NAA_REDIS_HOST=redis
 NAA_REDIS_PORT=6379
@@ -101,7 +101,7 @@ export $(echo $(cat .env | sed 's/#.*//g'| xargs) | envsubst) && make test
 
 Для функциональных тестов нужно создать файл `.env` в папке ./tests/functional
 
-**Пример `.env`:**
+**Пример `.env` (для корректной работы тестов надо подставить корректные значения для auth0):**
 ```dotenv
 ENV=.env
 
@@ -111,7 +111,7 @@ PYTHONUNBUFFERED=1
 # Netflix Auth API
 FLASK_APP=main.py
 # Project
-NAA_SECRET_KEY=
+NAA_SECRET_KEY=bxv-!8yyx)boy&-spzvrc(v_%kfwuf4&47-av5zqoe(k_b=*2)
 NAA_SQLALCHEMY_ECHO=1
 NAA_PROJECT_BASE_URL=http://api-auth.localhost:8009
 NAA_API_V1_STR=/api/v1
@@ -123,18 +123,18 @@ NAA_THROTTLE_KEY_PREFIX=limiter:
 NAA_THROTTLE_USER_REGISTRATION_LIMITS=59/second
 NAA_DEBUG=1
 # auth0
-NAA_AUTH0_DOMAIN=
-NAA_AUTH0_API_AUDIENCE=
-NAA_AUTH0_ISSUER=
-NAA_AUTH0_CLIENT_ID=
-NAA_AUTH0_CLIENT_SECRET=
-NAA_AUTH0_AUTHORIZATION_URL=
+NAA_AUTH0_DOMAIN=dummy.com
+NAA_AUTH0_API_AUDIENCE=https://dummy.com
+NAA_AUTH0_ISSUER=https://dummy.com/
+NAA_AUTH0_CLIENT_ID=change-me
+NAA_AUTH0_CLIENT_SECRET=change-me
+NAA_AUTH0_AUTHORIZATION_URL=https://dummy.com/oauth/token
 # Postgres
 NAA_DB_HOST=db
 NAA_DB_PORT=5432
-NAA_DB_NAME=
-NAA_DB_USER=
-NAA_DB_PASSWORD=
+NAA_DB_NAME=netflix_auth
+NAA_DB_USER=yandex
+NAA_DB_PASSWORD=netflix
 NAA_DB_DEFAULT_SCHEMA=public
 # Redis
 NAA_REDIS_HOST=redis
