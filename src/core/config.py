@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     PROJECT_BASE_URL: str
     API_V1_STR: str = "/api/v1"
-    SERVER_NAME: str
+    SERVER_NAME: str | None = Field(None, env="NAA_SERVER_NAME")
     SERVER_HOSTS: Union[str, list[AnyHttpUrl]]
     PROJECT_NAME: str
     THROTTLE_KEY_PREFIX: str = ""
