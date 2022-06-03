@@ -96,6 +96,15 @@ class Settings(BaseSettings):
         database = values["DB_NAME"]
         return f"postgresql://{user}:{password}@{host}:{port}/{database}"
 
+    @property
+    def formatted_rate_limits(self) -> str:
+        rate_limits = self.THROTTLE_DEFAULT_LIMITS
+        if not rate_limits:
+            return ""
+        if len(rate_limits) == 1:
+            return rate_limits[0]
+        return "; ".join(rate_limits)
+
 
 @lru_cache()
 def get_settings() -> "Settings":

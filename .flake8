@@ -21,4 +21,6 @@ per-file-ignores =
     */db/base_models.py:F401,
     # First argument of a method should be named 'self'
     */core/**.py:N805,
-    ./tests/functional/settings.py:N805
+    ./tests/functional/settings.py:N805,
+    # Change outer quotes to avoid escaping inner quotes
+    src/api/v1/namespaces.py:Q003
