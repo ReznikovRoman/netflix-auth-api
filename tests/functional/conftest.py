@@ -20,9 +20,15 @@ from .testlib import (
 )
 
 if TYPE_CHECKING:
+    from .settings import Test
     from .testlib import APIClient
 
-settings = get_settings()
+settings_ = get_settings()
+
+
+@pytest.fixture
+def settings() -> Test:
+    return settings_
 
 
 @pytest.fixture
@@ -91,7 +97,7 @@ def app_():
 
 @pytest.fixture(scope="session")
 def db_engine():
-    db_url = settings.DB_URL
+    db_url = settings_.DB_URL
     engine_ = create_engine(db_url, echo=True)
     yield engine_
     engine_.dispose()

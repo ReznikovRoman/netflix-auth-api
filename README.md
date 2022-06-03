@@ -143,6 +143,7 @@ NAA_REDIS_DECODE_RESPONSES=1
 NAA_REDIS_RETRY_ON_TIMEOUT=1
 # Tests
 TEST_CLIENT_BASE_URL=http://traefik:80
+TEST_SERVER_BASE_URL=http://server:8002
 ```
 
 Запуск функциональных тестов:

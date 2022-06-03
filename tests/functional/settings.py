@@ -18,6 +18,7 @@ class Test(BaseSettings):
 
     # Tests
     CLIENT_BASE_URL: str = Field(env="TEST_CLIENT_BASE_URL")
+    SERVER_BASE_URL: str = Field(env="TEST_SERVER_BASE_URL")
 
     # Postgres
     DB_HOST: str
