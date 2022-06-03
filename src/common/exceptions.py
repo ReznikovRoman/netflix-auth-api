@@ -49,3 +49,11 @@ class ImproperlyConfiguredError(NetflixAuthError):
     message = "Improperly configured service"
     code = "improperly_configured"
     status_code: int = HTTPStatus.INTERNAL_SERVER_ERROR
+
+
+class RequiredHeaderMissingError(NetflixAuthError):
+    """Отсутствует обязательный заголовок в запросе."""
+
+    message = "Required header is missing"
+    code = "missing_header"
+    status_code: int = HTTPStatus.BAD_REQUEST
