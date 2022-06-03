@@ -36,7 +36,6 @@ NAA_SECRET_KEY=bxv-!8yyx)boy&-spzvrc(v_%kfwuf4&47-av5zqoe(k_b=*2)
 NAA_SQLALCHEMY_ECHO=1
 NAA_PROJECT_BASE_URL=http://api-auth.localhost:8009
 NAA_API_V1_STR=/api/v1
-NAA_SERVER_NAME=api-auth.localhost:8009
 NAA_SERVER_HOSTS=http://api-auth.localhost:8009
 NAA_SERVER_PORT=8002
 NAA_PROJECT_NAME=netflix-auth
@@ -115,7 +114,6 @@ NAA_SECRET_KEY=bxv-!8yyx)boy&-spzvrc(v_%kfwuf4&47-av5zqoe(k_b=*2)
 NAA_SQLALCHEMY_ECHO=1
 NAA_PROJECT_BASE_URL=http://api-auth.localhost:8009
 NAA_API_V1_STR=/api/v1
-NAA_SERVER_NAME=server:8002
 NAA_SERVER_HOSTS=http://api-auth.localhost:8009
 NAA_SERVER_PORT=8002
 NAA_PROJECT_NAME=netflix-auth
@@ -144,7 +142,7 @@ NAA_REDIS_DEFAULT_CHARSET=utf-8
 NAA_REDIS_DECODE_RESPONSES=1
 NAA_REDIS_RETRY_ON_TIMEOUT=1
 # Tests
-TEST_CLIENT_BASE_URL=http://server:8002
+TEST_CLIENT_BASE_URL=http://traefik:80
 ```
 
 Запуск функциональных тестов:

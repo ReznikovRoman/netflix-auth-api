@@ -81,7 +81,6 @@ jobs:
           export NAA_SQLALCHEMY_ECHO=1
           export NAA_PROJECT_BASE_URL=http://api-auth.localhost:8009
           export NAA_API_V1_STR=/api/v1
-          export NAA_SERVER_NAME=api-auth.localhost:8009
           export NAA_SERVER_HOSTS=http://api-auth.localhost:8009
           export NAA_SERVER_PORT=8002
           export NAA_PROJECT_NAME=netflix-auth

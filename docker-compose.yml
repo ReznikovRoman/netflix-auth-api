@@ -24,7 +24,8 @@ services:
         condition: service_healthy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.fastapi.rule=Host(`api-auth.localhost`)"
+      - "traefik.http.routers.auth_api.rule=Host(`api-auth.localhost`,`traefik`)"
+      - "traefik.http.routers.auth_api.entrypoints=web"
 
   redis:
     image: redis:7.0-alpine
