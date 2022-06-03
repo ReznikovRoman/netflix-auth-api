@@ -8,8 +8,8 @@ from db import redis
 from db.postgres import init_postgres
 from db.postgres_security import init_security
 from jwt_manager import init_jwt
+from middleware.before_request import register_before_request
 from middleware.errors import init_error_handlers
-from middleware.request_id import init_custom_request
 from throttling import init_limiter
 from tracer import init_tracer
 
@@ -21,6 +21,8 @@ def create_app() -> Flask:
 
     app = Flask(__name__)
     app.config.from_object(settings)
+
+    register_before_request(app)
 
     from api.v1.namespaces import blueprint as api_v1  # noqa: F401
 
@@ -44,7 +46,6 @@ def create_app() -> Flask:
     init_jwt(app)
     init_limiter(app)
     init_tracer(app)
-    init_custom_request(app)
 
     return app
 
