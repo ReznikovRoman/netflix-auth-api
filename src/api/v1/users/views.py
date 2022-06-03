@@ -71,7 +71,7 @@ class UserChangePassword(Resource):
 class UserRolesView(Resource):
     """Роли пользователя."""
 
-    @user_ns.doc(security="auth0")
+    @user_ns.doc(security="auth0", description="Назначение роли пользователю.")
     @user_ns.response(HTTPStatus.CREATED.value, "Роль добавлена пользователю.")
     @user_ns.response(HTTPStatus.UNAUTHORIZED.value, "Требуется авторизация.")
     @user_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
@@ -82,10 +82,11 @@ class UserRolesView(Resource):
         user_id: UUID, role_id: UUID,
         user_repository: UserRepository = Provide[Container.user_package.user_repository],
     ):
+        """Назначить роль."""
         user_repository.assign_role(user_id, role_id)
         return "", HTTPStatus.CREATED
 
-    @user_ns.doc(security="auth0")
+    @user_ns.doc(security="auth0", description="Удаление роли у пользователя.")
     @user_ns.response(HTTPStatus.NO_CONTENT.value, "Роль удалена у пользователя.")
     @user_ns.response(HTTPStatus.UNAUTHORIZED.value, "Требуется авторизация.")
     @user_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
@@ -96,10 +97,11 @@ class UserRolesView(Resource):
         user_id: UUID, role_id: UUID,
         user_repository: UserRepository = Provide[Container.user_package.user_repository],
     ):
+        """Отобрать роль."""
         user_repository.revoke_role(user_id, role_id)
         return "", HTTPStatus.NO_CONTENT
 
-    @user_ns.doc(security="auth0")
+    @user_ns.doc(security="auth0", description="Проверка наличия роли у пользователя.")
     @user_ns.response(HTTPStatus.NO_CONTENT.value, "Роль есть у пользователя.")
     @user_ns.response(HTTPStatus.NOT_FOUND.value, "Роли нет у пользователя.")
     @user_ns.response(HTTPStatus.UNAUTHORIZED.value, "Требуется авторизация.")
@@ -111,6 +113,7 @@ class UserRolesView(Resource):
         user_id: UUID, role_id: UUID,
         user_repository: UserRepository = Provide[Container.user_package.user_repository],
     ):
+        """Проверить наличие роли."""
         has_role = user_repository.has_role(user_id, role_id)
         if has_role:
             return "", HTTPStatus.NO_CONTENT
