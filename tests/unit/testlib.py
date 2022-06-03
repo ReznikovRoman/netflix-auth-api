@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Any, Union
 
 from flask.testing import FlaskClient
 
@@ -15,6 +15,22 @@ class APIClient(FlaskClient):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
+
+    def open(
+        self,
+        *args: Any,
+        buffered: bool = False,
+        follow_redirects: bool = False,
+        **kwargs: Any,
+    ) -> "TestResponse":
+        headers = kwargs.pop("headers", {})
+        headers.update({"X-Request-Id": "XXX-XXX-XXX"})
+        response = super(APIClient, self).open(
+            *args,
+            buffered=buffered, follow_redirects=follow_redirects, headers=headers,
+            **kwargs,
+        )
+        return response
 
     def head(self, *args, **kwargs) -> APIResponse:
         return self._api_call("head", kwargs.get("expected_status_code", 200), *args, **kwargs)
