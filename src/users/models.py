@@ -14,15 +14,10 @@ from db.postgres import db
 from . import types
 
 if TYPE_CHECKING:
-    from flask_sqlalchemy.model import Model as _Model
     from sqlalchemy.engine import Connection
 
-    Model = db.make_declarative_base(_Model)
-else:
-    Model = db.Model
 
-
-class UsersRoles(Model):
+class UsersRoles(db.Model):
     __tablename__ = "users_roles"
 
     user = db.relationship("User", backref=db.backref("user_roles", cascade="all, delete-orphan"))
@@ -36,7 +31,7 @@ class UsersRoles(Model):
     )
 
 
-class User(TimeStampedMixin, UUIDMixin, Model, UserMixin):
+class User(TimeStampedMixin, UUIDMixin, db.Model, UserMixin):
     """Пользователь в онлайн-кинотеатре."""
 
     roles = association_proxy("user_roles", "role")
@@ -66,7 +61,7 @@ def create_loginlog_partitions(ddl, target, connection: Connection, **kwargs) ->
     connection.execute("""CREATE TABLE IF NOT EXISTS loginlog_pc PARTITION OF loginlog FOR VALUES IN ('PC')""")
 
 
-class LoginLog(TimeStampedMixin, Model):
+class LoginLog(TimeStampedMixin, db.Model):
     """Запись входов в аккаунт."""
 
     user_id = db.Column(UUID(as_uuid=True), db.ForeignKey("user.id"))

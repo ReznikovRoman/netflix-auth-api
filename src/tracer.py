@@ -45,7 +45,7 @@ def configure_otel() -> None:
 
 def request_hook(span: Span, environ: WSGIEnvironment) -> None:
     if span and span.is_recording():
-        request_id = request.headers.get("X-Request-Id")
+        request_id = request.headers["X-Request-Id"]
         span.set_attribute("http.request_id", request_id)
 
 

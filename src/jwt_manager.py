@@ -25,7 +25,7 @@ jwt_manager = JWTManager()
 def user_lookup_callback(
     jwt_header: dict, jwt_data: dict,
     user_repository: UserRepository = Provide[Container.user_package.user_repository],
-) -> types.User:
+) -> types.User | None:
     """Получение пользователя по identity claim из токена.
 
     https://flask-jwt-extended.readthedocs.io/en/stable/api/#flask_jwt_extended.JWTManager.user_lookup_loader

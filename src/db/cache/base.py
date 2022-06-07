@@ -40,6 +40,6 @@ class Cache(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_timeout(self, timeout: seconds | timedelta | None = None) -> int | None:
+    def get_timeout(self, timeout: seconds | timedelta | None = None) -> int | timedelta | None:
         """Получение `ttl` (таймаута) для записи в кэше."""
         raise NotImplementedError

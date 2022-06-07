@@ -54,12 +54,13 @@ class requires_auth:  # noqa
             token = get_token_from_header()
             payload = validate_token(token)
             if self.required_scope is not None:
-                self._check_permissions(token)
+                self._check_permissions(token, self.required_scope)
             _request_ctx_stack.top.current_user = payload
             return func(*args, **kwargs)
         return wrapper
 
-    def _check_permissions(self, token: str) -> None:
-        access_denied = not has_scope(token, self.required_scope)
+    @staticmethod
+    def _check_permissions(token: str, scope: str) -> None:
+        access_denied = not has_scope(token, scope)
         if access_denied:
             raise OAuthPermissionError

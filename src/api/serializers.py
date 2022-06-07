@@ -1,4 +1,3 @@
-import dataclasses
 import functools
 from typing import Any, Callable, ClassVar, Type
 
@@ -10,7 +9,7 @@ class BaseSerializer(Schema):
     """Базовый сериалайзер."""
 
     envelope: ClassVar[dict[str, Any]] = {"single": "data", "many": "data"}
-    model: ClassVar[Type[dataclasses.dataclass]]
+    model: ClassVar[Type[object]]
 
     def get_envelope_key(self, many):
         """Получение ключа для 'обертки'."""
@@ -29,7 +28,7 @@ class BaseSerializer(Schema):
         return {key: data}
 
     @post_load
-    def make_object(self, data, **kwargs) -> Schema:
+    def make_object(self, data, **kwargs) -> Schema | object:
         return self.model(**data)
 
 

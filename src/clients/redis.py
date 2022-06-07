@@ -37,7 +37,7 @@ class RedisClient:
         client = self.get_client(key, write=True)
         if timeout is not None:
             return client.setex(key, timeout, data)
-        return client.set(key, data)
+        return client.set(key, data) or False
 
     def delete(self, *keys: list[str]) -> int:
         client = self.get_client()
