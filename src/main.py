@@ -47,6 +47,8 @@ def create_app() -> Flask:
     init_limiter(app)
     init_tracer(app)
 
+    container.check_dependencies()
+
     return app
 
 
