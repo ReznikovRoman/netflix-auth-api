@@ -24,8 +24,11 @@ services:
         condition: service_healthy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.auth_api.rule=Host(`api-auth.localhost`,`traefik`)"
+      - "traefik.http.routers.auth_api.rule=Host(`api-auth.localhost`,`traefik`,`localhost`)"
       - "traefik.http.routers.auth_api.entrypoints=web"
+      - "traefik.http.routers.auth_api.middlewares=google-oauth"
+      - "traefik.http.middlewares.google-oauth.redirectregex.regex=^http://localhost:8009/api/v1/social/auth/google.*/?(\\?.*)"
+      - "traefik.http.middlewares.google-oauth.redirectregex.replacement=http://api-auth.localhost:8009/api/v1/social/auth/google$${1}"
 
   redis:
     image: redis:7.0-alpine
