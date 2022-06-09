@@ -4,6 +4,8 @@ from clients.redis import RedisClient
 from db.cache.redis import RedisCache
 from db.jwt_storage import JWTStorage
 from roles.containers import RoleContainer
+from social.auth.stubs import GoogleSocialAuthStub, OauthClientStub, YandexSocialAuthStub
+from social.containers import SocialContainer
 from users.containers import UserContainer
 
 
@@ -16,6 +18,7 @@ class Container(containers.DeclarativeContainer):
             "api.v1.auth.views",
             "api.v1.users.views",
             "api.v1.roles.views",
+            "api.v1.social.views",
         ],
     )
 
@@ -44,3 +47,19 @@ class Container(containers.DeclarativeContainer):
         jwt_storage=jwt_storage,
         role_repository=role_package.role_repository,
     )
+
+    social_package = providers.Container(
+        SocialContainer,
+    )
+
+
+def override_providers(container: Container) -> Container:
+    if container.config.SOCIAL_USE_STUBS():
+        oauth_client_stub = providers.Singleton(OauthClientStub)
+        container.social_package.yandex_auth.override(
+            providers.Singleton(YandexSocialAuthStub, oauth_client=oauth_client_stub),
+        )
+        container.social_package.google_auth.override(
+            providers.Singleton(GoogleSocialAuthStub, oauth_client=oauth_client_stub),
+        )
+    return container
