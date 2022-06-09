@@ -38,7 +38,11 @@ def serialize(serializer_class: Type[BaseSerializer], many: bool = False) -> Cal
     def decorator(func) -> Callable:
         @functools.wraps(func)
         def wrapper(*args, **kwargs) -> Any:
-            response, *params = func(*args, **kwargs)
+            _response = func(*args, **kwargs)
+            try:
+                response, *params = _response
+            except TypeError:
+                return _response
             response = serializer_class().dump(response, many=many)
             return response, *params
         return wrapper
