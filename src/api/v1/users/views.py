@@ -48,6 +48,26 @@ class UserLoginHistory(Resource):
         return login_history, HTTPStatus.OK
 
 
+@user_ns.route("/me/social/<string:provider_slug>")
+class UserSocialAccount(Resource):
+    """Социальный аккаунт пользователя."""
+
+    @user_ns.doc(security="JWT", description="Открепление социального аккаунта.")
+    @user_ns.response(HTTPStatus.NO_CONTENT.value, "Социальный аккаунт откреплен.")
+    @user_ns.response(HTTPStatus.UNAUTHORIZED.value, "Неверный refresh токен.")
+    @user_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
+    @jwt_required()
+    @inject
+    def delete(self, provider_slug: str):
+        """Открепить социальный аккаунт."""
+        print("TEST DELETE")
+        print("slug", provider_slug)
+        # TODO: SocialAccountRepository -> delete()
+        #  - удаление социального аккаунта пользователя по `provider_slug`
+        #  - Если такого аккаунта нет - не будем рэйзить ошибку
+        return "", HTTPStatus.NO_CONTENT
+
+
 @user_ns.route("/me/change-password")
 class UserChangePassword(Resource):
     """Смена пароля."""
