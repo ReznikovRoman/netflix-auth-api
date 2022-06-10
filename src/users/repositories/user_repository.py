@@ -5,7 +5,7 @@ from uuid import UUID
 
 from sqlalchemy import func
 from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, NoResultFound
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from common.exceptions import NotFoundError
@@ -74,7 +74,10 @@ class UserRepository:
     @staticmethod
     def get_active_by_email(email: str) -> types.User:
         """Получение активного пользователя по почте."""
-        user = UserRepository._active_with_roles(email=email).one()
+        try:
+            user = UserRepository._active_with_roles(email=email).one()
+        except NoResultFound:
+            raise NotFoundError
         return types.User.from_dict(user)
 
     @staticmethod
