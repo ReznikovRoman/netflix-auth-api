@@ -31,6 +31,14 @@ class UserSocialInfo:
 
     email: str
 
+    def to_dict(self) -> dict:
+        dct = {
+            "social_id": self.social_id,
+            "provider_slug": self.provider_slug,
+            "email": self.email,
+        }
+        return dct
+
 
 @dataclass(frozen=True, slots=True)
 class SocialAccount:

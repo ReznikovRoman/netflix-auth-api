@@ -50,6 +50,7 @@ class Container(containers.DeclarativeContainer):
 
     social_package = providers.Container(
         SocialContainer,
+        user_repository=user_package.user_repository,
     )
 
 

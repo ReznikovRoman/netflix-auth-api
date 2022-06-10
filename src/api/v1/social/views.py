@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from authlib.integrations.base_client import MismatchingStateError, MissingTokenError
 from dependency_injector.errors import NoSuchProviderError
 from dependency_injector.providers import Factory
-from dependency_injector.wiring import Provider, inject
+from dependency_injector.wiring import Provide, Provider, inject
 from flask_restx import Resource
 from werkzeug.exceptions import BadRequestKeyError
 
@@ -18,9 +18,14 @@ from api.v1.auth import openapi as auth_openapi
 from api.v1.auth.serializers import JWTCredentialsSerializer
 from containers import Container
 from social.exceptions import UnknownSocialProviderError
+from tracer import traced
+from users import types
 
 if TYPE_CHECKING:
     from social.auth import BaseSocialAuth
+    from social.services import SocialAccountService
+    from users.jwt import JWTAuth
+
 
 social_ns = Namespace("social", description="Социальные сети")
 
@@ -66,6 +71,8 @@ class SocialAuth(Resource):
         self,
         provider_slug: str,
         social_auth_factory: Factory[BaseSocialAuth] = Provider[Container.social_package.auth_factory],
+        jwt_auth: JWTAuth = Provide[Container.user_package.jwt_auth],
+        social_service: SocialAccountService = Provide[Container.social_package.social_account_service],
     ):
         """Получить доступы для входа с помощью данных от стороннего провайдера."""
         social_auth = _get_social_auth(social_auth_factory, provider_slug)
@@ -74,15 +81,19 @@ class SocialAuth(Resource):
         except (MissingTokenError, MismatchingStateError, BadRequestKeyError):
             login_url = url_for("api.social_social_login", provider_slug=provider_slug, _external=True)
             return social_auth.redirect(login_url)
-        user_info = social_auth.get_user_info()
-        print("USER: ", user_info)
-        # TODO: SocialAccountService -> handle_social_auth()
-        #  1. создание (если необходимо) пользователя
-        #  2. создание (если необходимо) социальной сети пользователя
-        credentials = {"access_token": "XXX", "refresh_token": "XXX"}
-        # TODO: генерировать пару токенов (access и refresh) каждый раз при авторизации через социальную сеть
+        credentials = self._handle_social_auth(social_auth, social_service, jwt_auth)
         headers = {
             "Cache-Control": "no-store",
             "Pragma": "no-cache",
         }
         return credentials, HTTPStatus.OK, headers
+
+    @staticmethod
+    @traced("_handle_social_auth")
+    def _handle_social_auth(
+        social_auth: BaseSocialAuth, social_service: SocialAccountService, jwt_auth: JWTAuth,
+    ) -> types.JWTCredentials:
+        user_info = social_auth.get_user_info()
+        user = social_service.handle_social_auth(user_info)
+        credentials = jwt_auth.generate_tokens(user)
+        return credentials

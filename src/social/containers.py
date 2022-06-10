@@ -3,11 +3,14 @@ from dependency_injector import containers, providers
 from social.constants import SocialProviderSlug
 
 from . import auth, repositories
+from .services import SocialAccountService
 from .types import IOAuthClient
 
 
 class SocialContainer(containers.DeclarativeContainer):
     """Контейнер с зависимостями приложения."""
+
+    user_repository = providers.Dependency()
 
     yandex_auth = providers.Factory(
         auth.YandexSocialAuth,
@@ -24,6 +27,12 @@ class SocialContainer(containers.DeclarativeContainer):
 
     social_account_repository = providers.Singleton(
         repositories.SocialAccountRepository,
+    )
+
+    social_account_service = providers.Factory(
+        SocialAccountService,
+        social_account_repository=social_account_repository,
+        user_repository=user_repository,
     )
 
 

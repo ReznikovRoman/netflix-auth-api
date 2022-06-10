@@ -20,6 +20,7 @@ from . import openapi
 from .serializers import LoginLogSerializer, password_change_parser
 
 if TYPE_CHECKING:
+    from social.repositories import SocialAccountRepository
     from users.repositories import LoginLogRepository, UserRepository
     from users.services import UserService
     current_user: types.User
@@ -58,13 +59,15 @@ class UserSocialAccount(Resource):
     @user_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
     @jwt_required()
     @inject
-    def delete(self, provider_slug: str):
+    def delete(
+        self,
+        provider_slug: str,
+        social_account_repository: SocialAccountRepository = Provide[
+            Container.social_package.social_account_repository
+        ],
+    ):
         """Открепить социальный аккаунт."""
-        print("TEST DELETE")
-        print("slug", provider_slug)
-        # TODO: SocialAccountRepository -> delete()
-        #  - удаление социального аккаунта пользователя по `provider_slug`
-        #  - Если такого аккаунта нет - не будем рэйзить ошибку
+        social_account_repository.delete_user_social_account(current_user.id, provider_slug)
         return "", HTTPStatus.NO_CONTENT
 
 

@@ -49,13 +49,16 @@ class TestSocialAuth(BaseClientTest):
         self.client.post("/api/v1/auth/logout", headers=headers, expected_status_code=204)
 
     def test_same_provider(self):
-        """Если у пользователя уже есть социальный аккаунт от провайдера, то клиент получит ошибку."""
+        """Если у пользователя уже есть социальный аккаунт от провайдера, то клиент просто получит новые ключи.
+
+        Аккаунт и пользователь не будут созданы.
+        """
         self.client.get(self.endpoint.format(provider_slug="yandex"))
 
-        got = self.client.get(self.endpoint.format(provider_slug="yandex"), expected_status_code=409)
+        got = self.client.get(self.endpoint.format(provider_slug="yandex"))["data"]
 
-        # TODO: проверять код ошибки, `code`
-        assert got["error"]
+        assert got["access_token"]
+        assert got["refresh_token"]
 
     def _register_user(self) -> dict:
         body = {"email": "user@yandex.ru", "password": "test"}
