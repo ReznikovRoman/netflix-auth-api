@@ -43,6 +43,17 @@ class Settings(BaseSettings):
     AUTH0_ISSUER: str
     AUTH0_ALGORITHMS: list[str] = ["RS256"]
 
+    # Social
+    SOCIAL_GOOGLE_CLIENT_ID: str
+    SOCIAL_GOOGLE_CLIENT_SECRET: str
+    SOCIAL_GOOGLE_METADATA_URL: str = Field("https://accounts.google.com/.well-known/openid-configuration")
+    SOCIAL_YANDEX_CLIENT_ID: str
+    SOCIAL_YANDEX_CLIENT_SECRET: str
+    SOCIAL_YANDEX_ACCESS_TOKEN_URL: str = Field("https://oauth.yandex.ru/token")
+    SOCIAL_YANDEX_USERINFO_ENDPOINT: str = Field("https://login.yandex.ru/info")
+    SOCIAL_YANDEX_AUTHORIZE_URL: str = Field("https://oauth.yandex.ru/authorize")
+    SOCIAL_USE_STUBS: bool = Field(False)
+
     # SQLAlchemy
     SQLALCHEMY_ECHO: bool = False
 

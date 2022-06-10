@@ -89,6 +89,15 @@ jobs:
           export NAA_AUTH0_DOMAIN=dev-lfllyc48.eu.auth0.com
           export NAA_AUTH0_API_AUDIENCE=https://netflix-auth.com
           export NAA_AUTH0_ISSUER=https://dev-lfllyc48.eu.auth0.com/
+          export NAA_SOCIAL_GOOGLE_CLIENT_ID=secret
+          export NAA_SOCIAL_GOOGLE_CLIENT_SECRET=secret
+          export NAA_SOCIAL_GOOGLE_METADATA_URL=https://accounts.google.com/.well-known/openid-configuration
+          export NAA_SOCIAL_YANDEX_CLIENT_ID=secret
+          export NAA_SOCIAL_YANDEX_CLIENT_SECRET=secret
+          export NAA_SOCIAL_YANDEX_ACCESS_TOKEN_URL=https://oauth.yandex.ru/token
+          export NAA_SOCIAL_YANDEX_USERINFO_ENDPOINT=https://login.yandex.ru/info
+          export NAA_SOCIAL_YANDEX_AUTHORIZE_URL=https://oauth.yandex.ru/authorize
+          export NAA_SOCIAL_USE_STUBS=1
           export NAA_DEBUG=1
           export NAA_DB_HOST=db
           export NAA_DB_PORT=5432

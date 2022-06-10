@@ -20,6 +20,7 @@ from . import openapi
 from .serializers import LoginLogSerializer, password_change_parser
 
 if TYPE_CHECKING:
+    from social.repositories import SocialAccountRepository
     from users.repositories import LoginLogRepository, UserRepository
     from users.services import UserService
     current_user: types.User
@@ -46,6 +47,28 @@ class UserLoginHistory(Resource):
         pagination = PageNumberPagination(request_data.get("page"), request_data.get("per_page"))
         login_history = login_log_repository.get_user_login_history(current_user, pagination)
         return login_history, HTTPStatus.OK
+
+
+@user_ns.route("/me/social/<string:provider_slug>")
+class UserSocialAccount(Resource):
+    """Социальный аккаунт пользователя."""
+
+    @user_ns.doc(security="JWT", description="Открепление социального аккаунта.")
+    @user_ns.response(HTTPStatus.NO_CONTENT.value, "Социальный аккаунт откреплен.")
+    @user_ns.response(HTTPStatus.UNAUTHORIZED.value, "Неверный refresh токен.")
+    @user_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
+    @jwt_required()
+    @inject
+    def delete(
+        self,
+        provider_slug: str,
+        social_account_repository: SocialAccountRepository = Provide[
+            Container.social_package.social_account_repository
+        ],
+    ):
+        """Открепить социальный аккаунт."""
+        social_account_repository.delete_user_social_account(current_user.id, provider_slug)
+        return "", HTTPStatus.NO_CONTENT
 
 
 @user_ns.route("/me/change-password")

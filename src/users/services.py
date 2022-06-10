@@ -2,9 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from sqlalchemy.exc import NoResultFound
-
-from common.exceptions import NotFoundError
 from roles.constants import DefaultRoles
 
 from . import types
@@ -36,10 +33,7 @@ class UserService:
 
     def login(self, email: str, password: str) -> tuple[types.JWTCredentials, types.User]:
         """Аутентификация пользователя в системе."""
-        try:
-            user = self.user_repository.get_active_by_email(email)
-        except NoResultFound:
-            raise NotFoundError
+        user = self.user_repository.get_active_by_email(email)
         if not self.user_repository.is_valid_password(user.password, password):
             raise UserInvalidCredentialsError
         credentials = self.jwt_auth.generate_tokens(user)

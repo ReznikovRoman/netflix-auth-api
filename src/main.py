@@ -2,7 +2,7 @@ from redis import Redis
 
 from flask import Flask
 
-from containers import Container
+from containers import Container, override_providers
 from core.config import get_settings
 from db import redis
 from db.postgres import init_postgres
@@ -10,6 +10,7 @@ from db.postgres_security import init_security
 from jwt_manager import init_jwt
 from middleware.before_request import register_before_request
 from middleware.errors import init_error_handlers
+from social.authlib import init_authlib
 from throttling import init_limiter
 from tracer import init_tracer
 
@@ -46,6 +47,9 @@ def create_app() -> Flask:
     init_jwt(app)
     init_limiter(app)
     init_tracer(app)
+    init_authlib(app, container.social_package)
+
+    override_providers(container)
 
     container.check_dependencies()
 

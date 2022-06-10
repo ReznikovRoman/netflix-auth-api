@@ -55,6 +55,16 @@ NAA_DEBUG=1
 NAA_AUTH0_DOMAIN=dummy.com
 NAA_AUTH0_API_AUDIENCE=https://dummy.com
 NAA_AUTH0_ISSUER=https://dummy.com/
+# Social
+NAA_SOCIAL_GOOGLE_CLIENT_ID=changeme
+NAA_SOCIAL_GOOGLE_CLIENT_SECRET=changeme
+NAA_SOCIAL_GOOGLE_METADATA_URL=https://accounts.google.com/.well-known/openid-configuration
+NAA_SOCIAL_YANDEX_CLIENT_ID=changeme
+NAA_SOCIAL_YANDEX_CLIENT_SECRET=changeme
+NAA_SOCIAL_YANDEX_ACCESS_TOKEN_URL=https://oauth.yandex.ru/token
+NAA_SOCIAL_YANDEX_USERINFO_ENDPOINT=https://login.yandex.ru/info
+NAA_SOCIAL_YANDEX_AUTHORIZE_URL=https://oauth.yandex.ru/authorize
+NAA_SOCIAL_USE_STUBS=0
 # Postgres
 NAA_DB_HOST=db
 NAA_DB_PORT=5432
@@ -135,6 +145,16 @@ NAA_AUTH0_ISSUER=https://dummy.com/
 NAA_AUTH0_CLIENT_ID=change-me
 NAA_AUTH0_CLIENT_SECRET=change-me
 NAA_AUTH0_AUTHORIZATION_URL=https://dummy.com/oauth/token
+# Social
+NAA_SOCIAL_GOOGLE_CLIENT_ID=changeme
+NAA_SOCIAL_GOOGLE_CLIENT_SECRET=changeme
+NAA_SOCIAL_GOOGLE_METADATA_URL=https://accounts.google.com/.well-known/openid-configuration
+NAA_SOCIAL_YANDEX_CLIENT_ID=changeme
+NAA_SOCIAL_YANDEX_CLIENT_SECRET=changeme
+NAA_SOCIAL_YANDEX_ACCESS_TOKEN_URL=https://oauth.yandex.ru/token
+NAA_SOCIAL_YANDEX_USERINFO_ENDPOINT=https://login.yandex.ru/info
+NAA_SOCIAL_YANDEX_AUTHORIZE_URL=https://oauth.yandex.ru/authorize
+NAA_SOCIAL_USE_STUBS=1
 # Postgres
 NAA_DB_HOST=db
 NAA_DB_PORT=5432
