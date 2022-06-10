@@ -26,6 +26,7 @@ class SocialAccountService:
         try:
             user = self.user_repository.get_active_by_email(email)
         except NotFoundError:
+            # XXX: выставляем свой пароль, чтобы пользователь его сменил в будущем
             user = self.user_repository.create(email, "XXX")
         try:
             self.social_account_repository.find_by_email(email=email, provider_slug=user_social_info.provider_slug)
