@@ -15,11 +15,11 @@ class TestDeleteUserSocialAccount(AuthClientTest):
         """При успешном откреплении социального аккаунта клиент получит пустой ответ с 204 статусом."""
         self._create_social_account()
 
-        self.client.delete(self.endpoint.format("yandex"))
+        self.client.delete(self.endpoint.format(provider_slug="yandex"))
 
     def test_no_social_account(self):
         """Если у пользователя не было социального аккаунта, то клиент получит пустой ответ с 204 статусом."""
-        self.client.delete(self.endpoint.format("yandex"))
+        self.client.delete(self.endpoint.format(provider_slug="yandex"))
 
     def _create_social_account(self):
-        self.anon_client.get(self._social_endpoint.format("yandex"))
+        self.anon_client.get(self._social_endpoint.format(provider_slug="yandex"))

@@ -9,12 +9,15 @@ class TestSocialLogin(BaseClientTest):
 
     def test_ok(self):
         """При успешной интеграции происходит редирект на страницу авторизации."""
-        got = self.client.get(self.endpoint.format("yandex"))
+        response = self.client.get(self.endpoint.format(provider_slug="yandex"), as_response=True)
+        got = response.json()["data"]
 
-        assert False, got
+        assert len(response.history) == 1
+        assert got["access_token"]
+        assert got["refresh_token"]
 
     def test_unknown_provider(self):
         """Если клиент пытается использовать неизвестный провайдер, то он получит ошибку."""
-        got = self.client.get(self.endpoint.format("XXX"), expected_status_code=400)
+        got = self.client.get(self.endpoint.format(provider_slug="XXX"), expected_status_code=400)
 
         assert got["error"]["code"] == "social_provider_unknown"
