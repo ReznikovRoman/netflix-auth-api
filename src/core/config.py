@@ -38,6 +38,9 @@ class Settings(BaseSettings):
     JWT_ACCESS_TOKEN_EXPIRES: timedelta = timedelta(minutes=10)
     JWT_REFRESH_TOKEN_EXPIRES: timedelta = timedelta(days=3)
 
+    # Tracing
+    OTEL_ENABLE_TRACING: bool = Field(True)
+
     # OAUTH
     AUTH0_DOMAIN: str
     AUTH0_API_AUDIENCE: str
