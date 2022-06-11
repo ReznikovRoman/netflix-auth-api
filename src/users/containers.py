@@ -9,15 +9,15 @@ class UserContainer(containers.DeclarativeContainer):
     jwt_storage = providers.Dependency()
     role_repository = providers.Dependency()
 
-    jwt_auth = providers.Factory(
+    jwt_auth = providers.Singleton(
         jwt.JWTAuth,
         jwt_storage=jwt_storage,
     )
 
-    login_log_repository = providers.Factory(
+    login_log_repository = providers.Singleton(
         repositories.LoginLogRepository,
     )
-    user_repository = providers.Factory(
+    user_repository = providers.Singleton(
         repositories.UserRepository,
         role_repository=role_repository,
     )

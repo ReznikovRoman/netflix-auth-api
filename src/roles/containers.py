@@ -6,6 +6,6 @@ from . import repositories
 class RoleContainer(containers.DeclarativeContainer):
     """Контейнер с зависимостями приложения."""
 
-    role_repository = providers.Factory(
+    role_repository = providers.Singleton(
         repositories.RoleRepository,
     )
