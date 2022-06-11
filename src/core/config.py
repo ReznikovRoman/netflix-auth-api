@@ -30,12 +30,16 @@ class Settings(BaseSettings):
     THROTTLE_KEY_PREFIX: str = ""
     THROTTLE_DEFAULT_LIMITS: Union[str, list[str]] = Field(default_factory=list)
     THROTTLE_USER_REGISTRATION_LIMITS: str = Field("5/minute")
+    THROTTLE_ENABLE_LIMITER: bool = Field(True)
     DEBUG: bool = False
 
     # JWT
     JWT_SECRET_KEY: str = None
     JWT_ACCESS_TOKEN_EXPIRES: timedelta = timedelta(minutes=10)
     JWT_REFRESH_TOKEN_EXPIRES: timedelta = timedelta(days=3)
+
+    # Tracing
+    OTEL_ENABLE_TRACING: bool = Field(True)
 
     # OAUTH
     AUTH0_DOMAIN: str

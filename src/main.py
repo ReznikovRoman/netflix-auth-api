@@ -1,3 +1,5 @@
+import logging
+
 from redis import Redis
 
 from flask import Flask
@@ -19,6 +21,7 @@ settings = get_settings()
 
 def create_app() -> Flask:
     container = Container()
+    container.init_resources()
 
     app = Flask(__name__)
     app.config.from_object(settings)
@@ -32,6 +35,7 @@ def create_app() -> Flask:
 
     app.container = container
     container.config.from_pydantic(settings)
+    container.config.testing.from_value(app.config.get("TESTING", False))
 
     from db import base_models  # noqa: F401
 
@@ -46,14 +50,24 @@ def create_app() -> Flask:
     )
     init_jwt(app)
     init_limiter(app)
-    init_tracer(app)
     init_authlib(app, container.social_package)
+
+    _configure_tracer(app)
 
     override_providers(container)
 
     container.check_dependencies()
+    container.shutdown_resources()
 
     return app
+
+
+def _configure_tracer(app: Flask) -> None:
+    if settings.OTEL_ENABLE_TRACING:
+        logging.info("Tracing is enabled")
+        init_tracer(app)
+    else:
+        logging.info("Tracing is disabled")
 
 
 if __name__ == "__main__":

@@ -29,6 +29,7 @@ def exemption_rules() -> bool:
 
 
 limiter = Limiter(
+    enabled=settings.THROTTLE_ENABLE_LIMITER,
     storage_uri=f"redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}/{settings.REDIS_THROTTLE_STORAGE_DB}",
     key_prefix=settings.THROTTLE_KEY_PREFIX,
     key_func=get_remote_address,

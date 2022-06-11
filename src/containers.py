@@ -1,3 +1,5 @@
+import logging
+
 from dependency_injector import containers, providers
 
 from clients.redis import RedisClient
@@ -23,6 +25,11 @@ class Container(containers.DeclarativeContainer):
     )
 
     config = providers.Configuration()
+
+    logging = providers.Resource(
+        logging.basicConfig,
+        level=logging.INFO,
+    )
 
     redis_client = providers.Singleton(
         RedisClient,
