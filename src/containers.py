@@ -1,5 +1,4 @@
 import logging
-import sys
 
 from dependency_injector import containers, providers
 
@@ -30,7 +29,6 @@ class Container(containers.DeclarativeContainer):
     logging = providers.Resource(
         logging.basicConfig,
         level=logging.INFO,
-        stream=sys.stdout,
     )
 
     redis_client = providers.Singleton(

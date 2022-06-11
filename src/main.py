@@ -35,6 +35,7 @@ def create_app() -> Flask:
 
     app.container = container
     container.config.from_pydantic(settings)
+    container.config.testing.from_value(app.config.get("TESTING", False))
 
     from db import base_models  # noqa: F401
 
