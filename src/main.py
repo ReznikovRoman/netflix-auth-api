@@ -57,7 +57,6 @@ def create_app() -> Flask:
     override_providers(container)
 
     container.check_dependencies()
-    container.shutdown_resources()
 
     return app
 
