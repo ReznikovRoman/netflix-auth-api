@@ -4,7 +4,6 @@ from http import HTTPStatus
 from typing import TYPE_CHECKING
 
 from authlib.integrations.base_client import MismatchingStateError, MissingTokenError
-from dependency_injector.errors import NoSuchProviderError
 from dependency_injector.providers import Factory
 from dependency_injector.wiring import Provide, Provider, inject
 from flask_restx import Resource
@@ -17,7 +16,7 @@ from api.serializers import serialize
 from api.v1.auth import openapi as auth_openapi
 from api.v1.auth.serializers import JWTCredentialsSerializer
 from containers import Container
-from social.exceptions import UnknownSocialProviderError
+from social.auth.providers import get_social_auth
 from tracer import traced
 from users import types
 
@@ -28,13 +27,6 @@ if TYPE_CHECKING:
 
 
 social_ns = Namespace("social", description="Социальные сети")
-
-
-def _get_social_auth(social_auth_factory: Factory[BaseSocialAuth], provider_slug: str) -> BaseSocialAuth:
-    try:
-        return social_auth_factory(provider_slug)
-    except NoSuchProviderError:
-        raise UnknownSocialProviderError
 
 
 @social_ns.route("/login/<string:provider_slug>")
@@ -51,7 +43,7 @@ class SocialLogin(Resource):
         social_auth_factory: Factory[BaseSocialAuth] = Provider[Container.social_package.auth_factory],
     ):
         """Связать аккаунт со сторонним провайдером."""
-        social_auth = _get_social_auth(social_auth_factory, provider_slug)
+        social_auth = get_social_auth(social_auth_factory, provider_slug)
         auth_url = url_for("api.social_social_auth", provider_slug=provider_slug, _external=True)
         redirect_url = social_auth.authorize_url(auth_url)
         return social_auth.redirect(redirect_url)
@@ -75,7 +67,7 @@ class SocialAuth(Resource):
         social_service: SocialAccountService = Provide[Container.social_package.social_account_service],
     ):
         """Получить доступы для входа с помощью данных от стороннего провайдера."""
-        social_auth = _get_social_auth(social_auth_factory, provider_slug)
+        social_auth = get_social_auth(social_auth_factory, provider_slug)
         try:
             social_auth.oauth_client.get_access_token()
         except (MissingTokenError, MismatchingStateError, BadRequestKeyError):

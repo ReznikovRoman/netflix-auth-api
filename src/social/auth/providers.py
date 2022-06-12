@@ -1,9 +1,13 @@
 from abc import ABC, abstractmethod
 from urllib.parse import urlsplit, urlunsplit
 
+from dependency_injector.errors import NoSuchProviderError
+from dependency_injector.providers import Factory
+
 from flask import Response, redirect
 
 from ..constants import SocialProviderSlug
+from ..exceptions import UnknownSocialProviderError
 from ..types import IOAuthClient, UserSocialInfo
 
 
@@ -88,3 +92,11 @@ class GoogleSocialAuth(BaseSocialAuth):
         _url: list[str] = list(urlsplit(url))
         _url[1] = _url[1].removeprefix("api-auth.")
         return urlunsplit(_url)
+
+
+def get_social_auth(social_auth_factory: Factory[BaseSocialAuth], provider_slug: str) -> BaseSocialAuth:
+    """Получение класса для работы с провайдером по названию."""
+    try:
+        return social_auth_factory(provider_slug)
+    except NoSuchProviderError:
+        raise UnknownSocialProviderError
