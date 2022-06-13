@@ -1,4 +1,4 @@
-# Netflix API
+# Netflix Auth API
 Сервис авторизации для онлайн-кинотеатра _Netflix_.
 
 ## Сервисы
@@ -14,6 +14,9 @@
 - Netflix Auth API:
   - Сервис авторизации - управление пользователями и ролями
   - https://github.com/ReznikovRoman/netflix-auth-api
+- Netflix UGC:
+  - Сервис для работы с пользовательским контентом
+  - https://github.com/ReznikovRoman/netflix-ugc
 
 ## Настройка и запуск
 Docker конфигурации содержат контейнеры:
