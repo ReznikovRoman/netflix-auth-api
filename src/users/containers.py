@@ -27,4 +27,5 @@ class UserContainer(containers.DeclarativeContainer):
         jwt_auth=jwt_auth,
         user_repository=user_repository,
         login_log_repository=login_log_repository,
+        notification_client=notification_client,
     )
