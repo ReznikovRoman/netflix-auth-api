@@ -33,6 +33,9 @@ class Settings(BaseSettings):
     THROTTLE_ENABLE_LIMITER: bool = Field(True)
     DEBUG: bool = False
 
+    # CLIENTS
+    CLIENT_USE_STUBS: bool = Field(False)
+
     # JWT
     JWT_SECRET_KEY: str = None
     JWT_ACCESS_TOKEN_EXPIRES: timedelta = timedelta(minutes=10)

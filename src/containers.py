@@ -5,6 +5,8 @@ from dependency_injector import containers, providers
 from clients.redis import RedisClient
 from db.cache.redis import RedisCache
 from db.jwt_storage import JWTStorage
+from integrations import notifications
+from integrations.notifications.stubs import NetflixNotificationsClientStub
 from roles.containers import RoleContainer
 from social.auth.stubs import GoogleSocialAuthStub, OauthClientStub, YandexSocialAuthStub
 from social.containers import SocialContainer
@@ -40,6 +42,10 @@ class Container(containers.DeclarativeContainer):
         default_ttl=config.REDIS_DEFAULT_TIMEOUT,
     )
 
+    notification_client = providers.Singleton(
+        notifications.NetflixNotificationsClient,
+    )
+
     jwt_storage = providers.Singleton(
         JWTStorage,
         cache=cache,
@@ -53,6 +59,7 @@ class Container(containers.DeclarativeContainer):
         UserContainer,
         jwt_storage=jwt_storage,
         role_repository=role_package.role_repository,
+        notification_client=notification_client,
     )
 
     social_package = providers.Container(
@@ -70,4 +77,6 @@ def override_providers(container: Container) -> Container:
         container.social_package.google_auth.override(
             providers.Singleton(GoogleSocialAuthStub, oauth_client=oauth_client_stub),
         )
+    if container.config.CLIENT_USE_STUBS():
+        container.notification_client.override(providers.Singleton(NetflixNotificationsClientStub))
     return container

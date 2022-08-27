@@ -87,6 +87,7 @@ jobs:
           export NAA_THROTTLE_KEY_PREFIX=test_limiter:
           export NAA_THROTTLE_USER_REGISTRATION_LIMITS=59/second
           export NAA_THROTTLE_ENABLE_LIMITER=1
+          export NAA_CLIENT_USE_STUBS=1
           export NAA_OTEL_ENABLE_TRACING=1
           export NAA_AUTH0_DOMAIN=dev-lfllyc48.eu.auth0.com
           export NAA_AUTH0_API_AUDIENCE=https://netflix-auth.com
