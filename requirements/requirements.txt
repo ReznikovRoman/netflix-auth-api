@@ -365,6 +365,7 @@ greenlet==1.1.2 \
     # via
     #   -r requirements.in
     #   gevent
+    #   sqlalchemy
 grpcio==1.46.3 \
     --hash=sha256:01f3f7a6cdb111cf276ffff9c892fa32624e03999bac809d3f3d8321d98b6855 \
     --hash=sha256:0a5012ba00cf8b7ce9e6ac2312ace0b0e16fe9502c18340c8c3ecb734a759831 \
