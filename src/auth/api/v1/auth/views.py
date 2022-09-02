@@ -14,15 +14,15 @@ from auth.api.openapi import register_openapi_models
 from auth.api.serializers import serialize
 from auth.containers import Container
 from auth.core.config import get_settings
+from auth.domain.users import types
 from auth.throttling import limiter
 from auth.tracer import traced
-from auth.users import types
 
 from . import openapi
 from .serializers import JWTCredentialsSerializer, UserRegistrationSerializer, auth_request_parser, login_parser
 
 if TYPE_CHECKING:
-    from auth.users.services import UserService
+    from auth.domain.users.services import UserService
     current_user: types.User
 
 settings = get_settings()

@@ -1,6 +1,6 @@
 from flask_restx import OrderedModel, fields
 
-from auth.users import types
+from auth.domain.users import types
 
 login_history = OrderedModel(
     "LoginHistory",

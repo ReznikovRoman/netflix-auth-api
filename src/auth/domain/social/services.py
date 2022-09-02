@@ -3,12 +3,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from auth.common.exceptions import NotFoundError
-from auth.users.types import User
+from auth.domain.users.types import User
 
 from .types import UserSocialInfo
 
 if TYPE_CHECKING:
-    from auth.users.repositories import UserRepository
+    from auth.domain.users.repositories import UserRepository
 
     from .repositories import SocialAccountRepository
 

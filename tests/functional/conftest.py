@@ -7,10 +7,10 @@ import pytest
 import sqlalchemy
 from sqlalchemy import create_engine
 
+from auth.domain.roles import types as rt
+from auth.domain.users import types as ut
 from auth.infrastructure.db.postgres import db
 from auth.main import create_app
-from auth.roles import types as rt
-from auth.users import types as ut
 
 from .constants import ROLE_UUID, USER_UUID
 from .settings import get_settings

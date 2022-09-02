@@ -2,13 +2,13 @@ import logging
 
 from dependency_injector import containers, providers
 
+from auth.domain.roles.containers import RoleContainer
+from auth.domain.social.auth.stubs import GoogleSocialAuthStub, OauthClientStub, YandexSocialAuthStub
+from auth.domain.social.containers import SocialContainer
+from auth.domain.users.containers import UserContainer
 from auth.infrastructure.db import cache, jwt_storage, redis
 from auth.integrations import notifications
 from auth.integrations.notifications.stubs import NetflixNotificationsClientStub
-from auth.roles.containers import RoleContainer
-from auth.social.auth.stubs import GoogleSocialAuthStub, OauthClientStub, YandexSocialAuthStub
-from auth.social.containers import SocialContainer
-from auth.users.containers import UserContainer
 
 
 class Container(containers.DeclarativeContainer):

@@ -3,7 +3,7 @@ from marshmallow import fields
 from marshmallow_enum import EnumField
 
 from auth.api.serializers import BaseSerializer
-from auth.users import types
+from auth.domain.users import types
 
 password_change_parser = RequestParser(bundle_errors=True)
 password_change_parser.add_argument(name="old_password", type=str, location="form", required=True, nullable=False)

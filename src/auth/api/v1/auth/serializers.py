@@ -3,7 +3,7 @@ from flask_restx.reqparse import RequestParser
 from marshmallow import fields
 
 from auth.api.serializers import BaseSerializer
-from auth.users import types
+from auth.domain.users import types
 
 auth_request_parser = RequestParser(bundle_errors=True)
 auth_request_parser.add_argument(name="email", type=email(), location="form", required=True, nullable=False)

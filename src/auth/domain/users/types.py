@@ -3,7 +3,7 @@ import uuid
 from dataclasses import dataclass
 
 from auth.common.enums import ExtendedEnum
-from auth.roles.types import Role
+from auth.domain.roles.types import Role
 
 
 @dataclass(slots=True)

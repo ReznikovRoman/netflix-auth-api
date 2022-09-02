@@ -5,8 +5,9 @@ from typing import TYPE_CHECKING
 from authlib.integrations.flask_client import OAuth
 
 from auth.core.config import get_settings
-from auth.social.constants import SocialProviderSlug
-from auth.social.containers import SocialContainer, configure_clients
+
+from .constants import SocialProviderSlug
+from .containers import SocialContainer, configure_clients
 
 if TYPE_CHECKING:
     from authlib.integrations.flask_client import FlaskOAuth2App

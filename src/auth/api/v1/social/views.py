@@ -16,14 +16,14 @@ from auth.api.serializers import serialize
 from auth.api.v1.auth import openapi as auth_openapi
 from auth.api.v1.auth.serializers import JWTCredentialsSerializer
 from auth.containers import Container
-from auth.social.auth.providers import get_social_auth
+from auth.domain.social.auth.providers import get_social_auth
+from auth.domain.users import types
 from auth.tracer import traced
-from auth.users import types
 
 if TYPE_CHECKING:
-    from auth.social.auth import BaseSocialAuth
-    from auth.social.services import SocialAccountService
-    from auth.users.jwt import JWTAuth
+    from auth.domain.social.auth import BaseSocialAuth
+    from auth.domain.social.services import SocialAccountService
+    from auth.domain.users import JWTAuth
 
 
 social_ns = Namespace("social", description="Социальные сети")

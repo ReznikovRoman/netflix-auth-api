@@ -4,12 +4,12 @@ from flask import Flask
 
 from auth.containers import Container, override_providers
 from auth.core.config import get_settings
+from auth.domain.social.authlib import init_authlib
 from auth.infrastructure.db.postgres import init_postgres
 from auth.infrastructure.db.postgres_security import init_security
 from auth.jwt_manager import init_jwt
 from auth.middleware.before_request import register_before_request
 from auth.middleware.errors import init_error_handlers
-from auth.social.authlib import init_authlib
 from auth.throttling import init_limiter
 from auth.tracer import init_tracer
 

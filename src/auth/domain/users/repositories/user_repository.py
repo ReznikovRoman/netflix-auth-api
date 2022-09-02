@@ -9,16 +9,17 @@ from sqlalchemy.exc import IntegrityError, NoResultFound
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from auth.common.exceptions import NotFoundError
+from auth.domain.roles.models import Role
 from auth.infrastructure.db.postgres import db, db_session
 from auth.infrastructure.db.postgres_security import user_datastore
-from auth.roles.models import Role
-from auth.users import types
-from auth.users.models import User, UsersRoles
+
+from .. import types
+from ..models import User, UsersRoles
 
 if TYPE_CHECKING:
     from sqlalchemy.orm import Query, Session
 
-    from auth.roles.repositories import RoleRepository
+    from auth.domain.roles.repositories import RoleRepository
 
 
 class UserRepository:

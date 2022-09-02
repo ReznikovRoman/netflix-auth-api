@@ -2,7 +2,8 @@ import requests
 from jose import jwt
 
 from auth.core.config import get_settings
-from auth.oauth.exceptions import OAuthError
+
+from .exceptions import OAuthError
 
 settings = get_settings()
 

@@ -4,9 +4,9 @@ from typing import TYPE_CHECKING
 
 from flask_security import Security, SQLAlchemyUserDatastore
 
+from auth.domain.roles.models import Role
+from auth.domain.users.models import User
 from auth.infrastructure.db.postgres import db
-from auth.roles.models import Role
-from auth.users.models import User
 
 if TYPE_CHECKING:
     from flask import Flask

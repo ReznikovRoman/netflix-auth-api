@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from auth.domain.roles.enums import DefaultRoles
 from auth.integrations.notifications.enums import NotificationPriority, NotificationType
 from auth.integrations.notifications.schemas import NotificationIn
-from auth.roles.enums import DefaultRoles
 
 from . import types
 from .exceptions import UserAlreadyExistsError, UserInvalidCredentialsError, UserPasswordChangeError

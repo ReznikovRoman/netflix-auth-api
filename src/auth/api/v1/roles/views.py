@@ -11,13 +11,13 @@ from auth.api.namespace import Namespace
 from auth.api.openapi import register_openapi_models
 from auth.api.serializers import serialize
 from auth.containers import Container
-from auth.oauth.utils import requires_auth
+from auth.domain.oauth.utils import requires_auth
 
 from . import openapi
 from .serializers import RoleSerializer, role_change_parser, role_parser
 
 if TYPE_CHECKING:
-    from auth.roles.repositories import RoleRepository
+    from auth.domain.roles.repositories import RoleRepository
 
 role_ns = Namespace("roles", description="Роли")
 register_openapi_models("auth.api.v1.roles.openapi", role_ns)

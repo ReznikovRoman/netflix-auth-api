@@ -1,7 +1,7 @@
 from flask_restx.reqparse import RequestParser
 
 from auth.api.serializers import BaseSerializer
-from auth.roles import types
+from auth.domain.roles import types
 
 role_parser = RequestParser(bundle_errors=True)
 role_parser.add_argument(name="name", type=str, location="form", required=True, nullable=False)

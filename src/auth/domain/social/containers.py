@@ -1,8 +1,7 @@
 from dependency_injector import containers, providers
 
-from auth.social.constants import SocialProviderSlug
-
 from . import auth, repositories
+from .constants import SocialProviderSlug
 from .services import SocialAccountService
 from .types import IOAuthClient
 

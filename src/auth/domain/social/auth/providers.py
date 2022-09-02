@@ -6,9 +6,9 @@ from dependency_injector.providers import Factory
 
 from flask import Response, redirect
 
-from auth.social.constants import SocialProviderSlug
-from auth.social.exceptions import UnknownSocialProviderError
-from auth.social.types import IOAuthClient, UserSocialInfo
+from ..constants import SocialProviderSlug
+from ..exceptions import UnknownSocialProviderError
+from ..types import IOAuthClient, UserSocialInfo
 
 
 class BaseSocialAuth(ABC):

@@ -7,13 +7,13 @@ from flask_jwt_extended import JWTManager
 
 from auth.containers import Container
 from auth.core.config import get_settings
-from auth.users import types
+from auth.domain.users import types
 
 if TYPE_CHECKING:
     from flask import Flask
 
+    from auth.domain.users.repositories import UserRepository
     from auth.infrastructure.db.jwt_storage import JWTStorage
-    from auth.users.repositories import UserRepository
 
 settings = get_settings()
 

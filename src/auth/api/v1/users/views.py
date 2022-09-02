@@ -13,16 +13,16 @@ from auth.api.openapi import register_openapi_models
 from auth.api.serializers import pagination_parser, serialize
 from auth.common.types import PageNumberPagination
 from auth.containers import Container
-from auth.oauth.utils import requires_auth
-from auth.users import types
+from auth.domain.oauth.utils import requires_auth
+from auth.domain.users import types
 
 from . import openapi
 from .serializers import LoginLogSerializer, password_change_parser
 
 if TYPE_CHECKING:
-    from auth.social.repositories import SocialAccountRepository
-    from auth.users.repositories import LoginLogRepository, UserRepository
-    from auth.users.services import UserService
+    from auth.domain.social.repositories import SocialAccountRepository
+    from auth.domain.users.repositories import LoginLogRepository, UserRepository
+    from auth.domain.users.services import UserService
     current_user: types.User
 
 user_ns = Namespace("users", validate=True, description="Пользователи")

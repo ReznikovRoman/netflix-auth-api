@@ -11,7 +11,7 @@ import sqlalchemy
 from requests.sessions import Session
 from sqlalchemy.engine import Engine
 
-from auth.users.types import User
+from auth.domain.users.types import User
 
 from .settings import get_settings
 

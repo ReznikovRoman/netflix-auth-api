@@ -2,8 +2,9 @@ from user_agents import parse
 
 from auth.common.types import PageNumberPagination
 from auth.infrastructure.db.postgres import db_session
-from auth.users import types
-from auth.users.models import LoginLog
+
+from .. import types
+from ..models import LoginLog
 
 
 class LoginLogRepository:

@@ -15,9 +15,7 @@ class UserContainer(containers.DeclarativeContainer):
         jwt_storage=jwt_storage,
     )
 
-    login_log_repository = providers.Singleton(
-        repositories.LoginLogRepository,
-    )
+    login_log_repository = providers.Singleton(repositories.LoginLogRepository)
     user_repository = providers.Singleton(
         repositories.UserRepository,
         role_repository=role_repository,
