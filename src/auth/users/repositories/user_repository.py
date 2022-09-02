@@ -12,7 +12,6 @@ from auth.common.exceptions import NotFoundError
 from auth.db.postgres import db, db_session
 from auth.db.postgres_security import user_datastore
 from auth.roles.models import Role
-
 from auth.users import types
 from auth.users.models import User, UsersRoles
 
