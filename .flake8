@@ -18,7 +18,7 @@ ignore =
     D401
 per-file-ignores =
     # XXX imported but unused
-    */db/base_models.py:F401,
+    */infrastructure/db/base_models.py:F401,
     # First argument of a method should be named 'self'
     */core/**.py:N805,
     */integrations/notifications/schemas.py:N805,
