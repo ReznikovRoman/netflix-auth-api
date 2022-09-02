@@ -1,6 +1,6 @@
 import pytest
 
-from src.main import create_app
+from auth.main import create_app
 
 from .testlib import APIClient
 

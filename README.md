@@ -44,7 +44,7 @@ ENV=.env
 PYTHONUNBUFFERED=1
 
 # Netflix Auth API
-FLASK_APP=main.py
+FLASK_APP=auth.main
 # Project
 NAA_SECRET_KEY=bxv-!8yyx)boy&-spzvrc(v_%kfwuf4&47-av5zqoe(k_b=*2)
 NAA_SQLALCHEMY_ECHO=1
@@ -137,7 +137,7 @@ ENV=.env
 PYTHONUNBUFFERED=1
 
 # Netflix Auth API
-FLASK_APP=main.py
+FLASK_APP=auth.main
 # Project
 NAA_SECRET_KEY=bxv-!8yyx)boy&-spzvrc(v_%kfwuf4&47-av5zqoe(k_b=*2)
 NAA_SQLALCHEMY_ECHO=1

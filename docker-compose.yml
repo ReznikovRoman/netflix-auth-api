@@ -16,7 +16,7 @@ services:
     command: >
       sh -c "cd /app/src
       && flask db upgrade
-      && gunicorn --reload --worker-class gevent --workers 2 --bind 0.0.0.0:$NAA_SERVER_PORT patched:app"
+      && gunicorn --reload --worker-class gevent --workers 2 --bind 0.0.0.0:$NAA_SERVER_PORT auth.patched:app"
     depends_on:
       db:
         condition: service_healthy

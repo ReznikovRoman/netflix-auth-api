@@ -1,6 +1,6 @@
 import pytest
 
-from roles import types as rt
+from auth.roles import types as rt
 
 
 @pytest.fixture
