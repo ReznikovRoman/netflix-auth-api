@@ -8,6 +8,8 @@ from auth.roles.types import Role
 
 @dataclass(slots=True)
 class User:
+    """Пользователь в системе."""
+
     id: uuid.UUID  # noqa: VNE003
     email: str
     password: str
@@ -34,12 +36,15 @@ class User:
 
 @dataclass(frozen=True, slots=True)
 class JWTCredentials:
+    """Данные для JWT авторизации."""
+
     access_token: str
     refresh_token: str
 
 
 @dataclass(frozen=True, slots=True)
 class LoginLog:
+    """История входов в аккаунт."""
 
     class DeviceType(ExtendedEnum):
         """Тип девайса, с которого осуществлялся вход в аккаунт."""

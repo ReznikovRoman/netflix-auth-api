@@ -1,7 +1,7 @@
 from user_agents import parse
 
 from auth.common.types import PageNumberPagination
-from auth.db.postgres import db_session
+from auth.infrastructure.db.postgres import db_session
 from auth.users import types
 from auth.users.models import LoginLog
 
@@ -21,6 +21,7 @@ class LoginLogRepository:
         return [login_log.to_dto(user=user) for login_log in login_logs.items]
 
     def create_log_record(self, user: types.User, ip_addr: str, user_agent: str) -> types.LoginLog:
+        """Создание новой записи об истории входов."""
         device_type = self._get_device_type_from_user_agent(user_agent)
         login_log = LoginLog(user_id=user.id, user_agent=user_agent, ip_addr=ip_addr, device_type=device_type)
         with db_session() as session:
@@ -29,6 +30,7 @@ class LoginLogRepository:
 
     @staticmethod
     def _get_device_type_from_user_agent(user_agent: str) -> types.LoginLog.DeviceType:
+        """Получение типа девайса по User Agent."""
         user_agent = parse(user_agent)
         if user_agent.is_mobile:
             return types.LoginLog.DeviceType.MOBILE

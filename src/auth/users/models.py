@@ -9,7 +9,7 @@ from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.sql import expression
 
 from auth.common.models import TimeStampedMixin, UUIDMixin
-from auth.db.postgres import db
+from auth.infrastructure.db.postgres import db
 
 from . import types
 
@@ -18,6 +18,8 @@ if TYPE_CHECKING:
 
 
 class UsersRoles(db.Model):
+    """Роли пользователя."""
+
     __tablename__ = "users_roles"
 
     user = db.relationship("User", backref=db.backref("user_roles", cascade="all, delete-orphan"))
@@ -56,6 +58,7 @@ class User(TimeStampedMixin, UUIDMixin, db.Model, UserMixin):
 
 
 def create_loginlog_partitions(ddl, target, connection: Connection, **kwargs) -> None:
+    """Создание партиций таблицы `LoginLog`."""
     connection.execute("""CREATE TABLE IF NOT EXISTS loginlog_mobile PARTITION OF loginlog FOR VALUES IN ('MOBILE')""")
     connection.execute("""CREATE TABLE IF NOT EXISTS loginlog_tablet PARTITION OF loginlog FOR VALUES IN ('TABLET')""")
     connection.execute("""CREATE TABLE IF NOT EXISTS loginlog_pc PARTITION OF loginlog FOR VALUES IN ('PC')""")

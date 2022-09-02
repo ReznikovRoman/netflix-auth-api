@@ -1,7 +1,7 @@
 from flask_security import RoleMixin
 
 from auth.common.models import TimeStampedMixin, UUIDMixin
-from auth.db.postgres import db
+from auth.infrastructure.db.postgres import db
 
 from . import types
 

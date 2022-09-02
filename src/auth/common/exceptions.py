@@ -1,7 +1,11 @@
 from http import HTTPStatus
 
 
-class NetflixAuthError(Exception):
+class BaseNetflixAuthError(Exception):
+    """Базовая ошибка сервиса Netflix Auth."""
+
+
+class NetflixAuthError(BaseNetflixAuthError):
     """Ошибка сервиса Netflix Auth API."""
 
     message: str

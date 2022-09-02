@@ -2,9 +2,7 @@ import logging
 
 from dependency_injector import containers, providers
 
-from auth.clients.redis import RedisClient
-from auth.db.cache.redis import RedisCache
-from auth.db.jwt_storage import JWTStorage
+from auth.infrastructure.db import cache, jwt_storage, redis
 from auth.integrations import notifications
 from auth.integrations.notifications.stubs import NetflixNotificationsClientStub
 from auth.roles.containers import RoleContainer
@@ -33,27 +31,38 @@ class Container(containers.DeclarativeContainer):
         level=logging.INFO,
     )
 
+    # Infrastructure
+
+    redis_connection = providers.Resource(
+        redis.init_redis,
+        host=config.REDIS_HOST,
+        port=config.REDIS_PORT,
+        encoding=config.REDIS_DEFAULT_CHARSET,
+        decode_responses=config.REDIS_DECODE_RESPONSES,
+        retry_on_timeout=config.REDIS_RETRY_ON_TIMEOUT,
+    )
     redis_client = providers.Singleton(
-        RedisClient,
+        redis.RedisClient,
+        redis_client=redis_connection,
     )
     cache = providers.Singleton(
-        RedisCache,
+        cache.RedisCache,
         redis_client=redis_client,
         default_ttl=config.REDIS_DEFAULT_TIMEOUT,
     )
 
-    notification_client = providers.Singleton(
-        notifications.NetflixNotificationsClient,
-    )
-
     jwt_storage = providers.Singleton(
-        JWTStorage,
+        jwt_storage.JWTStorage,
         cache=cache,
     )
 
-    role_package = providers.Container(
-        RoleContainer,
-    )
+    # Integrations
+
+    notification_client = providers.Singleton(notifications.NetflixNotificationsClient)
+
+    # Domain
+
+    role_package = providers.Container(RoleContainer)
 
     user_package = providers.Container(
         UserContainer,
@@ -69,6 +78,7 @@ class Container(containers.DeclarativeContainer):
 
 
 def override_providers(container: Container) -> Container:
+    """Переопределение DI провайдеров с помощью стабов."""
     if container.config.SOCIAL_USE_STUBS():
         oauth_client_stub = providers.Singleton(OauthClientStub)
         container.social_package.yandex_auth.override(

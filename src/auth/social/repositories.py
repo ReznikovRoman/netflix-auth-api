@@ -3,7 +3,7 @@ from uuid import UUID
 from sqlalchemy.exc import IntegrityError, NoResultFound
 
 from auth.common.exceptions import ConflictError, NotFoundError
-from auth.db.postgres import db, db_session
+from auth.infrastructure.db.postgres import db, db_session
 
 from . import types
 from .models import SocialAccount

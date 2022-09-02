@@ -31,6 +31,8 @@ def register_openapi_models(import_path: str, api: Namespace) -> None:
 
 
 class WrapperModelFactory:
+    """Фабрика моделей для автоматической 'обертки' данных в ключ `data`."""
+
     wrapped_models: dict[str, RawModel] = {}
 
     @classmethod

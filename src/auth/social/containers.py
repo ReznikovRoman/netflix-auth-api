@@ -37,6 +37,7 @@ class SocialContainer(containers.DeclarativeContainer):
 
 
 def configure_clients(container: SocialContainer, client_slug_map: dict[str, IOAuthClient]) -> SocialContainer:
+    """Настройка OAuth клиентов и провайдеров."""
     container.yandex_auth.add_kwargs(oauth_client=client_slug_map[SocialProviderSlug.YANDEX.value])
     container.google_auth.add_kwargs(oauth_client=client_slug_map[SocialProviderSlug.GOOGLE.value])
     return container

@@ -40,4 +40,5 @@ limiter = Limiter(
 
 
 def init_limiter(app: Flask) -> None:
+    """Настройка троттлинга."""
     limiter.init_app(app)

@@ -7,7 +7,7 @@ import pytest
 import sqlalchemy
 from sqlalchemy import create_engine
 
-from auth.db.postgres import db
+from auth.infrastructure.db.postgres import db
 from auth.main import create_app
 from auth.roles import types as rt
 from auth.users import types as ut

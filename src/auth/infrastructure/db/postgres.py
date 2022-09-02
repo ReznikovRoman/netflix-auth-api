@@ -31,6 +31,7 @@ def ignore_duplicates(insert, compiler, **kw) -> str:
 
 
 def init_postgres(app: Flask) -> None:
+    """Настройка Flask-SQLAlchemy и Flask-Migrate."""
     app.config["SQLALCHEMY_DATABASE_URI"] = settings.DB_URL
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["SQLALCHEMY_ECHO"] = settings.SQLALCHEMY_ECHO
@@ -49,6 +50,6 @@ def db_session() -> Generator[Session, None, None]:
     try:
         yield db.session
         db.session.commit()
-    except Exception as e:
+    except Exception as exc:
         db.session.rollback()
-        raise e
+        raise exc

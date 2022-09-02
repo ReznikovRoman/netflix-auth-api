@@ -1,26 +1,38 @@
 from __future__ import annotations
 
 from datetime import timedelta
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Iterator, Literal
 
-from auth.core.config import get_settings
-from auth.db.redis import get_redis_client
+from redis import Redis
 
 if TYPE_CHECKING:
-    from redis import Redis
-
     from auth.common.types import seconds
 
 
-settings = get_settings()
+def init_redis(
+    host: str, port: int, encoding: str, decode_responses: Literal[True] = True, retry_on_timeout: bool = True,
+) -> Iterator[Redis]:
+    """Инициализация и получение клиента Redis."""
+    redis_client = Redis(
+        host=host,
+        port=port,
+        encoding=encoding,
+        decode_responses=decode_responses,
+        retry_on_timeout=retry_on_timeout,
+    )
+    yield redis_client
+    redis_client.close()
 
 
 class RedisClient:
-    """Клиент Redis."""
+    """Синхронный клиент для работы с Redis."""
+
+    def __init__(self, redis_client: Redis) -> None:
+        self._redis_client = redis_client
 
     def get_client(self, key: str | None = None, *, write: bool = False) -> Redis:
         self.pre_init_client()
-        client = self._get_client(write)
+        client = self._get_client(write=write)
         self.post_init_client(client)
         return client
 
@@ -49,5 +61,5 @@ class RedisClient:
     def post_init_client(self, client: Redis, *args, **kwargs) -> None:
         """Вызывается после инициализации клиента Redis."""
 
-    def _get_client(self, write: bool = False) -> Redis:
-        return get_redis_client()
+    def _get_client(self, *, write: bool = False) -> Redis:
+        return self._redis_client

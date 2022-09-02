@@ -7,6 +7,7 @@ errors = Blueprint("errors", __name__)
 
 @errors.app_errorhandler(NetflixAuthError)
 def handle_error(error: NetflixAuthError):
+    """Обработка проектных ошибок `NetflixAuthError`."""
     return error.to_dict(), error.status_code
 
 

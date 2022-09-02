@@ -5,7 +5,7 @@ from sqlalchemy import any_
 from sqlalchemy.exc import IntegrityError, NoResultFound
 
 from auth.common.exceptions import ConflictError, NotFoundError
-from auth.db.postgres import db, db_session
+from auth.infrastructure.db.postgres import db, db_session
 
 from . import types
 from .models import Role
@@ -16,11 +16,13 @@ class RoleRepository:
 
     @staticmethod
     def find_by_names(roles_names: list[str]) -> list[types.Role]:
+        """Получение ролей по их названиям."""
         roles = Role.query.filter_by(name=any_([roles_names])).all()
         return [role.to_dto() for role in roles]
 
     @staticmethod
     def get_all() -> list[types.Role]:
+        """Получение списка всех ролей."""
         return [role.to_dto() for role in Role.query.all()]
 
     @staticmethod

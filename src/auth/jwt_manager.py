@@ -12,7 +12,7 @@ from auth.users import types
 if TYPE_CHECKING:
     from flask import Flask
 
-    from auth.db.jwt_storage import JWTStorage
+    from auth.infrastructure.db.jwt_storage import JWTStorage
     from auth.users.repositories import UserRepository
 
 settings = get_settings()
@@ -49,6 +49,7 @@ def revoked_token_callback(
 
 
 def init_jwt(app: Flask) -> None:
+    """Настройка JWT."""
     app.config["JWT_SECRET_KEY"] = settings.JWT_SECRET_KEY
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = settings.JWT_ACCESS_TOKEN_EXPIRES
     app.config["JWT_REFRESH_TOKEN_EXPIRES"] = settings.JWT_REFRESH_TOKEN_EXPIRES

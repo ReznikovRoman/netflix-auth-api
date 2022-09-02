@@ -4,8 +4,9 @@ from authlib.integrations.base_client import MismatchingStateError
 
 from flask import request, url_for
 
-from ..constants import SocialProviderSlug
-from ..types import UserSocialInfo
+from auth.social.constants import SocialProviderSlug
+from auth.social.types import UserSocialInfo
+
 from . import GoogleSocialAuth, YandexSocialAuth
 
 

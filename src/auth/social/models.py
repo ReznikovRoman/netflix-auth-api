@@ -1,7 +1,7 @@
 from sqlalchemy.dialects.postgresql import UUID
 
 from auth.common.models import UUIDMixin
-from auth.db.postgres import db
+from auth.infrastructure.db.postgres import db
 
 from . import types
 

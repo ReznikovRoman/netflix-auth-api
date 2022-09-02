@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from auth.integrations.notifications.enums import NotificationPriority, NotificationType
 from auth.integrations.notifications.schemas import NotificationIn
-from auth.roles.constants import DefaultRoles
+from auth.roles.enums import DefaultRoles
 
 from . import types
 from .exceptions import UserAlreadyExistsError, UserInvalidCredentialsError, UserPasswordChangeError
@@ -32,6 +32,7 @@ class UserService:
         self.notification_client = notification_client
 
     def register_new_user(self, email: str, password: str) -> types.User:
+        """Регистрация нового пользователя в системе."""
         if self.user_repository.user_exists(email):
             raise UserAlreadyExistsError
         user = self.user_repository.create(email, password)
@@ -52,6 +53,7 @@ class UserService:
         return credentials, user
 
     def update_login_history(self, user: types.User, ip_addr: str, user_agent: str) -> types.LoginLog:
+        """Обновление истории входов в аккаунт пользователя."""
         login_log = self.login_log_repository.create_log_record(user, ip_addr, user_agent)
         return login_log
 

@@ -2,7 +2,7 @@ from datetime import timedelta
 
 from auth.common.types import seconds
 from auth.core.config import get_settings
-from auth.db.cache.base import Cache
+from auth.infrastructure.db.cache import Cache
 
 settings = get_settings()
 
@@ -14,6 +14,7 @@ class JWTStorage:
         self.cache = cache
 
     def is_token_revoked(self, jti: str) -> bool:
+        """Проверка на отозванные токены."""
         return bool(self.cache.exists(jti))
 
     def invalidate_tokens(self, access_jwt: dict) -> None:
@@ -24,4 +25,5 @@ class JWTStorage:
         self.invalidate_token(refresh_jti, settings.JWT_REFRESH_TOKEN_EXPIRES)
 
     def invalidate_token(self, jti: str, timeout: seconds | timedelta) -> bool:
+        """Инвалидация токена по jti."""
         return self.cache.set(jti, "", timeout=timeout)

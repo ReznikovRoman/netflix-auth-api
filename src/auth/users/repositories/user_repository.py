@@ -9,8 +9,8 @@ from sqlalchemy.exc import IntegrityError, NoResultFound
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from auth.common.exceptions import NotFoundError
-from auth.db.postgres import db, db_session
-from auth.db.postgres_security import user_datastore
+from auth.infrastructure.db.postgres import db, db_session
+from auth.infrastructure.db.postgres_security import user_datastore
 from auth.roles.models import Role
 from auth.users import types
 from auth.users.models import User, UsersRoles
@@ -89,6 +89,7 @@ class UserRepository:
 
     @staticmethod
     def is_valid_password(hashed_password: str, given_password: str) -> bool:
+        """Проверка пароля пользователя."""
         return check_password_hash(hashed_password, given_password)
 
     @staticmethod
@@ -101,6 +102,7 @@ class UserRepository:
 
     @staticmethod
     def change_password(user: types.User, password: str) -> types.User:
+        """Изменение пароля пользователя."""
         hashed_password = UserRepository._hash_password(password)
         with db_session():
             User.query.filter_by(email=user.email).update({"password": hashed_password})

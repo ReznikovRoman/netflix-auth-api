@@ -10,7 +10,7 @@ from auth.core.config import get_settings
 from . import types
 
 if TYPE_CHECKING:
-    from auth.db.jwt_storage import JWTStorage
+    from auth.infrastructure.db.jwt_storage import JWTStorage
 
 settings = get_settings()
 

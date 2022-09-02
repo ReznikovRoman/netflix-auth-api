@@ -16,7 +16,7 @@ from opentelemetry.trace import NonRecordingSpan
 
 from flask import request
 
-from auth.db.postgres import db
+from auth.infrastructure.db.postgres import db
 
 if TYPE_CHECKING:
     from _typeshed.wsgi import WSGIEnvironment
@@ -26,6 +26,7 @@ if TYPE_CHECKING:
 
 
 def configure_otel() -> None:
+    """Конфигурация OpenTelemetry и Jaeger."""
     provider = TracerProvider(
         resource=Resource.create(
             attributes={
@@ -44,12 +45,14 @@ def configure_otel() -> None:
 
 
 def request_hook(span: Span, environ: WSGIEnvironment) -> None:
+    """Хук для добавления заголовка `X-Request-Id` в спаны."""
     if span and span.is_recording():
         request_id = request.headers["X-Request-Id"]
         span.set_attribute("http.request_id", request_id)
 
 
 def init_tracer(app: Flask) -> None:
+    """Настройка трассировки."""
     configure_otel()
     FlaskInstrumentor().instrument_app(
         app=app,

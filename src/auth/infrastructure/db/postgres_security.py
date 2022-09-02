@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from flask_security import Security, SQLAlchemyUserDatastore
 
-from auth.db.postgres import db
+from auth.infrastructure.db.postgres import db
 from auth.roles.models import Role
 from auth.users.models import User
 
