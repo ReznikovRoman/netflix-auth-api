@@ -1,7 +1,6 @@
-import logging
-
 from dependency_injector import containers, providers
 
+from auth.core.logging import configure_logger
 from auth.domain.roles.containers import RoleContainer
 from auth.domain.social.auth.stubs import GoogleSocialAuthStub, OauthClientStub, YandexSocialAuthStub
 from auth.domain.social.containers import SocialContainer
@@ -17,6 +16,7 @@ class Container(containers.DeclarativeContainer):
     wiring_config = containers.WiringConfiguration(
         modules=[
             "auth.jwt_manager",
+            "auth.domain.users.signals",
             "auth.api.v1.auth.views",
             "auth.api.v1.users.views",
             "auth.api.v1.roles.views",
@@ -26,10 +26,7 @@ class Container(containers.DeclarativeContainer):
 
     config = providers.Configuration()
 
-    logging = providers.Resource(
-        logging.basicConfig,
-        level=logging.INFO,
-    )
+    logging = providers.Resource(configure_logger)
 
     # Infrastructure
 
@@ -68,7 +65,6 @@ class Container(containers.DeclarativeContainer):
         UserContainer,
         jwt_storage=jwt_storage,
         role_repository=role_package.role_repository,
-        notification_client=notification_client,
     )
 
     social_package = providers.Container(

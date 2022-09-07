@@ -24,15 +24,12 @@ def create_app() -> Flask:
     app = Flask(__name__)
     app.config.from_object(settings)
 
-    register_before_request(app)
-
-    from auth.api.v1.namespaces import blueprint as api_v1  # noqa: F401
-
-    init_error_handlers(app)
-    app.register_blueprint(api_v1)
-
-    app.container = container
+    container = override_providers(container)
     container.config.testing.from_value(app.config.get("TESTING", False))
+    container.init_resources()
+    container.check_dependencies()
+
+    register_before_request(app)
 
     init_postgres(app)
     init_security(app)
@@ -42,11 +39,12 @@ def create_app() -> Flask:
 
     _configure_tracer(app)
 
-    override_providers(container)
-    container.init_resources()
+    app.container = container
 
-    container.check_dependencies()
+    from auth.api.v1.namespaces import blueprint as api_v1  # noqa: F401
 
+    init_error_handlers(app)
+    app.register_blueprint(api_v1)
     return app
 
 
