@@ -8,7 +8,6 @@ class UserContainer(containers.DeclarativeContainer):
 
     jwt_storage = providers.Dependency()
     role_repository = providers.Dependency()
-    notification_client = providers.Dependency()
 
     jwt_auth = providers.Singleton(
         jwt.JWTAuth,
@@ -25,5 +24,4 @@ class UserContainer(containers.DeclarativeContainer):
         jwt_auth=jwt_auth,
         user_repository=user_repository,
         login_log_repository=login_log_repository,
-        notification_client=notification_client,
     )
