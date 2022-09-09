@@ -3,15 +3,13 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from auth.domain.roles.enums import DefaultRoles
-from auth.integrations.notifications.enums import NotificationPriority, NotificationType
-from auth.integrations.notifications.schemas import NotificationIn
+from auth.signals import event_emitter
 
 from . import types
+from .enums import UserSignal
 from .exceptions import UserAlreadyExistsError, UserInvalidCredentialsError, UserPasswordChangeError
 
 if TYPE_CHECKING:
-    from auth.integrations.notifications import NetflixNotificationsClient
-
     from .jwt import JWTAuth
     from .repositories import LoginLogRepository, UserRepository
 
@@ -19,17 +17,10 @@ if TYPE_CHECKING:
 class UserService:
     """Сервис для работы с пользователями."""
 
-    def __init__(
-        self,
-        user_repository: UserRepository,
-        login_log_repository: LoginLogRepository,
-        jwt_auth: JWTAuth,
-        notification_client: NetflixNotificationsClient,
-    ):
+    def __init__(self, user_repository: UserRepository, login_log_repository: LoginLogRepository, jwt_auth: JWTAuth):
         self.user_repository = user_repository
         self.login_log_repository = login_log_repository
         self.jwt_auth = jwt_auth
-        self.notification_client = notification_client
 
     def register_new_user(self, email: str, password: str) -> types.User:
         """Регистрация нового пользователя в системе."""
@@ -37,7 +28,7 @@ class UserService:
             raise UserAlreadyExistsError
         user = self.user_repository.create(email, password)
         self.assign_default_roles(user)
-        self.notification_client.send_notification(self._build_welcome_notification_payload(email=email))
+        event_emitter.emit(UserSignal.USER_REGISTERED.value, user_email=email)
         return user
 
     def assign_default_roles(self, user: types.User) -> types.User:
@@ -76,14 +67,3 @@ class UserService:
         user = self.user_repository.change_password(user, new_password1)
         self.jwt_auth.revoke_tokens(jwt)
         return user
-
-    @staticmethod
-    def _build_welcome_notification_payload(*, email: str) -> NotificationIn:
-        notification = NotificationIn(
-            subject="Спасибо за регистрацию",
-            notification_type=NotificationType.EMAIL.value,
-            priority=NotificationPriority.URGENT.value,
-            recipient_list=[email],
-            content="Вы зарегистрировались на сайте netflix.com",
-        )
-        return notification
