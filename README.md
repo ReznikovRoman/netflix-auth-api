@@ -5,7 +5,7 @@ _Netflix_ authorization service.
 [Flask](https://flask.palletsprojects.com/en/2.2.x/), [Flask-RestX](https://flask-restx.readthedocs.io/en/latest/),
 [SQLAlchemy](https://www.sqlalchemy.org/), [Alembic](https://alembic.sqlalchemy.org/en/latest/front.html),
 [auth0](https://auth0.com/machine-to-machine),
-[Postgres](https://www.postgresql.org/), [Redis](https://redis.io/)
+[Postgres](https://www.postgresql.org/), [Redis](https://redis.io/), [Traefik](https://doc.traefik.io/traefik/)
 
 ## Services
 - Netflix Admin:
