@@ -1,17 +1,18 @@
-Временный пароль пользователя при авторизации через социальную сеть
+Temporary user password when logging in via a social network
 ===============================
 
-Контекст
+Context
 ------
-- Пользователи могут зарегистрироваться через социальную сеть.
-- У каждого пользователя должен быть пароль.
+- Users can register via the social network.
+- Each user must have a password.
+- The `Netflix Notifications` service is currently not integrated.
 
-Решение
+Decision
 ------
-На данном этапе проекта пароль назначается одинаковым для всех пользователей при социальной авторизации.
+At the current stage of the project, the same password is assigned for all users during social auth.
 
-Последствия
+Consequences
 ------
-На данном этапе проекта не реализован механизм уведомлений.
-В будущем при регистрации через социальную сеть пользователю будет генерироваться случайный пароль и
-отсылаться письмо для его смены.
+**Major security issue**.
+In the future, when registering via a social network, a random password will be generated and
+sent to the user via email.

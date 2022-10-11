@@ -1,25 +1,25 @@
-Роли пользователя
+User roles
 ===============================
 
-Контекст
+Context
 ------
-- У пользователя есть список ролей (`viewer`, `subscriber`, и т.п.).
-- Наличие некоторых ролей открывает пользователю доступ к расширенному функционалу платформы.
-- Для проверки наличия роли уже есть готовое АПИ.
-- В сервисах часто проверяются роли, поэтому хотелось бы ускорить эту проверку.
+- User has a list of roles (`viewer`, `subscriber`, etc.).
+- If user has some specific roles, he gets access to extended platform's functionality .
+- There is already an API for checking user roles.
+- Roles are often checked in services, so we would like to speed up this process.
 
-Решение
+Decision
 ------
-Роли пользователя сохраняются в JWT токене в качестве `additional claims`.
+User roles are stored in a JWT claim `additional claims`.
 
-Любой клиент может декодировать токен с помощью секретного ключа и получить список ролей.
+Any client can decode the token using a secret key and get a list of roles.
 
-Последствия
+Consequences
 ------
-Если роли пользователя обновляются (например, он покупает подписку и получает роль `subscriber`),
-а клиент продолжает использовать старый access токен, то мы неверно будем определять
-роли пользователя (потому что в старом access токене они не изменились).
+If the user roles are updated (e.g., he purchases a subscription and retrieves `subscriber` role),
+and the client continues to use the old access token,
+then we will define user roles incorrectly (because roles have not been changed in the old access token).
 
-Мы предполагаем, что клиенты сами будут отвечать за корректное обновление токенов
-(например, получение нового access токена после изменения ролей по refresh токену).
-А сами сервисы, которым нужна проверка ролей, не будут ответственны за это.
+We assume that clients themselves would be responsible for the correct and timely token updates.
+(e.g., retrieving a new access token after changing roles using the refresh token).
+And the services that need role verification will not be responsible for that.

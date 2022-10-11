@@ -1,73 +1,67 @@
 # Netflix Auth API
-Сервис аутентификации для онлайн-кинотеатра.
+Authentication service for the online cinema.
 
-## Технологии
+## Technologies
 - Flask
   - [flask-sqlalchemy](https://flask-sqlalchemy.palletsprojects.com/en/2.x/quickstart/)
-    - Дополнение к ORM SQLAlchemy
+    - SQLAlchemy ORM Flask extension
   - [flask-migrate](https://flask-migrate.readthedocs.io/en/latest/)
-    - Дополнение к миграциям alembic
+    - Alembic migrations extension
   - [flask-security](https://pythonhosted.org/Flask-Security/quickstart.html)
-    - Управление пользователями
+    - User management
   - [flask-restx](https://flask-restx.readthedocs.io/en/latest/)
     - REST API + Swagger docs
   - [flask-jwt-extended](https://flask-jwt-extended.readthedocs.io/en/stable/basic_usage/)
-    - Генерация JWT токенов
+    - JWT manager
   - [authlib](https://docs.authlib.org/en/latest/client/flask.html#flask-client)
     - Social Auth, OAuth 2.0
   - [flask-limiter](https://github.com/alisaifee/flask-limiter)
     - Rate limits
 - PostgreSQL
-  - Основная БД для хранения информации о пользователях, ролях и социальных аккаунтах
+  - Primary database for storing information about users, roles and social accounts.
 - Redis
-  - Хранилище недействительных access токенов (токенов, у которых истек `ttl`),
-  а также refresh токенов с установленным `ttl`
+  - Storage of invalid access tokens (tokens with expired `ttl`) and refresh tokens with configured `ttl`
 
-## АПИ
-- Анонимный пользователь
-  - Авторизация через социальную сеть
-    - `POST /api/v1/social/login/{provider_name}`
-    - ? Тело запроса
-    - Google OAuth
-    - Yandex OAuth
-  - Вход в аккаунт через социальную сеть
+## API
+- Anonymous user
+  - Social login
     - `POST /api/v1/social/login/{provider_slug}`
-    - ? Тело запроса
+    - ? Request body
     - Google OAuth
     - Yandex OAuth
-  - Стандартная регистрация по электронной почте и паролю
+  - Standard email-password registration
     - `POST /api/v1/auth/register`
-    - Тело запроса
+    - Request body
     ```json
     {
       "login": "xxx@mail.com",
       "password": "xxx"
     }
     ```
-  - Стандартный вход в аккаунт по электронной почте и паролю
+  - Email-password login/authentication
     - `POST /api/v1/auth/login`
-    - Тело запроса
+    - Request body
     ```json
     {
       "login": "xxx@mail.com",
       "password": "xxx"
     }
     ```
-  - Обновление access токена с помощью refresh токена
+  - Retrieve a new access token by the refresh token
     - `POST /api/v1/auth/refresh`
-    - Тело запроса
+    - Request body
     ```json
     {
       "refresh_token": "xxx",
       "grant_type": "refresh_token"
     }
     ```
-  - Выход из аккаунта
+  - Logout
     - `POST /api/v1/auth/logout`
-- Авторизированный пользователь
-  - Изменение пароля
+- Authenticated user
+  - Change password
     - `POST /api/v1/users/me/change-password`
-    - Тело запроса
+    - Request body
     ```json
     {
       "old_password": "old",
@@ -75,47 +69,48 @@
       "new_password2": "new"
     }
     ```
-  - Просмотр истории входов в аккаунт
+  - View account login history
     - `GET /api/v1/users/me/login-history`
-    - ID лога (истории входа)
-    - ID пользователя
-    - User Agent, с которого был произведен вход в аккаунт
-    - Дата входа в аккаунт
-    - Доп. информация о входе
-  - Просмотр списка связанных аккаунтов в социальных сетях
+    - Log ID (login history)
+    - User ID
+    - User Agent, from which the account was logged in
+    - Login date
+    - Additional login information
+  - List of linked social accounts
     - `GET /api/v1/users/me/social-accounts/`
-  - Открепление аккаунта из социальной сети
+  - Remove integration with a social account
     - `DELETE /api/v1/users/me/social-accounts/{social_account_id}`
-- Роли
-  - Приватное АПИ
+- Roles
+  - Private API
     - CLIENT_ID/CLIENT_SECRET
-    - Используем сервис auth0 для генерации и проверки ключей
+    - We use the auth0 service to generate and verify keys
   - CRUD
-    - Создание новой роли
+    - Create role
       - `POST /api/v1/roles/`
-      - Тело запроса
+      - Request body
       ```json
         {
           "name": "xxx",
           "description": "xxx"
         }
       ```
-    - Удаление роли
+    - Delete role
       - `DELETE /api/v1/roles/{role_id}`
-    - Изменение роли
+    - Change role
       - `PATCH /api/v1/roles/{role_id}`
-      - Тело запроса
+      - Request body
       ```json
         {
           "name": "xxx",
           "description": "xxx"
         }
       ```
-    - Просмотр всех ролей
+    - List of all roles
       - `GET /api/v1/roles/`
-  - Назначение роли пользователю
+  - Assign role to the user
     - `POST /api/v1/users/{user_id}/roles/{role_id}`
-  - Удалить роль у пользователя
+  - Remove role from the user
     - `DELETE /api/v1/users/{user_id}/roles/{role_id}`
   - Проверка наличия роли у пользователя. 200 - роль есть, 404 - роли у пользователя нет
+  - Check whether user has a specific role. 200 - user has the given role, 404 otherwise
     - `HEAD /api/v1/users/{user_id}/roles/{role_id}/`
