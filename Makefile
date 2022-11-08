@@ -2,6 +2,7 @@ REQUIREMENTS_DIR := requirements
 FUNCTIONAL_TESTS_DIR := tests/functional
 PIP_COMPILE_ARGS := --generate-hashes --allow-unsafe --no-header --no-emit-index-url --verbose
 PIP_COMPILE := cd $(REQUIREMENTS_DIR) && pip-compile $(PIP_COMPILE_ARGS)
+PIP_SYNC_ARGS := --no-deps
 
 .PHONY: fix
 fix:
@@ -40,6 +41,6 @@ compile-requirements:
 .PHONY: sync-requirements
 sync-requirements:
 	pip install pip-tools
-	cd $(REQUIREMENTS_DIR) && pip-sync requirements.txt requirements.*.txt
+	cd $(REQUIREMENTS_DIR) && pip-sync requirements.txt requirements.*.txt --pip-args "$(PIP_SYNC_ARGS)"
 
 .DEFAULT_GOAL :=
