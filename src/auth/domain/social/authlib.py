@@ -37,24 +37,25 @@ oauth.register(
 
 
 class AuthlibClient:
-    """OAuth клиент на основе библиотеки authlib."""
+    """OAuth authlib based client."""
 
     def __init__(self, base_client: FlaskOAuth2App):
         self._base_client = base_client
 
     def create_authorization_url(self, url: str, **kwargs) -> dict:
+        """Build authorization url with optional parameters."""
         return self._base_client.create_authorization_url(url, **kwargs)
 
     def save_authorize_data(self, **kwargs) -> None:
-        """Сохранение данных авторизации, `state`, в хранилище."""
+        """Save authorization related data to state."""
         return self._base_client.save_authorize_data(**kwargs)
 
     def get_access_token(self, **kwargs) -> str:
-        """Получение и проверка access токена от провайдера."""
+        """Receive access token from social provider."""
         return self._base_client.authorize_access_token(**kwargs)
 
     def get_user_info(self, **kwargs) -> dict:
-        """Получение информации о пользователе от провайдера."""
+        """Get user info from social provider."""
         return self._base_client.userinfo(**kwargs)
 
 
@@ -67,6 +68,7 @@ def create_social_clients(oauth_: OAuth) -> dict[str, AuthlibClient]:
 
 
 def init_authlib(app: Flask, container: SocialContainer) -> OAuth:
+    """Authlib configuration."""
     oauth.init_app(app)
     configure_clients(container, create_social_clients(oauth))
     return oauth

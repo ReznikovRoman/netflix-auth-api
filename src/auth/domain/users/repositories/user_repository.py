@@ -23,17 +23,17 @@ if TYPE_CHECKING:
 
 
 class UserRepository:
-    """Репозиторий для работы с данными пользователей."""
+    """Users repository."""
 
     def __init__(self, role_repository: RoleRepository):
         self.role_repository = role_repository
 
     def add_roles(self, user: types.User, roles_names: list[str]) -> types.User:
-        """Добавление ролей с названиями `roles_names` пользователю."""
+        """Assign roles with the given names to user."""
         roles = self.role_repository.find_by_names(roles_names)
         with db_session() as session:
             for role in roles:
-                # XXX: для игнорирования дубликатов приходится вручную проверять наличие роли у пользователя
+                # XXX: to ignore duplicates, we have to manually check whether user has a specific role
                 if self._has_role(session, user.id, role.id):
                     continue
                 session.add(UsersRoles(user_id=user.id, role_id=role.id))
@@ -41,13 +41,13 @@ class UserRepository:
         return user
 
     def has_role(self, user_id: UUID, role_id: UUID) -> bool:
-        """Проверка наличия роли у пользователя."""
+        """Check whether user has a specific role."""
         with db_session() as session:
             return self._has_role(session, user_id, role_id)
 
     @staticmethod
     def assign_role(user_id: UUID, role_id: UUID) -> None:
-        """Добавление роли пользователю."""
+        """Assign role to user."""
         with db_session() as session:
             stmt = (
                 insert(UsersRoles, postgresql_ignore_duplicates=True).values(user_id=user_id, role_id=role_id)
@@ -59,13 +59,13 @@ class UserRepository:
 
     @staticmethod
     def revoke_role(user_id: UUID, role_id: UUID) -> None:
-        """Удаление роли у пользователя."""
+        """Remove role from user."""
         with db_session():
             UsersRoles.query.filter_by(user_id=user_id, role_id=role_id).delete()
 
     @staticmethod
     def get_active_or_none(user_id: UUID) -> types.User | None:
-        """Получение активного пользователя по `user_id`."""
+        """Get active user by ID."""
         user = UserRepository._active_with_roles(id=user_id).one_or_none()
         if user is None:
             return None
@@ -73,7 +73,7 @@ class UserRepository:
 
     @staticmethod
     def get_active_by_email(email: str) -> types.User:
-        """Получение активного пользователя по почте."""
+        """Get active user by email."""
         try:
             user = UserRepository._active_with_roles(email=email).one()
         except NoResultFound:
@@ -82,7 +82,7 @@ class UserRepository:
 
     @staticmethod
     def user_exists(email: str) -> bool:
-        """Проверка на существование пользователя с данной почтой."""
+        """Check whether user with the given email already exists."""
         exists = db.session.query(
             db.session.query(User.id).filter_by(email=email, active=True).exists(),
         ).scalar()
@@ -90,12 +90,12 @@ class UserRepository:
 
     @staticmethod
     def is_valid_password(hashed_password: str, given_password: str) -> bool:
-        """Проверка пароля пользователя."""
+        """Validate user password."""
         return check_password_hash(hashed_password, given_password)
 
     @staticmethod
     def create(email: str, password: str) -> types.User:
-        """Создание нового пользователя с хэшированным паролем."""
+        """Create new user with hashed password."""
         hashed_password = UserRepository._hash_password(password)
         with db_session():
             user: User = user_datastore.create_user(email=email, password=hashed_password)
@@ -103,7 +103,7 @@ class UserRepository:
 
     @staticmethod
     def change_password(user: types.User, password: str) -> types.User:
-        """Изменение пароля пользователя."""
+        """Change user password."""
         hashed_password = UserRepository._hash_password(password)
         with db_session():
             User.query.filter_by(email=user.email).update({"password": hashed_password})
@@ -116,7 +116,7 @@ class UserRepository:
 
     @staticmethod
     def _active_with_roles(**filters) -> Query:
-        """Получение активного пользователя с ролями в соответствии с заданными фильтрами."""
+        """Get active user with roles with optional filtering."""
         roles = func.json_agg(
             func.jsonb_build_object("id", Role.id, "name", Role.name, "description", Role.description).distinct(),
         ).label("roles")

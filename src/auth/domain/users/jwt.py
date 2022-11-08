@@ -16,14 +16,14 @@ settings = get_settings()
 
 
 class JWTAuth:
-    """Авторизация с использованием JWT."""
+    """JWT authorization."""
 
     def __init__(self, jwt_storage: JWTStorage):
         self.jwt_storage = jwt_storage
 
     @staticmethod
     def generate_tokens(user: types.User, fresh: bool = True) -> types.JWTCredentials:
-        """Генерация JWT - access и refresh токенов."""
+        """Generate JWT - access and refresh tokens."""
         user_identity = str(user.id)
         refresh_token_jti = str(uuid.uuid4())
         roles_names = [role.name for role in user.roles]
@@ -36,12 +36,12 @@ class JWTAuth:
         return types.JWTCredentials(access_token=access_token, refresh_token=refresh_token)
 
     def refresh_tokens(self, refresh_token_jti: str, user: types.User) -> types.JWTCredentials:
-        """Обновление доступов по refresh токену."""
-        # XXX: инвалидируем только refresh токен
-        # при запросе на новую пару доступов оставляем доступным предыдущий access токен
+        """Renew credentials using a refresh token."""
+        # XXX: invalidate only the refresh token
+        # when requesting new credentials, we leave the previous access token valid
         self.jwt_storage.invalidate_token(refresh_token_jti, settings.JWT_REFRESH_TOKEN_EXPIRES)
         return self.generate_tokens(user, fresh=False)
 
     def revoke_tokens(self, access_jwt: dict) -> None:
-        """Инвалидация access и refresh токенов по access токену."""
+        """Revoke access and refresh tokens by the given jwt."""
         self.jwt_storage.invalidate_tokens(access_jwt)

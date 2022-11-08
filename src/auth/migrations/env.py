@@ -24,7 +24,7 @@ target_metadata = current_app.extensions["migrate"].db.metadata
 
 
 def include_object(object_: Table, name: str, type_: str, reflected, compare_to) -> bool:
-    """Настраиваем правила автогенерации миграций.
+    """Configure auto-generation rules.
 
     https://alembic.sqlalchemy.org/en/latest/autogenerate.html#omitting-based-on-object
     """

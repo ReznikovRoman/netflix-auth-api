@@ -4,7 +4,7 @@ from . import jwt, repositories, services
 
 
 class UserContainer(containers.DeclarativeContainer):
-    """Контейнер с зависимостями приложения."""
+    """App DI container."""
 
     jwt_storage = providers.Dependency()
     role_repository = providers.Dependency()

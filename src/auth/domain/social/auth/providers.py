@@ -12,26 +12,26 @@ from ..types import IOAuthClient, UserSocialInfo
 
 
 class BaseSocialAuth(ABC):
-    """Базовая авторизация через внешнего провайдера."""
+    """Base social authorization."""
 
     slug: str
     oauth_client: IOAuthClient
 
     @abstractmethod
     def authorize_url(self, auth_url: str) -> str:
-        """Проверка и создание URL для редиректа."""
+        """Authorize URL for redirect."""
 
     @abstractmethod
     def get_user_info(self) -> UserSocialInfo:
-        """Получение данных пользователя от провайдера."""
+        """Get user info from social provider."""
 
     def redirect(self, redirect_uri: str) -> Response:
-        """Осуществляет редирект клиента на `redirect_uri`."""
+        """Redirect client for the given `redirect_uri`."""
         return redirect(redirect_uri)
 
 
 class YandexSocialAuth(BaseSocialAuth):
-    """Авторизация с использованием 'Яндекс'."""
+    """Yandex based social authorization."""
 
     def __init__(self, oauth_client: IOAuthClient):
         self.oauth_client = oauth_client
@@ -57,7 +57,7 @@ class YandexSocialAuth(BaseSocialAuth):
 
 
 class GoogleSocialAuth(BaseSocialAuth):
-    """Авторизация с использованием 'Google'."""
+    """Google based social authorization."""
 
     def __init__(self, oauth_client: IOAuthClient):
         self.oauth_client = oauth_client
@@ -84,9 +84,9 @@ class GoogleSocialAuth(BaseSocialAuth):
 
     @staticmethod
     def _prepare_url(url: str) -> str:
-        """Убирает префикс 'api-auth.' у ссылки для редиректа.
+        """Remove API prefix 'api-auth.' from url.
 
-        Google позволяет указать только домен верхнего уровня в качестве 'redirect_uri':
+        Google allows only top-level domains for 'redirect_uri':
         https://developers.google.com/identity/protocols/oauth2/web-server#uri-validation
         """
         _url: list[str] = list(urlsplit(url))
@@ -95,7 +95,7 @@ class GoogleSocialAuth(BaseSocialAuth):
 
 
 def get_social_auth(social_auth_factory: Factory[BaseSocialAuth], provider_slug: str) -> BaseSocialAuth:
-    """Получение класса для работы с провайдером по названию."""
+    """Get appropriate authorization service by provider slug."""
     try:
         return social_auth_factory(provider_slug)
     except NoSuchProviderError:

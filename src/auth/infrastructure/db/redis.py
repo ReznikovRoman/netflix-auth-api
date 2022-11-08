@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 def init_redis(
     host: str, port: int, encoding: str, decode_responses: Literal[True] = True, retry_on_timeout: bool = True,
 ) -> Iterator[Redis]:
-    """Инициализация и получение клиента Redis."""
+    """Init Redis client."""
     redis_client = Redis(
         host=host,
         port=port,
@@ -25,7 +25,7 @@ def init_redis(
 
 
 class RedisClient:
-    """Синхронный клиент для работы с Redis."""
+    """Sync Redis client."""
 
     def __init__(self, redis_client: Redis) -> None:
         self._redis_client = redis_client
@@ -56,10 +56,10 @@ class RedisClient:
         return client.delete(*keys)
 
     def pre_init_client(self, *args, **kwargs) -> None:
-        """Вызывается до начала инициализации клиента Redis."""
+        """Pre-init signal. Called before initializing Redis client."""
 
     def post_init_client(self, client: Redis, *args, **kwargs) -> None:
-        """Вызывается после инициализации клиента Redis."""
+        """Post-init signal. called after initializing Redis client."""
 
     def _get_client(self, *, write: bool = False) -> Redis:
         return self._redis_client

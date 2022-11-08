@@ -8,7 +8,7 @@ from .types import Queue
 
 
 class NotificationIn(BaseModel):
-    """Новое уведомление от внешнего сервиса."""
+    """New notification from an external service."""
 
     subject: str
     notification_type: NotificationType
@@ -20,11 +20,11 @@ class NotificationIn(BaseModel):
 
     @root_validator(pre=True)
     def clean_content_with_slug(cls, values: dict) -> dict:
-        """Проверка контента и слага уведомления.
+        """Validate notification slug and content.
 
-        Если клиент решает использовать готовый шаблон со слагом `template_slug`, то поле `content` не используется.
+        If client uses built-in template with `template_slug`, `content` field is ignored.
 
-        Если шаблон не выбран, то клиент должен обязательно добавить текст в поле `content`.
+        If template is `None`, then client has to specify notification `content`.
         """
         content = values.get("content")
         template_slug = values.get("template_slug")
@@ -37,7 +37,7 @@ class NotificationIn(BaseModel):
 
 
 class NotificationShortDetails(BaseModel):
-    """Короткая информация об уведомлении."""
+    """Notification short details."""
 
     notification_id: str
     queue: Queue

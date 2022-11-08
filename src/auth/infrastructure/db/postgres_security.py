@@ -16,4 +16,5 @@ security = Security()
 
 
 def init_security(app: Flask) -> None:
+    """Flask security configuration."""
     security.init_app(app, user_datastore)

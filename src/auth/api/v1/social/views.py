@@ -26,23 +26,23 @@ if TYPE_CHECKING:
     from auth.domain.users import JWTAuth
 
 
-social_ns = Namespace("social", description="Социальные сети")
+social_ns = Namespace("social", description="Social accounts")
 
 
 @social_ns.route("/login/<string:provider_slug>")
 class SocialLogin(Resource):
-    """Интеграция с социальной сетью."""
+    """Social network integration."""
 
-    @social_ns.doc(description="Связка аккаунта с социальной сетью.")
-    @social_ns.response(HTTPStatus.FOUND.value, "Интеграция с провайдером прошла успешно.")
-    @social_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
+    @social_ns.doc(description="Link social account.")
+    @social_ns.response(HTTPStatus.FOUND.value, "Successfully linked accounts.")
+    @social_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Server error.")
     @inject
     def get(
         self,
         provider_slug: str,
         social_auth_factory: Factory[BaseSocialAuth] = Provider[Container.social_package.auth_factory],
     ):
-        """Связать аккаунт со сторонним провайдером."""
+        """Link social account."""
         social_auth = get_social_auth(social_auth_factory, provider_slug)
         auth_url = url_for("api.social_social_auth", provider_slug=provider_slug, _external=True)
         redirect_url = social_auth.authorize_url(auth_url)
@@ -51,12 +51,12 @@ class SocialLogin(Resource):
 
 @social_ns.route("/auth/<string:provider_slug>")
 class SocialAuth(Resource):
-    """Авторизация через социальную сеть."""
+    """Social authorization."""
 
-    @social_ns.doc(description="Авторизация через социальную сеть.")
-    @social_ns.response(HTTPStatus.OK.value, "Доступы для входа.", auth_openapi.user_login)
-    @social_ns.response(HTTPStatus.FOUND.value, "Ошибка CSRF.")
-    @social_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
+    @social_ns.doc(description="Social authorization.")
+    @social_ns.response(HTTPStatus.OK.value, "Credentials.", auth_openapi.user_login)
+    @social_ns.response(HTTPStatus.FOUND.value, "CSRF error.")
+    @social_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Server error.")
     @serialize(JWTCredentialsSerializer)
     @inject
     def get(
@@ -66,7 +66,7 @@ class SocialAuth(Resource):
         jwt_auth: JWTAuth = Provide[Container.user_package.jwt_auth],
         social_service: SocialAccountService = Provide[Container.social_package.social_account_service],
     ):
-        """Получить доступы для входа с помощью данных от стороннего провайдера."""
+        """Get login credentials via social authorization."""
         social_auth = get_social_auth(social_auth_factory, provider_slug)
         try:
             social_auth.oauth_client.get_access_token()

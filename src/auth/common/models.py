@@ -7,7 +7,7 @@ from sqlalchemy.ext.declarative import declared_attr
 
 
 class BaseModel(_Model):
-    """Базовая модель приложения."""
+    """Base ORM model."""
 
     __abstract__ = True
 
@@ -17,7 +17,7 @@ class BaseModel(_Model):
 
 
 class TimeStampedMixin:
-    """Миксин для определения timestamp полей."""
+    """Mixin for defining timestamped models."""
 
     __abstract__ = True
 
@@ -42,7 +42,7 @@ class TimeStampedMixin:
 
 
 class UUIDMixin:
-    """Миксин для определения UUID в качестве PK."""
+    """Mixin for using UUID as a primary key."""
 
     __abstract__ = True
 

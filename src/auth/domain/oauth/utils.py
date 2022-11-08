@@ -12,7 +12,7 @@ TOKEN_TYPE: Final[str] = "Bearer"
 
 
 def get_token_from_header() -> str:
-    """Получение токена из заголовка 'Authorization'."""
+    """Get token from the 'Authorization' header."""
     auth = request.headers.get("Authorization", None)
     if not auth:
         raise OAuthError("Authorization header is expected", "authorization_header_missing")
@@ -30,7 +30,7 @@ def get_token_from_header() -> str:
 
 
 def has_scope(token: str, required_scope: str) -> bool:
-    """Определяет есть ли у токена необходимый 'scope'."""
+    """Determines whether the token has the required 'scope'."""
     unverified_claims = jwt.get_unverified_claims(token)
     if not unverified_claims.get("scope"):
         return False
@@ -39,10 +39,10 @@ def has_scope(token: str, required_scope: str) -> bool:
 
 
 class requires_auth:  # noqa
-    """Декоратор для проверки access токена из запроса с помощью сервиса auth0.
+    """Decorator for validating access token using auth0 service.
 
     Attributes:
-        required_scope: опциональный атрибут для указания необходимого 'scope' для доступа к ресурсу.
+        required_scope: optional required resource scope.
     """
 
     def __init__(self, required_scope: str | None = None):

@@ -3,11 +3,11 @@ from typing import Final, Sequence
 
 
 class SocialProviderSlug(enum.Enum):
-    """Доступные социальные провайдеры для авторизации."""
+    """Available social providers."""
 
     YANDEX = "yandex"
     GOOGLE = "google"
 
 
-# Список слагов доступных провайдеров авторизации
+# List of slugs of available social providers
 SOCIAL_AUTH_AVAILABLE_PROVIDER_SLUGS: Final[Sequence[str]] = [provider.value for provider in SocialProviderSlug]

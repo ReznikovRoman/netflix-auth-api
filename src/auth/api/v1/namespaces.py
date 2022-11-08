@@ -17,33 +17,33 @@ authorizations = {
         "type": "apiKey",
         "in": "header",
         "name": "Authorization",
-        "description": "В поле *'Value'* надо вставить JWT: **'Bearer &lt;JWT&gt;'**, JWT - токен авторизации",
+        "description": "Paste JWT: **'Bearer &lt;JWT&gt;'** in the *'Value'* field, JWT - authorization token",
     },
     "auth0": {
         "type": "apiKey",
         "in": "header",
         "name": "Authorization",
-        "description": "В поле *'Value'* надо вставить JWT: **'Bearer &lt;JWT&gt;'**, JWT - токен от сервиса auth0",
+        "description": "Paste JWT: **'Bearer &lt;JWT&gt;'** in the *'Value'* field, JWT - auth0 token",
     },
 }
 throttling_description = ""
 if settings.formatted_rate_limits:
     throttling_description = (
-        "## Тротлинг\n"
-        f"По умолчанию на всех эндпоинтах настроен тротлинг - **{settings.formatted_rate_limits}**.\n"
-        "Если лимит будет превышен, то клиент получит ошибку с **429** статусом ответа."
+        "## Throttling\n"
+        f"By default, throttling is configured on all endpoints - **{settings.formatted_rate_limits}**.\n"
+        "If the limit is exceeded, the client will receive an error with **429** response status."
     )
 api_description = (
-    "АПИ сервиса аутентификации для онлайн-кинотеатра.\n"
-    "## Авторизация OAuth 2.0\n"
-    "АПИ ролей использует авторизацию [протокола OAuth 2.0](https://oauth.net/2/).\n"
-    "Необходимо сделать POST запрос к эндпоинту `/oauth/token` с следующим телом:\n\n"
+    "Netflix Auth API.\n"
+    "## Authorization OAuth 2.0\n"
+    "Role API uses [OAuth 2.0 authorization](https://oauth.net/2/).\n"
+    "You have to make a POST request to the endpoint `/oauth/token` with the following body:\n\n"
     "`{"
     "\"client_id\": \"<Application ID>\","
     "\"client_secret\": \"<Application Secret>\","
     "\"grant_type\": \"client_credentials\""
     "}`\n\n"
-    "При успешном ответе клиент получает `access_token`.\n"
+    "Client receives an `access_token` on successful response.\n"
 ) + throttling_description
 
 api = Api(

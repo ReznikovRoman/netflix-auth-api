@@ -2,10 +2,10 @@ from .schemas import NotificationIn, NotificationShortDetails
 
 
 class NetflixNotificationsClient:
-    """Клиент для работы с АПИ сервиса Netflix Notifications."""
+    """Netflix Notifications API client."""
 
-    # TODO [Дипломный проект]: сделать клиенты ко всем микросервисам и выложить в (закрытый) PyPI репозиторий
-    # TODO [Дипломный проект]: добавить репозитории к integrations.notifications
+    # TODO: create Netflix API clients and publish to PyPI repository/GitHub
+    # TODO: add repository in `integrations.notifications`
 
     def send_notification(self, notification: NotificationIn) -> NotificationShortDetails:
-        """Отправка уведомления пользователю."""
+        """Send notification to user."""

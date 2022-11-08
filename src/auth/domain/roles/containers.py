@@ -4,6 +4,6 @@ from . import repositories
 
 
 class RoleContainer(containers.DeclarativeContainer):
-    """Контейнер с зависимостями приложения."""
+    """App DI container."""
 
     role_repository = providers.Singleton(repositories.RoleRepository)

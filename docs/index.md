@@ -111,6 +111,5 @@ Authentication service for the online cinema.
     - `POST /api/v1/users/{user_id}/roles/{role_id}`
   - Remove role from the user
     - `DELETE /api/v1/users/{user_id}/roles/{role_id}`
-  - Проверка наличия роли у пользователя. 200 - роль есть, 404 - роли у пользователя нет
   - Check whether user has a specific role. 200 - user has the given role, 404 otherwise
     - `HEAD /api/v1/users/{user_id}/roles/{role_id}/`

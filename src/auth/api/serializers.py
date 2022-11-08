@@ -6,13 +6,13 @@ from marshmallow import Schema, post_dump, post_load, pre_load
 
 
 class BaseSerializer(Schema):
-    """Базовый сериалайзер."""
+    """Base serializer."""
 
     envelope: ClassVar[dict[str, Any]] = {"single": "data", "many": "data"}
     model: ClassVar[Type[object]]
 
     def get_envelope_key(self, many):
-        """Получение ключа для 'обертки'."""
+        """Get wrapper key."""
         key = self.envelope["many"] if many else self.envelope["single"]
         assert key is not None, "Envelope key undefined"
         return key
@@ -33,7 +33,7 @@ class BaseSerializer(Schema):
 
 
 def serialize(serializer_class: Type[BaseSerializer], many: bool = False) -> Callable:
-    """Декоратор для сериализации объекта с помощью `serializer_class`."""
+    """Decorator for serializing object with the given `serializer_class`."""
 
     def decorator(func) -> Callable:
         @functools.wraps(func)

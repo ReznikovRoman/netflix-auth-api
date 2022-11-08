@@ -11,7 +11,7 @@ from auth.integrations.notifications.stubs import NetflixNotificationsClientStub
 
 
 class Container(containers.DeclarativeContainer):
-    """Контейнер с зависимостями."""
+    """DI container."""
 
     wiring_config = containers.WiringConfiguration(
         modules=[
@@ -74,7 +74,7 @@ class Container(containers.DeclarativeContainer):
 
 
 def override_providers(container: Container) -> Container:
-    """Переопределение DI провайдеров с помощью стабов."""
+    """Override providers with stubs."""
     if container.config.SOCIAL_USE_STUBS():
         oauth_client_stub = providers.Singleton(OauthClientStub)
         container.social_package.yandex_auth.override(

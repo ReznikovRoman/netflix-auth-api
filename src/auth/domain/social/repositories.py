@@ -11,11 +11,11 @@ from .types import UserSocialInfo
 
 
 class SocialAccountRepository:
-    """Репозиторий для работы с данными социальных сетей пользователя."""
+    """User social accounts repository."""
 
     @staticmethod
     def create(user_id: UUID, user_social_info: UserSocialInfo) -> types.SocialAccount:
-        """Создание новой социальной сети пользователя."""
+        """Create a new social account for user."""
         try:
             social_account = SocialAccount(user_id=user_id, **user_social_info.to_dict())
             db.session.add(social_account)
@@ -29,7 +29,7 @@ class SocialAccountRepository:
 
     @staticmethod
     def find_by_email(email: str, provider_slug: str) -> types.SocialAccount:
-        """Получить социальный аккаунт по почте."""
+        """Find social account by email."""
         try:
             social_account = SocialAccount.query.filter_by(email=email, provider_slug=provider_slug).one()
         except NoResultFound:
@@ -38,6 +38,6 @@ class SocialAccountRepository:
 
     @staticmethod
     def delete_user_social_account(user_id: UUID, provider_slug: str) -> None:
-        """Удалить социальный аккаунт пользователя по названию провайдера."""
+        """Delete user social account by provider slug."""
         with db_session():
             SocialAccount.query.filter_by(user_id=user_id, provider_slug=provider_slug).delete()

@@ -16,7 +16,7 @@ settings = get_settings()
 
 
 def exemption_rules() -> bool:
-    """Исключения из лимитов по умолчанию.
+    """Throttling exemption rules.
 
     https://flask-limiter.readthedocs.io/en/stable/configuration.html#RATELIMIT_DEFAULTS_EXEMPT_WHEN
     """
@@ -40,5 +40,5 @@ limiter = Limiter(
 
 
 def init_limiter(app: Flask) -> None:
-    """Настройка троттлинга."""
+    """Throttling configuration."""
     limiter.init_app(app)

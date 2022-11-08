@@ -4,7 +4,7 @@ from auth.api.openapi import wrap_model
 
 
 class Namespace(_Namespace):
-    """Группа ресурсов с принудительной 'оберткой' ответов в ключ `data`."""
+    """Resources wrapped with a `data` key."""
 
     def response(self, code, description, model=None, **kwargs):
         if model is None:

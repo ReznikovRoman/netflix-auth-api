@@ -21,16 +21,16 @@ def send_user_welcome_email(
     user_email: str, *,
     notification_client: NetflixNotificationsClient = Provide[Container.notification_client],
 ):
-    """Отправка приветственного письма пользователю при регистрации."""
+    """Send 'welcome' email to user after registration."""
     notification_client.send_notification(_build_welcome_notification_payload(email=user_email))
 
 
 def _build_welcome_notification_payload(*, email: str) -> NotificationIn:
     notification = NotificationIn(
-        subject="Спасибо за регистрацию",
+        subject="Thanks for registration",
         notification_type=NotificationType.EMAIL.value,
         priority=NotificationPriority.URGENT.value,
         recipient_list=[email],
-        content="Вы зарегистрировались на сайте netflix.com",
+        content="You have created an account on netflix.com",
     )
     return notification

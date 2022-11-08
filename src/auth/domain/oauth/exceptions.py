@@ -4,7 +4,7 @@ from auth.common.exceptions import NetflixAuthError
 
 
 class OAuthError(NetflixAuthError):
-    """Ошибка OAuth авторизации."""
+    """OAuth authorization error."""
 
     message = "OAuth error"
     code = "oauth_error"
@@ -12,7 +12,7 @@ class OAuthError(NetflixAuthError):
 
 
 class OAuthPermissionError(NetflixAuthError):
-    """Нет прав для получения доступа к ресурсу."""
+    """Missing permissions for accessing the resource."""
 
     message = "Client does not have access to the resource"
     code = "oauth_unauthorized"

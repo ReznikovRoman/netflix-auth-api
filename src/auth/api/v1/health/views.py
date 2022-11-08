@@ -3,15 +3,15 @@ from flask_restx import Resource
 from auth.api.namespace import Namespace
 from auth.throttling import limiter
 
-health_ns = Namespace("health", description="Состояние сервиса")
+health_ns = Namespace("health", description="Healthcheck")
 
 
 @health_ns.route("/")
 class Healthcheck(Resource):
-    """Состояние сервиса."""
+    """Service health."""
 
     decorators = [limiter.exempt]
 
     def get(self):
-        """Проверка состояния сервиса."""
+        """Check service health."""
         return {"status": "ok"}

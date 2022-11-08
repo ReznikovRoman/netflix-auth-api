@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True, slots=True)
 class Role:
-    """Роль пользователя."""
+    """User role."""
 
     id: uuid.UUID  # noqa: VNE003
     name: str

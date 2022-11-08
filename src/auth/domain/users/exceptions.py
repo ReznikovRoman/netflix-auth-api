@@ -4,7 +4,7 @@ from auth.common.exceptions import NetflixAuthError
 
 
 class UserAlreadyExistsError(NetflixAuthError):
-    """Пользователь уже зарегистрирован."""
+    """User with the given email already exists."""
 
     message = "User with such email already exists"
     code = "user_exists"
@@ -12,7 +12,7 @@ class UserAlreadyExistsError(NetflixAuthError):
 
 
 class UserInvalidCredentialsError(NetflixAuthError):
-    """Данные от аккаунта пользователя неверные."""
+    """Invalid user credentials."""
 
     message = "Invalid credentials"
     code = "user_invalid_credentials"
@@ -20,7 +20,7 @@ class UserInvalidCredentialsError(NetflixAuthError):
 
 
 class UserPasswordChangeError(NetflixAuthError):
-    """Не удалось сменить пароль."""
+    """Password change error."""
 
     message = "Error during password change"
     code = "password_change_error"

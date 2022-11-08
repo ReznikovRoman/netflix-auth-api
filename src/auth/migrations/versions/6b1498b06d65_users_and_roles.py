@@ -1,4 +1,4 @@
-"""Users and roles
+"""Users and roles.
 
 Revision ID: 6b1498b06d65
 Revises:

@@ -14,19 +14,20 @@ if TYPE_CHECKING:
 
 
 class SocialAccountService:
-    """Сервис для работы с социальными сетями пользователей."""
+    """User social account service."""
 
     def __init__(self, social_account_repository: SocialAccountRepository, user_repository: UserRepository):
         self.social_account_repository = social_account_repository
         self.user_repository = user_repository
 
     def handle_social_auth(self, user_social_info: UserSocialInfo) -> User:
-        """Создать пользователя и соц. сеть если их еще нет."""
+        """Create user and social account if needed."""
         email = user_social_info.email
         try:
             user = self.user_repository.get_active_by_email(email)
         except NotFoundError:
-            # XXX: выставляем свой пароль, чтобы пользователь его сменил в будущем
+            # XXX: specifying a default password, so user could change it in the future
+            # ref: `02_user_social_temp_password.md` decision
             user = self.user_repository.create(email, "XXX")
         try:
             self.social_account_repository.find_by_email(email=email, provider_slug=user_social_info.provider_slug)

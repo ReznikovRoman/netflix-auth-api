@@ -1,4 +1,4 @@
-"""Default roles
+"""Default roles.
 
 Revision ID: a666a2723b6a
 Revises: 6b1498b06d65

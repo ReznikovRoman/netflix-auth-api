@@ -12,22 +12,22 @@ from .models import Role
 
 
 class RoleRepository:
-    """Репозиторий для работы с данными ролей."""
+    """Roles repository."""
 
     @staticmethod
     def find_by_names(roles_names: list[str]) -> list[types.Role]:
-        """Получение ролей по их названиям."""
+        """Find roles by names."""
         roles = Role.query.filter_by(name=any_([roles_names])).all()
         return [role.to_dto() for role in roles]
 
     @staticmethod
     def get_all() -> list[types.Role]:
-        """Получение списка всех ролей."""
+        """Get list of all roles."""
         return [role.to_dto() for role in Role.query.all()]
 
     @staticmethod
     def create(name: str, description: str) -> types.Role:
-        """Создание новой роли."""
+        """Create a new role."""
         try:
             role = Role(name=name, description=description)
             db.session.add(role)
@@ -41,7 +41,7 @@ class RoleRepository:
 
     @staticmethod
     def delete(role_id: UUID) -> None:
-        """Удаление роли."""
+        """Delete role."""
         with db_session() as session:
             try:
                 role = Role.query.filter_by(id=role_id).one()
@@ -51,7 +51,7 @@ class RoleRepository:
 
     @staticmethod
     def update(role_id: UUID, **role_data) -> types.Role:
-        """Редактирование роли."""
+        """Update role."""
         role = Role.query.get_or_404(role_id)
         update_fields = RoleRepository._prepare_update_fields(role_data)
         if not update_fields:
@@ -59,7 +59,7 @@ class RoleRepository:
         with db_session():
             try:
                 Role.query.filter_by(id=role_id).update(update_fields)
-            except IntegrityError:  # если в БД уже есть роль с переданным `name`
+            except IntegrityError:  # if there is a role with the given `name`
                 raise ConflictError(message="Role with such name already exists", code="role_conflict")
         return role.to_dto()
 

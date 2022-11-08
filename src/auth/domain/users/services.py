@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 
 class UserService:
-    """Сервис для работы с пользователями."""
+    """User service."""
 
     def __init__(self, user_repository: UserRepository, login_log_repository: LoginLogRepository, jwt_auth: JWTAuth):
         self.user_repository = user_repository
@@ -23,7 +23,7 @@ class UserService:
         self.jwt_auth = jwt_auth
 
     def register_new_user(self, email: str, password: str) -> types.User:
-        """Регистрация нового пользователя в системе."""
+        """Register a new user."""
         if self.user_repository.user_exists(email):
             raise UserAlreadyExistsError
         user = self.user_repository.create(email, password)
@@ -32,11 +32,11 @@ class UserService:
         return user
 
     def assign_default_roles(self, user: types.User) -> types.User:
-        """Назначение ролей по умолчанию пользователю."""
+        """Assign default roles."""
         return self.user_repository.add_roles(user, roles_names=[DefaultRoles.VIEWERS.value])
 
     def login(self, email: str, password: str) -> tuple[types.JWTCredentials, types.User]:
-        """Аутентификация пользователя в системе."""
+        """User authentication."""
         user = self.user_repository.get_active_by_email(email)
         if not self.user_repository.is_valid_password(user.password, password):
             raise UserInvalidCredentialsError
@@ -44,22 +44,22 @@ class UserService:
         return credentials, user
 
     def update_login_history(self, user: types.User, ip_addr: str, user_agent: str) -> types.LoginLog:
-        """Обновление истории входов в аккаунт пользователя."""
+        """Update user login history with new record."""
         login_log = self.login_log_repository.create_log_record(user, ip_addr, user_agent)
         return login_log
 
     def refresh_credentials(self, jti: str, user: types.User) -> types.JWTCredentials:
-        """Обновление доступов пользователя по refresh токену."""
+        """Renew credentials using the given refresh token."""
         return self.jwt_auth.refresh_tokens(jti, user)
 
     def logout(self, jwt: dict) -> None:
-        """Выход пользователя из аккаунта."""
+        """Logout user."""
         self.jwt_auth.revoke_tokens(jwt)
 
     def change_password(
         self, jwt: dict, user: types.User, old_password: str, new_password1: str, new_password2: str,
     ) -> types.User:
-        """Смена пароля."""
+        """Change user password."""
         if not self.user_repository.is_valid_password(user.password, old_password):
             raise UserInvalidCredentialsError
         if new_password1 != new_password2:

@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 
 class UsersRoles(db.Model):
-    """Роли пользователя."""
+    """User roles."""
 
     __tablename__ = "users_roles"
 
@@ -34,7 +34,7 @@ class UsersRoles(db.Model):
 
 
 class User(TimeStampedMixin, UUIDMixin, db.Model, UserMixin):
-    """Пользователь в онлайн-кинотеатре."""
+    """User."""
 
     roles = association_proxy("user_roles", "role")
     login_history = db.relationship("LoginLog", back_populates="user", cascade="all, delete")
@@ -58,14 +58,14 @@ class User(TimeStampedMixin, UUIDMixin, db.Model, UserMixin):
 
 
 def create_loginlog_partitions(ddl, target, connection: Connection, **kwargs) -> None:
-    """Создание партиций таблицы `LoginLog`."""
+    """Create `LoginLog` partitions."""
     connection.execute("""CREATE TABLE IF NOT EXISTS loginlog_mobile PARTITION OF loginlog FOR VALUES IN ('MOBILE')""")
     connection.execute("""CREATE TABLE IF NOT EXISTS loginlog_tablet PARTITION OF loginlog FOR VALUES IN ('TABLET')""")
     connection.execute("""CREATE TABLE IF NOT EXISTS loginlog_pc PARTITION OF loginlog FOR VALUES IN ('PC')""")
 
 
 class LoginLog(TimeStampedMixin, db.Model):
-    """Запись входов в аккаунт."""
+    """Login log record."""
 
     user_id = db.Column(UUID(as_uuid=True), db.ForeignKey("user.id"))
     user: "User" = db.relationship("User", back_populates="login_history")

@@ -4,29 +4,29 @@ from typing import Protocol
 
 
 class IOAuthClient(Protocol):
-    """Интерфейс работы с OAuth клиентом."""
+    """Oauth client interface."""
 
     def create_authorization_url(self, url: str, **kwargs) -> dict:
-        """Создает ссылку для авторизации с использованием опциональных параметров."""
+        """Build authorization url with optional parameters."""
 
     def save_authorize_data(self, **kwargs) -> None:
-        """Сохранение данных авторизации, `state`, в хранилище."""
+        """Save authorization related data to state."""
 
     def get_access_token(self, **kwargs) -> str:
-        """Получение и проверка access токена от провайдера."""
+        """Receive access token from social provider."""
 
     def get_user_info(self, **kwargs) -> dict:
-        """Получение информации о пользователе от провайдера."""
+        """Get user info from social provider."""
 
 
 @dataclass(frozen=True, slots=True)
 class UserSocialInfo:
-    """Информация о пользователе от провайдера."""
+    """User info from social provider."""
 
-    # идентификатор пользователя у внешнего провайдера
+    # user id from social provider
     social_id: str
 
-    # название провайдера
+    # social provider slug
     provider_slug: str
 
     email: str
@@ -42,7 +42,7 @@ class UserSocialInfo:
 
 @dataclass(frozen=True, slots=True)
 class SocialAccount:
-    """Социальный аккаунт пользователя."""
+    """User social account."""
 
     id: uuid.UUID  # noqa: VNE003
     user_id: uuid.UUID

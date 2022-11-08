@@ -1,4 +1,4 @@
-"""Login History
+"""Login History.
 
 Revision ID: 08b8be69adec
 Revises: a666a2723b6a

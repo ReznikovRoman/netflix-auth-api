@@ -1,12 +1,8 @@
 from http import HTTPStatus
 
 
-class BaseNetflixAuthError(Exception):
-    """Базовая ошибка сервиса Netflix Auth."""
-
-
-class NetflixAuthError(BaseNetflixAuthError):
-    """Ошибка сервиса Netflix Auth API."""
+class APIErrorMixin:
+    """REST API error mixin."""
 
     message: str
     code: str
@@ -31,33 +27,41 @@ class NetflixAuthError(BaseNetflixAuthError):
         return dct
 
 
+class BaseNetflixAuthError(Exception):
+    """Base service error."""
+
+
+class NetflixAuthError(APIErrorMixin, BaseNetflixAuthError):
+    """Netflix Auth service error."""
+
+
 class NotFoundError(NetflixAuthError):
-    """Ресурс не найден."""
+    """Resource is not found."""
 
     message = "Resource not found"
     code = "not_found"
-    status_code: int = HTTPStatus.NOT_FOUND
+    status_code = HTTPStatus.NOT_FOUND
 
 
 class ConflictError(NetflixAuthError):
-    """Конфликт между существующими ресурсами."""
+    """Resource conflict."""
 
     message = "Resource cannot be processed"
     code = "resource_conflict"
-    status_code: int = HTTPStatus.CONFLICT
+    status_code = HTTPStatus.CONFLICT
 
 
 class ImproperlyConfiguredError(NetflixAuthError):
-    """Неверная конфигурация."""
+    """Improperly configured service."""
 
     message = "Improperly configured service"
     code = "improperly_configured"
-    status_code: int = HTTPStatus.INTERNAL_SERVER_ERROR
+    status_code = HTTPStatus.INTERNAL_SERVER_ERROR
 
 
 class RequiredHeaderMissingError(NetflixAuthError):
-    """Отсутствует обязательный заголовок в запросе."""
+    """Required header is missing in the request."""
 
     message = "Required header is missing"
     code = "missing_header"
-    status_code: int = HTTPStatus.BAD_REQUEST
+    status_code = HTTPStatus.BAD_REQUEST

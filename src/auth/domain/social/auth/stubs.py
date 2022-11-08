@@ -1,4 +1,4 @@
-"""Стабы для использования при тестировании."""
+"""OAuth stubs for testing."""
 
 from authlib.integrations.base_client import MismatchingStateError
 
@@ -12,20 +12,20 @@ from . import GoogleSocialAuth, YandexSocialAuth
 class OauthClientStub:
 
     def create_authorization_url(self, url: str, **kwargs) -> dict:
-        """Создает ссылку для авторизации с использованием опциональных параметров."""
+        """Build authorization url with optional parameters."""
         return {"uri": "http://dummy.com"}
 
     def save_authorize_data(self, **kwargs) -> None:
-        """Сохранение данных авторизации, `state`, в хранилище."""
+        """Save authorization related data to state."""
 
     def get_access_token(self, **kwargs) -> str:
-        """Получение и проверка access токена от провайдера."""
+        """Receive access token from social provider."""
         if request.args.get("state", None) is None:
             raise MismatchingStateError
         return "XXX"
 
     def get_user_info(self, **kwargs) -> dict:
-        """Получение информации о пользователе от провайдера."""
+        """Get user info from social provider."""
         return {"id": "123"}
 
 

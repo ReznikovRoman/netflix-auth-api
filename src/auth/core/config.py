@@ -18,7 +18,7 @@ class EnvConfig(BaseSettings.Config):
 
 
 class Settings(BaseSettings):
-    """Настройки проекта."""
+    """Project settings."""
 
     # Project
     SECRET_KEY: str
@@ -79,7 +79,7 @@ class Settings(BaseSettings):
     REDIS_DEFAULT_CHARSET: str = "utf-8"
     REDIS_DECODE_RESPONSES: bool | Literal[True, False] = True
     REDIS_RETRY_ON_TIMEOUT: bool = True
-    REDIS_DEFAULT_TIMEOUT: seconds = 5 * 60  # 5 минут
+    REDIS_DEFAULT_TIMEOUT: seconds = 5 * 60  # 5 minutes
 
     class Config(EnvConfig):
         env_prefix = "NAA_"

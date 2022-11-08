@@ -7,7 +7,7 @@ from . import types
 
 
 class Role(TimeStampedMixin, UUIDMixin, db.Model, RoleMixin):
-    """Роль пользователя в онлайн-кинотеатре."""
+    """User role."""
 
     name = db.Column(db.String(80), unique=True, nullable=False)
     description = db.Column(db.String(255), server_default="", default="", nullable=False)

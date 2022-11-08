@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 
 
 def configure_otel() -> None:
-    """Конфигурация OpenTelemetry и Jaeger."""
+    """OpenTelemetry and Jaeger configuration."""  # noqa: D403
     provider = TracerProvider(
         resource=Resource.create(
             attributes={
@@ -45,14 +45,14 @@ def configure_otel() -> None:
 
 
 def request_hook(span: Span, environ: WSGIEnvironment) -> None:
-    """Хук для добавления заголовка `X-Request-Id` в спаны."""
+    """Hook for enriching log spans with `X-Request-Id` header."""
     if span and span.is_recording():
         request_id = request.headers["X-Request-Id"]
         span.set_attribute("http.request_id", request_id)
 
 
 def init_tracer(app: Flask) -> None:
-    """Настройка трассировки."""
+    """Tracing configuration."""
     configure_otel()
     FlaskInstrumentor().instrument_app(
         app=app,
@@ -66,10 +66,10 @@ def init_tracer(app: Flask) -> None:
 
 
 class traced:  # noqa
-    """Декоратор для трассировки.
+    """Tracing decorator.
 
     Attributes:
-        name: название span'а.
+        name: span's name.
     """
 
     def __init__(self, name: str):

@@ -7,7 +7,7 @@ from . import types
 
 
 class SocialAccount(UUIDMixin, db.Model):
-    """Аккаунт пользователя в социальной сети."""
+    """User social account."""
 
     user_id = db.Column(UUID(as_uuid=True), db.ForeignKey("user.id"))
     user = db.relationship("User", backref=db.backref("social_accounts", cascade="all, delete-orphan"))
@@ -17,13 +17,13 @@ class SocialAccount(UUIDMixin, db.Model):
     email = db.Column(db.String(255), nullable=False)
 
     __table_args__ = (
-        # у одного пользователя - один аккаунт в выбранной социальной сети
+        # user has only one account in the given social network
         db.UniqueConstraint("user_id", "provider_slug"),
 
-        # одна электронная почта - к одному аккаунту в выбранной социальной сети
+        # one social account for each social account
         db.UniqueConstraint("email", "provider_slug"),
 
-        # ID в данной социальной сети уникален
+        # ID in the social network is unique
         db.UniqueConstraint("social_id", "provider_slug"),
     )
 

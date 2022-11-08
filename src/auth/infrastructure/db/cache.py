@@ -9,47 +9,46 @@ from auth.infrastructure.db.redis import RedisClient
 
 
 class Cache(ABC):
-    """Кэш."""
+    """Cache."""
 
     @abstractmethod
     def exists(self, *keys) -> int:
-        """Проверка на существование ключей в кэше."""
+        """Check that given keys are in cache."""
 
     @abstractmethod
     def get(self, key: str) -> Any:
-        """Получение данных из кэша по ключу `key`."""
+        """Get data from cache by the given key."""
         raise NotImplementedError
 
     @abstractmethod
     def set(self, key: str, data: Any, *, timeout: seconds | timedelta | None = None) -> bool:
-        """Сохранение данных с заданным ttl и ключом.
+        """Save data in cache with the given key and timeout.
 
         Args:
-            key (str): ключ, по которому надо сохранять данные.
-            data (Any): данные для сохранения.
-            timeout (int): значение ttl (время жизни), в секундах.
+            key: cache key.
+            data: data for caching.
+            timeout: ttl cache value.
 
-        Returns:
-            bool: были ли данные сохранены успешно.
+        Returns: Has the data been saved successfully.
         """
         raise NotImplementedError
 
     @abstractmethod
     def delete(self, *keys) -> int:
-        """Удаление ключей из кэша."""
+        """Delete given keys from cache."""
         raise NotImplementedError
 
     @abstractmethod
     def get_timeout(self, timeout: seconds | timedelta | None = None) -> int | timedelta | None:
-        """Получение `ttl` (таймаута) для записи в кэше."""
+        """Get ttl (timeout) for cache."""
         raise NotImplementedError
 
 
 class RedisCache(Cache):
-    """Кэш с использованием Redis.
+    """Redis cache.
 
     Attributes:
-        default_ttl: время жизни ключа в кэше по умолчанию.
+        default_ttl: default key ttl.
     """
 
     def __init__(self, redis_client: RedisClient, default_ttl: int | None = None):

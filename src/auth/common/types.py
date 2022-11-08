@@ -10,7 +10,7 @@ Query = dict | str
 
 @dataclass(frozen=True, slots=True)
 class PageNumberPagination:
-    """Настройки постраничной пагинации."""
+    """Page number pagination params."""
 
     page: int
     per_page: int

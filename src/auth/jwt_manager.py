@@ -26,7 +26,7 @@ def user_lookup_callback(
     jwt_header: dict, jwt_data: dict,
     user_repository: UserRepository = Provide[Container.user_package.user_repository],
 ) -> types.User | None:
-    """Получение пользователя по identity claim из токена.
+    """Get user by identity claim from token.
 
     https://flask-jwt-extended.readthedocs.io/en/stable/api/#flask_jwt_extended.JWTManager.user_lookup_loader
     """
@@ -40,7 +40,7 @@ def user_lookup_callback(
 def revoked_token_callback(
     jwt_header: dict, jwt_payload: dict, jwt_storage: JWTStorage = Provide[Container.jwt_storage],
 ) -> bool:
-    """Проверка на невалидные токены.
+    """Validate tokens.
 
     https://flask-jwt-extended.readthedocs.io/en/stable/api/#flask_jwt_extended.JWTManager.token_in_blocklist_loader
     """
@@ -49,7 +49,7 @@ def revoked_token_callback(
 
 
 def init_jwt(app: Flask) -> None:
-    """Настройка JWT."""
+    """JWT configuration."""
     app.config["JWT_SECRET_KEY"] = settings.JWT_SECRET_KEY
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = settings.JWT_ACCESS_TOKEN_EXPIRES
     app.config["JWT_REFRESH_TOKEN_EXPIRES"] = settings.JWT_REFRESH_TOKEN_EXPIRES

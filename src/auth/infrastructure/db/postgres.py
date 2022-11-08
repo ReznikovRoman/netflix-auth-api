@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from contextlib import contextmanager
-from typing import TYPE_CHECKING, Generator
+from typing import TYPE_CHECKING, ContextManager
 
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -24,14 +24,14 @@ migrate = Migrate(directory="auth/migrations")
 
 @compiles(Insert, "postgresql")
 def ignore_duplicates(insert, compiler, **kw) -> str:
-    """Игнорируем дубликаты в операциях вставки."""
+    """Ignore duplicates on inserts."""
     stmt = compiler.visit_insert(insert, **kw)
     ignore = insert.kwargs.get("postgresql_ignore_duplicates", False)
     return stmt if not ignore else f"{stmt} ON CONFLICT DO NOTHING"
 
 
 def init_postgres(app: Flask) -> None:
-    """Настройка Flask-SQLAlchemy и Flask-Migrate."""
+    """Flask-SQLAlchemy and Flask-Migrate configuration."""
     app.config["SQLALCHEMY_DATABASE_URI"] = settings.DB_URL
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["SQLALCHEMY_ECHO"] = settings.SQLALCHEMY_ECHO
@@ -39,14 +39,14 @@ def init_postgres(app: Flask) -> None:
     db.init_app(app)
     migrate.init_app(app, db)
 
-    # регистрируем новый аргумент для функции `sqlalchemy.dialects.postgresql.insert`
+    # register new argument for function `sqlalchemy.dialects.postgresql.insert`
     # https://stackoverflow.com/a/57725017/12408707
     Insert.argument_for("postgresql", "ignore_duplicates", None)
 
 
 @contextmanager
-def db_session() -> Generator[Session, None, None]:
-    """Контекстный менеджер для работы с сессией SQLAlchemy."""
+def db_session() -> ContextManager[Session]:
+    """SQLAlchemy ORM session context manager."""  # noqa: D403
     try:
         yield db.session
         db.session.commit()

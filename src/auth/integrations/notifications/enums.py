@@ -2,13 +2,13 @@ import enum
 
 
 class NotificationType(str, enum.Enum):
-    """Тип уведомления."""
+    """Notification type."""
 
     EMAIL = "email"
 
 
 class NotificationPriority(str, enum.Enum):
-    """Приоритет уведомления."""
+    """Notification priority."""
 
     URGENT = "urgent"
     COMMON = "common"

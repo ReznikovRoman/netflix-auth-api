@@ -8,7 +8,7 @@ from auth.domain.roles.types import Role
 
 @dataclass(slots=True)
 class User:
-    """Пользователь в системе."""
+    """User."""
 
     id: uuid.UUID  # noqa: VNE003
     email: str
@@ -36,7 +36,7 @@ class User:
 
 @dataclass(frozen=True, slots=True)
 class JWTCredentials:
-    """Данные для JWT авторизации."""
+    """JWT credentials."""
 
     access_token: str
     refresh_token: str
@@ -44,10 +44,10 @@ class JWTCredentials:
 
 @dataclass(frozen=True, slots=True)
 class LoginLog:
-    """История входов в аккаунт."""
+    """Login log record."""
 
     class DeviceType(ExtendedEnum):
-        """Тип девайса, с которого осуществлялся вход в аккаунт."""
+        """Device type that was used to log in to the account."""
 
         PC = "pc"
         MOBILE = "mobile"

@@ -27,29 +27,28 @@ if TYPE_CHECKING:
 
 settings = get_settings()
 
-auth_ns = Namespace("auth", validate=True, description="Авторизация")
+auth_ns = Namespace("auth", validate=True, description="Auth")
 register_openapi_models("auth.api.v1.auth.openapi", auth_ns)
 
 
 @auth_ns.route("/register")
 class UserRegister(Resource):
-    """Регистрация пользователя."""
+    """User registration."""
 
     decorators = [
         limiter.limit(settings.THROTTLE_USER_REGISTRATION_LIMITS, methods=["post"]),
     ]
 
     @auth_ns.expect(auth_request_parser, validate=True)
-    @auth_ns.doc(description="Регистрация нового пользователя в системе.")
-    @auth_ns.response(
-        HTTPStatus.CREATED.value, "Пользователь был успешно зарегистрирован.", openapi.user_registration)
-    @auth_ns.response(HTTPStatus.CONFLICT.value, "Пользователь с введенным email адресом уже существует.")
-    @auth_ns.response(HTTPStatus.BAD_REQUEST.value, "Ошибка в теле запроса.")
-    @auth_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
+    @auth_ns.doc(description="Register new user.")
+    @auth_ns.response(HTTPStatus.CREATED.value, "User has been registered.", openapi.user_registration)
+    @auth_ns.response(HTTPStatus.CONFLICT.value, "User with the given email already exists.")
+    @auth_ns.response(HTTPStatus.BAD_REQUEST.value, "Invalid request.")
+    @auth_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Server error.")
     @serialize(UserRegistrationSerializer)
     @inject
     def post(self, user_service: UserService = Provide[Container.user_package.user_service]):
-        """Регистрация."""
+        """Registration."""
         request_data = auth_request_parser.parse_args()
         email = request_data.get("email")
         password = request_data.get("password")
@@ -59,18 +58,18 @@ class UserRegister(Resource):
 
 @auth_ns.route("/login")
 class UserLogin(Resource):
-    """Аутентификация пользователя."""
+    """User authentication."""
 
     @auth_ns.expect(login_parser, validate=True)
-    @auth_ns.doc(description="Аутентификация пользователя в системе.")
-    @auth_ns.response(HTTPStatus.OK.value, "Пользователь успешно аутентифицировался.", openapi.user_login)
-    @auth_ns.response(HTTPStatus.UNAUTHORIZED.value, "Неверные почта/пароль.")
-    @auth_ns.response(HTTPStatus.BAD_REQUEST.value, "Ошибка в теле запроса.")
-    @auth_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
+    @auth_ns.doc(description="User authentication.")
+    @auth_ns.response(HTTPStatus.OK.value, "User has logged in.", openapi.user_login)
+    @auth_ns.response(HTTPStatus.UNAUTHORIZED.value, "Invalid email/password.")
+    @auth_ns.response(HTTPStatus.BAD_REQUEST.value, "Invalid request.")
+    @auth_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Server error.")
     @serialize(JWTCredentialsSerializer)
     @inject
     def post(self, user_service: UserService = Provide[Container.user_package.user_service]):
-        """Аутентификация."""
+        """Password authentication."""
         request_data = login_parser.parse_args()
         email = request_data.get("email")
         password = request_data.get("password")
@@ -95,16 +94,16 @@ class UserLogin(Resource):
 
 @auth_ns.route("/logout")
 class UserLogout(Resource):
-    """Выход пользователя из аккаунта."""
+    """Logout."""
 
-    @auth_ns.doc(security="JWT", description="Выход пользователя из аккаунта.")
-    @auth_ns.response(HTTPStatus.NO_CONTENT.value, "Пользователь успешно вышел из аккаунта.")
-    @auth_ns.response(HTTPStatus.UNAUTHORIZED.value, "Пользователь не аутентифицировался.")
-    @auth_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
+    @auth_ns.doc(security="JWT", description="Logout.")
+    @auth_ns.response(HTTPStatus.NO_CONTENT.value, "User has been logged out.")
+    @auth_ns.response(HTTPStatus.UNAUTHORIZED.value, "Invalid access token.")
+    @auth_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Server error.")
     @jwt_required()
     @inject
     def post(self, user_service: UserService = Provide[Container.user_package.user_service]):
-        """Выход пользователя."""
+        """Logout user."""
         jwt = get_jwt()
         user_service.logout(jwt)
         return "", HTTPStatus.NO_CONTENT
@@ -112,17 +111,17 @@ class UserLogout(Resource):
 
 @auth_ns.route("/refresh")
 class UserRefreshToken(Resource):
-    """Обновление access токена."""
+    """Renew access token."""
 
-    @auth_ns.doc(security="JWT", description="Обмен refresh токена на новую пару access/refresh токенов.")
-    @auth_ns.response(HTTPStatus.OK.value, "Пользователь успешно получил новые доступы.", openapi.user_login)
-    @auth_ns.response(HTTPStatus.UNAUTHORIZED.value, "Неверный refresh токен.")
-    @auth_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Ошибка сервера.")
+    @auth_ns.doc(security="JWT", description="Use refresh token to get a new pair of access/refresh tokens.")
+    @auth_ns.response(HTTPStatus.OK.value, "Credentials.", openapi.user_login)
+    @auth_ns.response(HTTPStatus.UNAUTHORIZED.value, "Invalid access token.")
+    @auth_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, "Server error.")
     @jwt_required(refresh=True)
     @serialize(JWTCredentialsSerializer)
     @inject
     def post(self, user_service: UserService = Provide[Container.user_package.user_service]):
-        """Обновление access токена."""
+        """Get new access token."""
         jti = get_jwt()["jti"]
         credentials = user_service.refresh_credentials(jti, current_user)
         headers = {

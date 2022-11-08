@@ -17,7 +17,7 @@ settings = get_settings()
 
 
 def create_app() -> Flask:
-    """Фабрика по созданию Flask приложений."""
+    """Flask app factory."""
     container = Container()
     container.config.from_pydantic(settings)
 

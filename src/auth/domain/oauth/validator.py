@@ -9,9 +9,9 @@ settings = get_settings()
 
 
 def validate_token(token: str) -> dict:
-    """Валидация access токена с помощью сервиса auth0.
+    """Validate access token using auth0 service.
 
-    Пример из документации: https://auth0.com/docs/quickstart/backend/python#create-the-jwt-validation-decorator
+    Example from docs: https://auth0.com/docs/quickstart/backend/python#create-the-jwt-validation-decorator
     """
     try:
         unverified_header = jwt.get_unverified_header(token)
