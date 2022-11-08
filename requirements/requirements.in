@@ -22,6 +22,7 @@ opentelemetry-instrumentation-psycopg2==0.30b1
 opentelemetry-instrumentation-sqlalchemy==0.30b1
 
 Flask==2.1.2
+werkzeug==2.1.2
 SQLAlchemy==1.4.36
 alembic==1.7.7
 
