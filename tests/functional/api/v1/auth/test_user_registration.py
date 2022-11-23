@@ -2,7 +2,7 @@ from ..base import BaseClientTest
 
 
 class TestUserRegistration(BaseClientTest):
-    """Тестирование регистрации пользователей."""
+    """Tests for user registration."""
 
     THROTTLING_RATE = 3
 
@@ -11,7 +11,7 @@ class TestUserRegistration(BaseClientTest):
     use_data = True
 
     def test_ok(self, user_dto):
-        """При корректном теле запроса пользователь с ролями по умолчанию регистрируется/создается корректно."""
+        """If request body is valid, new user with default roles will be registered/created."""
         body = {"email": user_dto.email, "password": "test-password"}
         got = self.client.post("/api/v1/auth/register", data=body)["data"]
 
@@ -19,7 +19,7 @@ class TestUserRegistration(BaseClientTest):
         assert got["email"] == user_dto.email
 
     def test_throttling(self):
-        """При превышении лимита запросов к АПИ клиент получит соответствующую ошибку."""
+        """If API requests limit is exceeded, client will receive an appropriate error."""
         email_template = "email_{id}@test.com"
         password = "test-password"
         for user_id in range(self.THROTTLING_RATE):
@@ -30,7 +30,7 @@ class TestUserRegistration(BaseClientTest):
         self.client.post("/api/v1/auth/register", data=body, expected_status_code=429)
 
     def test_invalid_body(self):
-        """Если в теле запроса неправильно заполнены поля, то клиент получит соответствующую ошибку."""
+        """If request body is invalid, client will receive an appropriate error."""
         body = {"email": "wrongemail.com", "password": "test-password"}
         got = self.client.post("/api/v1/auth/register", data=body, expected_status_code=400)
 
@@ -38,10 +38,10 @@ class TestUserRegistration(BaseClientTest):
         assert "email" in got["errors"]
 
     def test_user_exists(self):
-        """Если пользователь уже существует с почтой из формы регистрации, то клиент получит соответствующую ошибку."""
+        """If user with the email from registration form already exists, client will receive an appropriate error."""
         body = {"email": "duplicate@gmail.com", "password": "test-password"}
         self.client.post("/api/v1/auth/register", data=body)
 
-        got = self.client.post("/api/v1/auth/register", data=body, expected_status_code=409)  # делаем второй запрос
+        got = self.client.post("/api/v1/auth/register", data=body, expected_status_code=409)  # make a second request
 
         assert got["error"]["code"] == "user_exists"

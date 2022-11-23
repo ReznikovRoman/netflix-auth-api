@@ -4,20 +4,20 @@ from ..base import Auth0ClientTest
 
 
 class TestAssignRoleToUser(Auth0ClientTest):
-    """Тестирование добавления роли пользователю."""
+    """Tests for assigning role to a user."""
 
     endpoint = "/api/v1/users/{user_id}/roles/{role_id}"
     method = "post"
     format_url = True
 
     def test_ok(self, _user_role):
-        """При успешном назначении роли пользователю клиент получит пустой ответ с 201 статусом."""
+        """If role is assigned successfully, client will receive an empty response with 201 status."""
         user_id, role_id = _user_role
 
         self.client.post(f"/api/v1/users/{user_id}/roles/{role_id}")
 
     def test_has_new_role(self, _user_role):
-        """После назначения роли она появляется в списке ролей пользователя."""
+        """After assigning role to the user, it appears in the list of user's roles."""
         user_id, role_id = _user_role
         url = f"/api/v1/users/{user_id}/roles/{role_id}"
         self.client.post(url)
@@ -25,13 +25,13 @@ class TestAssignRoleToUser(Auth0ClientTest):
         self.client.head(url, expected_status_code=204)
 
     def test_role_does_not_exist(self, user_dto):
-        """При попытке назначить несуществующую роль пользователю клиент получит ошибку."""
+        """If there is no role with the given ID, client will receive an appropriate error."""
         user_id = self._register(user_dto)["id"]
 
         self.client.post(f"/api/v1/users/{user_id}/roles/XXX", expected_status_code=404)
 
     def test_user_does_not_exist(self, role_dto):
-        """При попытке назначить роль несуществующему пользователю клиент получит ошибку."""
+        """If there is no user with the given ID, client will receive an appropriate error."""
         role_id = self._create_role(role_dto)["id"]
 
         self.client.post(f"/api/v1/users/XXX/roles/{role_id}", expected_status_code=404)

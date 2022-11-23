@@ -2,7 +2,7 @@ from ..base import AuthClientTest
 
 
 class TestUserChangePassword(AuthClientTest):
-    """Тестирование смены пароля."""
+    """Tests for changing password."""
 
     endpoint = "/api/v1/users/me/change-password"
     method = "post"
@@ -10,7 +10,7 @@ class TestUserChangePassword(AuthClientTest):
     jwt_invalid_access_token_status_code = 422
 
     def test_ok(self, user_dto):
-        """После смены пароля пользователь не может использовать старый access токен."""
+        """After changing password user can't use old access token."""
         new_password = f"{user_dto.password}_new"
         body = {
             "old_password": user_dto.password,
@@ -23,7 +23,7 @@ class TestUserChangePassword(AuthClientTest):
         self.client.post("/api/v1/users/me/change-password", data=body, expected_status_code=401)
 
     def test_can_login_with_new_password(self, user_dto):
-        """Пользователь может успешно войти в аккаунт с измененным паролем."""
+        """User can log in with a new password."""
         new_password = f"{user_dto.password}_new"
         body = {
             "old_password": user_dto.password,
@@ -38,7 +38,7 @@ class TestUserChangePassword(AuthClientTest):
         assert "access_token" in credentials
 
     def test_wrong_second_password(self, user_dto):
-        """При несовпадающих паролях клиент получит ошибку."""
+        """If passwords don't match, client will receive an appropriate error."""
         body = {
             "old_password": user_dto.password,
             "new_password1": f"{user_dto.password}_1",

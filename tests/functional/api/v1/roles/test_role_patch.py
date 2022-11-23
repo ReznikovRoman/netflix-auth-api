@@ -6,14 +6,14 @@ from ..base import Auth0ClientTest
 
 
 class TestRolePatch(Auth0ClientTest):
-    """Тестирование редактирования роли."""
+    """Tests for patching a role."""
 
     endpoint = "/api/v1/roles/{role_id}"
     method = "patch"
     format_url = True
 
     def test_ok(self, role_dto):
-        """При редактировании роли ее поля корректно изменяются."""
+        """After patching a role, its fields are changed correctly."""
         role_id = self._create_role(role_dto)
         new_name = f"{role_dto.name}_new"
         body = {"name": new_name}
@@ -25,7 +25,7 @@ class TestRolePatch(Auth0ClientTest):
         assert got["description"] == role_dto.description
 
     def test_role_with_given_name_exists(self, role_dto, another_role_dto):
-        """Если клиент пытается заменить название роли на уже существующее в БД, то он получит ошибку."""
+        """If client tries to change role's name to an existing one, it will receive an appropriate error."""
         body = {"name": another_role_dto.name}
         role_id = self._create_role(role_dto)
         self._create_role(another_role_dto)
@@ -33,7 +33,7 @@ class TestRolePatch(Auth0ClientTest):
         self.client.patch(f"/api/v1/roles/{role_id}", data=body, expected_status_code=409)
 
     def test_not_found(self):
-        """Если роли с данным id нет в БД, то клиент получит ошибку."""
+        """If there is no role with the given ID, client will receive an appropriate error."""
         body = {"name": "XXX"}
 
         self.client.patch("/api/v1/roles/XXX", data=body, expected_status_code=404)

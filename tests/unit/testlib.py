@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 
 class APIClient(FlaskClient):
-    """API клиент для тестов."""
+    """API client for tests."""
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)

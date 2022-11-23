@@ -2,16 +2,16 @@ import requests
 
 
 class TestRequestIdMiddleware:
-    """Проверка middleware для обязательного заголовка `X-Request-Id`."""
+    """Test middleware that requires `X-Request-Id` headers in all requests."""
 
     def test_ok(self, settings):
-        """Если у запроса есть заголовок `X-Request-Id`, то он корректно обрабатывается."""
+        """If there is `X-Request-Id` header in the request, service will respond correctly."""
         got = requests.get(f"{settings.CLIENT_BASE_URL}/api/v1/health/")
 
         assert got.status_code == 200
 
     def test_missing_header(self, settings):
-        """Если у запроса нет заголовка `X-Request-Id`, то клиент получит ошибку."""
+        """If there is no `X-Request-Id` header in the request, client will receive an appropriate error."""
         got = requests.get(f"{settings.SERVER_BASE_URL}/api/v1/health/")
 
         assert got.status_code == 400

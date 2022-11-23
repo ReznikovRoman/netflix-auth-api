@@ -25,7 +25,7 @@ settings = get_settings()
 
 
 class APIClient(Session):
-    """Requests-based клиент для тестов."""
+    """Requests-based test client."""
 
     _access_token: str = None
 
@@ -106,7 +106,7 @@ class APIClient(Session):
 
 
 class Auth0Client(APIClient):
-    """Клиент для тестов с авторизацией auth0."""
+    """Requests-based test client for tests with auth0 authorization."""
 
     _access_token: str = None
 
@@ -155,7 +155,7 @@ def create_auth0_client() -> Auth0Client:
 
 
 def teardown_postgres(engine: Engine) -> None:
-    # XXX: указываем вручную таблицы, которые не должны очищаться
+    # XXX: have to specify tables that won't be truncated
     tables_to_exclude = (
         "alembic_version",
     )

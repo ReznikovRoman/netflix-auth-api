@@ -4,14 +4,14 @@ from ..base import Auth0ClientTest
 
 
 class TestRoleCreate(Auth0ClientTest):
-    """Тестирование создания роли."""
+    """Tests for creating a new role."""
 
     endpoint = "/api/v1/roles"
     method = "post"
     use_data = True
 
     def test_ok(self, role_dto):
-        """При корректном теле запроса клиент роль создается корректно и клиент получает информацию о ней."""
+        """If request body is valid, role is created correctly and client receives info about it."""
         body = {"name": role_dto.name, "description": role_dto.description}
 
         got = self.client.post("/api/v1/roles", data=body)["data"]
@@ -21,7 +21,7 @@ class TestRoleCreate(Auth0ClientTest):
         assert got["description"] == role_dto.description
 
     def test_role_exists(self, role_dto):
-        """При попытке создать роль с уже существующим названием клиент получит ошибку."""
+        """If client tries to create a role with the duplicate name, it will receive an appropriate error."""
         body = {"name": role_dto.name, "description": role_dto.description}
         self.client.post("/api/v1/roles", data=body)
 

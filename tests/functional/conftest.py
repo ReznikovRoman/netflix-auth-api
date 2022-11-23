@@ -105,9 +105,9 @@ def db_engine():
 
 @pytest.fixture
 def db_session(app_):
-    """Создает SQLAlchemy сессию для тестов.
+    """Create SQLAlchemy session for tests.
 
-    Ответ на SO: https://stackoverflow.com/a/38626139/12408707
+    SO answer: https://stackoverflow.com/a/38626139/12408707
     """
     app_.app_context().push()
     connection = db.engine.connect()

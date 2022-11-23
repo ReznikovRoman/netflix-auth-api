@@ -9,7 +9,7 @@ settings = get_settings()
 
 
 class BaseClientTest:
-    """Базовый класс для тестов."""
+    """Base test client."""
 
     client: APIClient
     anon_client: APIClient
@@ -27,12 +27,12 @@ class BaseClientTest:
 
 
 class AuthTestMixin:
-    """Миксин для тестов с авторизацией."""
+    """Mixin for tests with authorization."""
 
     jwt_invalid_access_token_status_code: int = 401
 
     def test_invalid_access_token(self, pre_auth_invalid_access_token):
-        """Если access токен в заголовке неверный, то клиент получит ошибку."""
+        """If access token from request headers is invalid, client will receive an appropriate error."""
         headers = {"Authorization": "Bearer XXX"}
         method = getattr(self.anon_client, self.method)
         endpoint = self._format_endpoint(pre_auth_invalid_access_token)
@@ -40,7 +40,7 @@ class AuthTestMixin:
         method(endpoint, headers=headers, data=body, expected_status_code=self.jwt_invalid_access_token_status_code)
 
     def test_no_credentials(self, pre_auth_no_credentials):
-        """Если access токена нет в заголовках, то клиент получит соответствующую ошибку."""
+        """If there is no access token in request headers, client will receive an appropriate error."""
         method = getattr(self.anon_client, self.method)
         endpoint = self._format_endpoint(pre_auth_no_credentials)
         body = self._format_body(pre_auth_no_credentials)
@@ -74,7 +74,7 @@ class Auth0ClientTest(
     AuthTestMixin,
     BaseClientTest,
 ):
-    """Базовый класс для тестов с авторизацией auth0."""
+    """Base class for tests with auth0 authorization."""
 
     client: Auth0Client
 
@@ -90,7 +90,7 @@ class AuthClientTest(
     AuthTestMixin,
     BaseClientTest,
 ):
-    """Базовый класс для тестов с JWT авторизацией."""
+    """Base class for tests with JWT authorization."""
 
     client: APIClient
 

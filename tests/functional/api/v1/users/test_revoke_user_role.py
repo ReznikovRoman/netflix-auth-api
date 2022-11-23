@@ -4,14 +4,14 @@ from ..base import Auth0ClientTest
 
 
 class TestRevokeUserRole(Auth0ClientTest):
-    """Тестирование удаления роли у пользователя."""
+    """Tests for revoking role from user."""
 
     endpoint = "/api/v1/users/{user_id}/roles/{role_id}"
     method = "delete"
     format_url = True
 
     def test_ok(self, _user_role):
-        """При успешном удалении роли у пользователя клиент получит пустой ответ с 204 статусом."""
+        """If role is successfully revoked, client will receive an empty response with 204 status."""
         user_id, role_id = _user_role
         url = f"/api/v1/users/{user_id}/roles/{role_id}"
         self.client.post(url)
@@ -19,7 +19,7 @@ class TestRevokeUserRole(Auth0ClientTest):
         self.client.delete(url)
 
     def test_no_role_after_delete(self, _user_role):
-        """После удаления роли она пропадает из списка ролей пользователя."""
+        """After role is revoked, it disappears from the list of user's roles."""
         user_id, role_id = _user_role
         url = f"/api/v1/users/{user_id}/roles/{role_id}"
         self.client.post(url)
@@ -28,13 +28,13 @@ class TestRevokeUserRole(Auth0ClientTest):
         self.client.head(url, expected_status_code=404)
 
     def test_role_does_not_exist(self, user_dto):
-        """При попытке удалить несуществующую роль у пользователя клиент получит 404 статус в ответе."""
+        """If client tries to revoke a role that user doesn't have, it will receive an appropriate error."""
         user_id = self._register(user_dto)["id"]
 
         self.client.delete(f"/api/v1/users/{user_id}/roles/XXX", expected_status_code=404)
 
     def test_user_does_not_exist(self, role_dto):
-        """При попытке удалить роль у несуществующего пользователя клиент получит 404 статус в ответе."""
+        """If client tries to revoke a role from the user that doesn't exist, it will receive an appropriate error."""
         role_id = self._create_role(role_dto)["id"]
 
         self.client.delete(f"/api/v1/users/XXX/roles/{role_id}", expected_status_code=404)

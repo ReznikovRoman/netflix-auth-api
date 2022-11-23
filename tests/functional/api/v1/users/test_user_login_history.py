@@ -2,7 +2,7 @@ from ..base import AuthClientTest
 
 
 class TestUserLoginHistory(AuthClientTest):
-    """Тестирование получения истории входов в аккаунт."""
+    """Tests for receiving login history."""
 
     endpoint = "/api/v1/users/me/login-history"
     method = "get"
@@ -10,14 +10,14 @@ class TestUserLoginHistory(AuthClientTest):
     jwt_invalid_access_token_status_code = 422
 
     def test_ok(self, user_dto):
-        """История входов пользователя корректно логируется."""
+        """User login history is recorded correctly."""
         got = self.client.get("/api/v1/users/me/login-history")["data"]
 
         assert len(got) == 1
         assert got[0]["device_type"] == "pc"
 
     def test_pagination(self, user_dto):
-        """Пагинация истории входов работает корректно."""
+        """Login history is paginated correctly."""
         for _ in range(2):
             self._login(user_dto)
 

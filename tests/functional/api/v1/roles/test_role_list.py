@@ -2,13 +2,13 @@ from ..base import Auth0ClientTest
 
 
 class TestRoleList(Auth0ClientTest):
-    """Тестирование получения списка ролей."""
+    """Tests for retrieving list of roles."""
 
     endpoint = "/api/v1/roles"
     method = "get"
 
     def test_ok(self):
-        """Клиент получит корректный список ролей."""
+        """Client receives list of roles."""
         got = self.client.get("/api/v1/roles/")["data"]
 
         assert len(got) == 2, got

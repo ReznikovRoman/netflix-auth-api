@@ -2,7 +2,7 @@ from ..base import AuthClientTest
 
 
 class TestDeleteUserSocialAccount(AuthClientTest):
-    """Тестирование открепления социальной сети."""
+    """Tests for 'unlinking' social account."""
 
     endpoint = "/api/v1/users/me/social/{provider_slug}"
     method = "delete"
@@ -12,13 +12,13 @@ class TestDeleteUserSocialAccount(AuthClientTest):
     jwt_invalid_access_token_status_code = 422
 
     def test_ok(self):
-        """При успешном откреплении социального аккаунта клиент получит пустой ответ с 204 статусом."""
+        """If social account is successfully 'unlinked', client will receive an empty response with 204 status."""
         self._create_social_account()
 
         self.client.delete(self.endpoint.format(provider_slug="yandex"))
 
     def test_no_social_account(self):
-        """Если у пользователя не было социального аккаунта, то клиент получит пустой ответ с 204 статусом."""
+        """If user doesn't have the given social account, client will receive an empty response with 204 status."""
         self.client.delete(self.endpoint.format(provider_slug="yandex"))
 
     def _create_social_account(self):

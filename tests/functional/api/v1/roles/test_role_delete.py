@@ -6,14 +6,14 @@ from ..base import Auth0ClientTest
 
 
 class TestRoleDelete(Auth0ClientTest):
-    """Тестирование удаления роли."""
+    """Tests for deleting a role."""
 
     endpoint = "/api/v1/roles/{role_id}"
     method = "delete"
     format_url = True
 
     def test_ok(self, role_dto):
-        """Роль корректно удаляется из БД и ее нельзя больше получить по id."""
+        """Role is deleted from DB, and it no longer can be accessed by ID."""
         role_id = self._create_role(role_dto)
 
         self.client.delete(f"/api/v1/roles/{role_id}", expected_status_code=204)
@@ -22,7 +22,7 @@ class TestRoleDelete(Auth0ClientTest):
         assert role_id not in [role["id"] for role in roles]
 
     def test_not_found(self, role_dto):
-        """Если роли с данным id нет в БД, то клиент получит ошибку."""
+        """If there is no role with the given ID, client will receive an appropriate error."""
         self.client.delete("/api/v1/roles/XXX", expected_status_code=404)
 
     @pytest.fixture

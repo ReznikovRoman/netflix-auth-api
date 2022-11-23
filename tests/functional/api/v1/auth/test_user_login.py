@@ -2,14 +2,14 @@ from ..base import BaseClientTest
 
 
 class TestUserLogin(BaseClientTest):
-    """Тестирование аутентификации пользователей."""
+    """Tests for user authentication."""
 
     endpoint = "/api/v1/auth/login"
     method = "post"
     use_data = True
 
     def test_ok(self, user_dto):
-        """При корректных доступах (почта/пароль) клиент получает пару access и refresh токенов."""
+        """Client receives a pair of access/refresh tokens by submitting valid credentials (email/password)."""
         body = {"email": user_dto.email, "password": user_dto.password}
         self.client.post("/api/v1/auth/register", data=body)
 
@@ -19,14 +19,14 @@ class TestUserLogin(BaseClientTest):
         assert "refresh_token" in got
 
     def test_user_not_found(self):
-        """Если активного пользователя с данной почтой нет в системе, то клиент получит соответствующую ошибку."""
+        """If there is no active user with the given email, client will receive an appropriate error."""
         body = {"email": "not@found.com", "password": "test"}
         got = self.client.post("/api/v1/auth/login", data=body, expected_status_code=404)
 
         assert "error" in got
 
     def test_invalid_credentials(self, user_dto):
-        """При неверных доступах клиент получит ошибку."""
+        """If submitted credentials are invalid, client will receive an appropriate error."""
         body = {"email": user_dto.email, "password": "wrongpassword"}
         self.client.post("/api/v1/auth/register", data={"email": user_dto.email, "password": user_dto.password})
 
@@ -35,7 +35,7 @@ class TestUserLogin(BaseClientTest):
         assert "error" in got
 
     def test_invalid_body(self):
-        """При неверном теле запроса клиент получит ошибку."""
+        """If request body is invalid, client will receive an appropriate error."""
         body = {"email": "wrong.com", "password": "test"}
         got = self.client.post("/api/v1/auth/login", data=body, expected_status_code=400)
 
